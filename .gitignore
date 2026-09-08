@@ -1,0 +1,11 @@
+dist/
+*.zip
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.DS_Store
+.idea/
+.vscode/
+node_modules/
+site/static/assets/fonts/*.woff2

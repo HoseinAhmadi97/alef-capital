@@ -1,0 +1,27 @@
+# انتشار خودکار با هر push روی main.
+# در تنظیمات مخزن این Secretها را بسازید:
+#   SSH_HOST · SSH_USER · SSH_KEY
+name: build & deploy
+on:
+  push: { branches: [main] }
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: ساخت
+        run: python site/build.py
+      - name: بررسی لینک‌ها
+        run: python -c "import sys;sys.path.insert(0,'tests');import check;b=check.check_links();print(*b,sep='\n');sys.exit(1 if b else 0)"
+      - name: ارسال به سرور
+        uses: burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avzr --delete
+          path: dist/
+          remote_path: /srv/alef-capital/dist/
+          remote_host: ${{ secrets.SSH_HOST }}
+          remote_user: ${{ secrets.SSH_USER }}
+          remote_key:  ${{ secrets.SSH_KEY }}

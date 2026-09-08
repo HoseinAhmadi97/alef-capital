@@ -1,0 +1,28 @@
+# ════════════════════════════════════════════════════════════════
+#  اجرا:   docker compose -f deploy/docker-compose.yml up -d
+#
+#  نکته مهم برای سرعت کار شما:
+#  پوشه dist/ به‌صورت volume سوار می‌شود، نه داخل image.
+#  یعنی برای دیدن تغییرات فقط کافی است `make build` بزنید —
+#  نه build مجدد image لازم است، نه restart کانتینر.
+# ════════════════════════════════════════════════════════════════
+services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: alef-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"          # HTTP/3
+    volumes:
+      - ../dist:/srv/site:ro
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data       # گواهی‌های TLS — حتماً بماند
+      - caddy_config:/config
+      - caddy_logs:/var/log/caddy
+
+volumes:
+  caddy_data:
+  caddy_config:
+  caddy_logs:

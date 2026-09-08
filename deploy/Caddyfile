@@ -1,0 +1,51 @@
+# ════════════════════════════════════════════════════════════════
+#  الف کپیتال — پیکربندی Caddy
+#  گواهی HTTPS خودکار گرفته و خودکار تمدید می‌شود. کاری لازم نیست.
+# ════════════════════════════════════════════════════════════════
+
+alefcapital.ir, www.alefcapital.ir {
+
+	root * /srv/site
+	encode zstd gzip
+	file_server
+
+	# آدرس بدون .html هم کار کند:  /pricing  →  /pricing.html
+	try_files {path} {path}.html {path}/index.html
+
+	# ── کش ──
+	# HTML کش نمی‌شود تا تغییرات شما بلافاصله دیده شود
+	@html path *.html /
+	header @html Cache-Control "no-cache, must-revalidate"
+
+	# فونت و تصویر و CSS یک ساله کش می‌شوند
+	@static path /assets/*
+	header @static Cache-Control "public, max-age=31536000, immutable"
+
+	# ── امنیت ──
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options    "nosniff"
+		X-Frame-Options           "SAMEORIGIN"
+		Referrer-Policy           "strict-origin-when-cross-origin"
+		Permissions-Policy        "geolocation=(), microphone=(), camera=()"
+		-Server
+	}
+
+	handle_errors {
+		rewrite * /index.html
+		file_server
+	}
+
+	log {
+		output file /var/log/caddy/access.log {
+			roll_size 20mb
+			roll_keep 5
+		}
+	}
+}
+
+# وقتی API اضافه شد، این بلوک را از حالت کامنت دربیاورید:
+# api.alefcapital.ir {
+# 	reverse_proxy api:8000
+# 	encode zstd gzip
+# }

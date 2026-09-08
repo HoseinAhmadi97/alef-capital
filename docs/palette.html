@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>پالت رنگی طلایی — الف کپیتال</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold-50:#FFF9EC;  --gold-100:#FEF0CC; --gold-200:#FDE29B; --gold-300:#FFD873;
+  --gold-400:#F0B429; --gold-500:#E0A82E; --gold-600:#C9861A; --gold-700:#8A5A08;
+  --gold-800:#6B4506; --gold-900:#4A2F04; --gold-950:#2B1B02;
+
+  --ink-950:#070C16; --ink-900:#0B1220; --ink-800:#0F172A;
+  --panel:#111A2B;   --dark-border:#1E2A3F;
+
+  --blue-400:#5B8DF5; --blue-500:#2E5FE0; --blue-700:#1B3BA8;
+  --cyan-600:#0891B2; --cyan-700:#0E7490;
+
+  --slate-600:#475569; --slate-500:#64748B; --slate-400:#94A3B8;
+  --surface:#FFFFFF; --surface-2:#F8FAFC; --surface-3:#F1F5F9;
+  --border:#E2E8F0; --border-strong:#CBD5E1;
+
+  --up:#16A34A; --up-text:#0F7233; --up-dark:#4ADE80;
+  --down:#DC2626; --down-dark:#FB7185; --warn:#D97706;
+
+  --grad-gold:linear-gradient(135deg,#FFD873,#C9861A);
+  --grad-gold-text:linear-gradient(135deg,#C9861A,#8A5A08);
+  --grad-gold-dark:linear-gradient(135deg,#FFD873,#F0B429);
+
+  --r:12px; --r-lg:16px; --r-xl:22px;
+  --sh:0 4px 16px -4px rgba(11,18,32,.10);
+  --sh-lg:0 18px 44px -18px rgba(11,18,32,.24);
+  --sh-gold:0 14px 30px -12px rgba(184,120,26,.55);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Vazirmatn,system-ui,sans-serif;background:var(--surface-2);color:var(--ink-900);line-height:1.9;font-size:15px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 clamp(18px,5vw,40px)}
+h1{font-size:clamp(28px,4vw,44px);font-weight:800;margin:0;line-height:1.2}
+h2{font-size:22px;font-weight:800;margin:0 0 6px}
+h3{font-size:15px;font-weight:700;margin:0 0 12px;color:var(--slate-600)}
+.sec{padding:44px 0;border-bottom:1px solid var(--border)}
+.sub{color:var(--slate-600);margin:0 0 24px;font-size:14.5px}
+.num{font-variant-numeric:tabular-nums}
+code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;direction:ltr;display:inline-block}
+
+.head{background:#fff;border-bottom:1px solid var(--border);padding:52px 0 44px;
+ background-image:radial-gradient(ellipse 70% 60% at 50% 0%, rgba(240,180,41,.14), transparent 62%),
+ linear-gradient(rgba(14,116,144,.05) 1px,transparent 1px),
+ linear-gradient(90deg,rgba(14,116,144,.05) 1px,transparent 1px);
+ background-size:auto,44px 44px,44px 44px}
+.head p{color:var(--slate-600);max-width:660px;margin:14px 0 0;font-size:16px}
+.pill{display:inline-block;background:rgba(240,180,41,.18);border:1px solid rgba(184,120,26,.32);color:var(--gold-700);padding:6px 15px;border-radius:99px;font-size:13px;font-weight:700;margin-bottom:16px}
+
+.ramp{display:grid;grid-template-columns:repeat(11,1fr);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+@media(max-width:820px){.ramp{grid-template-columns:repeat(6,1fr)}}
+.sw{aspect-ratio:1/1.25;display:flex;flex-direction:column;justify-content:flex-end;padding:9px;gap:2px}
+.sw b{font-size:12px;font-weight:800}
+.sw span{font-size:10.5px;opacity:.85;direction:ltr;font-family:ui-monospace,monospace}
+
+.tg{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.tk{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.tk .chip{height:62px}
+.tk .meta{padding:10px 12px}
+.tk .meta b{display:block;font-size:13px}
+.tk .meta span{font-size:11.5px;color:var(--slate-500);font-family:ui-monospace,monospace;direction:ltr}
+
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);font-size:14px}
+th{background:var(--surface-3);text-align:right;padding:11px 14px;font-size:12.5px;font-weight:700;color:var(--slate-600)}
+td{padding:11px 14px;border-top:1px solid var(--border)}
+.tag{font-size:11.5px;font-weight:800;padding:3px 9px;border-radius:99px;white-space:nowrap}
+.aaa{background:#DCFCE7;color:#0F7233}.aa{background:#DBEAFE;color:#1B3BA8}.lg{background:#FEF3C7;color:#92400E}.no{background:#FEE2E2;color:#B91C1C}
+
+.prev{background:#fff;border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--sh-lg)}
+.phero{padding:40px;background:#fff;
+ background-image:radial-gradient(ellipse 70% 55% at 50% 0%, rgba(15,23,42,.07), transparent 60%),
+ linear-gradient(rgba(14,116,144,.05) 1px,transparent 1px),
+ linear-gradient(90deg,rgba(14,116,144,.05) 1px,transparent 1px);
+ background-size:auto,44px 44px,44px 44px}
+.phero h3{font-size:clamp(22px,3vw,34px);font-weight:800;color:var(--ink-900);margin:0 0 10px;line-height:1.3}
+.gr{background:var(--grad-gold-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+.phero p{color:var(--slate-600);margin:0 0 22px;font-size:14.5px;max-width:470px}
+.btn{display:inline-block;padding:13px 28px;border-radius:var(--r);font-weight:800;font-size:14.5px;border:0;font-family:inherit;text-decoration:none}
+.b-gold{background:var(--grad-gold);color:#1A1200;box-shadow:var(--sh-gold)}
+.b-ghost{background:transparent;color:var(--ink-800);border:1px solid var(--border-strong)}
+.pbody{padding:28px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;border-top:1px solid var(--border)}
+@media(max-width:760px){.pbody{grid-template-columns:1fr}}
+.kpi{border:1px solid var(--border);border-radius:var(--r);padding:16px}
+.kpi small{font-size:12px;color:var(--slate-500);font-weight:600}
+.kpi b{display:block;font-size:24px;font-weight:800;margin-top:4px}
+.d{font-size:12.5px;font-weight:800;padding:3px 9px;border-radius:99px;display:inline-block;margin-top:6px}
+.d-up{background:rgba(22,163,74,.12);color:var(--up-text)}
+.d-dn{background:rgba(220,38,38,.10);color:#B91C1C}
+
+.cd{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:760px){.cd{grid-template-columns:1fr}}
+.cbox{border-radius:var(--r-lg);padding:20px;border:1px solid var(--border);background:#fff}
+.cbox.dk{background:var(--ink-900);border-color:var(--dark-border)}
+.cbox h4{margin:0 0 4px;font-size:14px;font-weight:700}
+.cbox.dk h4{color:#E6EDF7}
+.cbox .cap{font-size:12px;color:var(--slate-500);margin:0 0 16px}
+.cbox.dk .cap{color:#7C8CA8}
+.leg{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px;font-size:12px;color:var(--slate-600)}
+.cbox.dk .leg{color:#94A3B8}
+.leg i{width:10px;height:10px;border-radius:3px;display:inline-block;margin-inline-end:5px}
+.pass{display:inline-block;background:#DCFCE7;color:#0F7233;font-size:11.5px;font-weight:800;padding:3px 10px;border-radius:99px}
+
+pre{background:var(--ink-950);color:#C7D6F0;padding:20px;border-radius:var(--r-lg);overflow-x:auto;direction:ltr;text-align:left;font-size:12.5px;line-height:1.75;font-family:ui-monospace,Menlo,monospace}
+.note{background:var(--gold-50);border-inline-start:3px solid var(--gold-400);padding:14px 18px;border-radius:10px;font-size:14px;color:#5C3D06;margin-top:18px}
+.note.warn{background:#FEF2F2;border-color:#DC2626;color:#7F1D1D}
+</style>
+</head>
+<body>
+
+<div class="head">
+<div class="wrap">
+  <span class="pill">دیزاین سیستم — نسخه طلایی (اصلی)</span>
+  <h1>پالت رنگی الف کپیتال</h1>
+  <p>همان هویت طلایی-سرمه‌ای نسخه اولیه، این بار با اعداد کنتراست محاسبه‌شده و یک پالت نمودار شش‌تایی که هر دو حالت روشن و تیره را از اعتبارسنجی کوررنگی رد کرده است.</p>
+</div>
+</div>
+
+<!-- RAMP -->
+<section class="sec"><div class="wrap">
+  <h2>۱. رمپ اصلی — طلایی</h2>
+  <p class="sub">۴۰۰ رنگ برند و پایه دکمه‌هاست. برای <b>متن</b> فقط از ۷۰۰ به بعد استفاده کنید — گام‌های روشن‌تر روی سفید کنتراست کافی ندارند.</p>
+  <div class="ramp">
+    <div class="sw" style="background:#FFF9EC;color:#4A2F04"><b>50</b><span>#FFF9EC</span></div>
+    <div class="sw" style="background:#FEF0CC;color:#4A2F04"><b>100</b><span>#FEF0CC</span></div>
+    <div class="sw" style="background:#FDE29B;color:#4A2F04"><b>200</b><span>#FDE29B</span></div>
+    <div class="sw" style="background:#FFD873;color:#2B1B02"><b>300</b><span>#FFD873</span></div>
+    <div class="sw" style="background:#F0B429;color:#1A1200"><b>400</b><span>#F0B429</span></div>
+    <div class="sw" style="background:#E0A82E;color:#1A1200"><b>500</b><span>#E0A82E</span></div>
+    <div class="sw" style="background:#C9861A;color:#fff"><b>600</b><span>#C9861A</span></div>
+    <div class="sw" style="background:#8A5A08;color:#fff"><b>700</b><span>#8A5A08</span></div>
+    <div class="sw" style="background:#6B4506;color:#fff"><b>800</b><span>#6B4506</span></div>
+    <div class="sw" style="background:#4A2F04;color:#fff"><b>900</b><span>#4A2F04</span></div>
+    <div class="sw" style="background:#2B1B02;color:#fff"><b>950</b><span>#2B1B02</span></div>
+  </div>
+
+  <div class="note warn"><b>تله اصلی این پالت:</b> متن طلایی روی سفید. <code>#C9861A</code> فقط ۳.۰۴:۱ کنتراست دارد — برای متن معمولی مردود است. هر جا متن طلایی می‌خواهید، <code>#8A5A08</code> (۵.۹۲:۱) یا <code>#6B4506</code> (۸.۴۷:۱) بگذارید.</div>
+</div></section>
+
+<!-- SUPPORT -->
+<section class="sec"><div class="wrap">
+  <h2>۲. سطوح و رنگ‌های پشتیبان</h2>
+  <p class="sub">سرمه‌ای برای متن و سکشن‌های داشبورد؛ آبی و فیروزه‌ای فقط به‌عنوان لهجه ثانویه (محصول کاوردکال و نشانگر داده زنده).</p>
+
+  <h3>سطوح تیره — سکشن نمایش داشبورد</h3>
+  <div class="tg" style="margin-bottom:26px">
+    <div class="tk"><div class="chip" style="background:#070C16"></div><div class="meta"><b>ink-950</b><span>#070C16</span></div></div>
+    <div class="tk"><div class="chip" style="background:#0B1220"></div><div class="meta"><b>ink-900 · بوم اصلی</b><span>#0B1220</span></div></div>
+    <div class="tk"><div class="chip" style="background:#0F172A"></div><div class="meta"><b>ink-800 · متن تیره</b><span>#0F172A</span></div></div>
+    <div class="tk"><div class="chip" style="background:#111A2B"></div><div class="meta"><b>panel</b><span>#111A2B</span></div></div>
+    <div class="tk"><div class="chip" style="background:#1E2A3F"></div><div class="meta"><b>dark-border</b><span>#1E2A3F</span></div></div>
+  </div>
+
+  <h3>لهجه ثانویه — محصول کاوردکال و داده زنده</h3>
+  <div class="tg" style="margin-bottom:26px">
+    <div class="tk"><div class="chip" style="background:#5B8DF5"></div><div class="meta"><b>blue-400</b><span>#5B8DF5</span></div></div>
+    <div class="tk"><div class="chip" style="background:#2E5FE0"></div><div class="meta"><b>blue-500 · آیکون کاوردکال</b><span>#2E5FE0</span></div></div>
+    <div class="tk"><div class="chip" style="background:#1B3BA8"></div><div class="meta"><b>blue-700 · متن</b><span>#1B3BA8</span></div></div>
+    <div class="tk"><div class="chip" style="background:#0891B2"></div><div class="meta"><b>cyan-600 · داده زنده</b><span>#0891B2</span></div></div>
+  </div>
+
+  <h3>معنایی — بازار</h3>
+  <div class="tg">
+    <div class="tk"><div class="chip" style="background:#16A34A"></div><div class="meta"><b>up · نشانگر</b><span>#16A34A</span></div></div>
+    <div class="tk"><div class="chip" style="background:#0F7233"></div><div class="meta"><b>up-text · متن ریز</b><span>#0F7233</span></div></div>
+    <div class="tk"><div class="chip" style="background:#DC2626"></div><div class="meta"><b>down</b><span>#DC2626</span></div></div>
+    <div class="tk"><div class="chip" style="background:#D97706"></div><div class="meta"><b>warn</b><span>#D97706</span></div></div>
+    <div class="tk"><div class="chip" style="background:#4ADE80"></div><div class="meta"><b>up-dark</b><span>#4ADE80</span></div></div>
+    <div class="tk"><div class="chip" style="background:#FB7185"></div><div class="meta"><b>down-dark</b><span>#FB7185</span></div></div>
+  </div>
+
+  <div class="note"><b>قاعده:</b> سبز و قرمز فقط برای داده بازار — هرگز برای دکمه یا عنصر برند. و رنگ هرگز تنها حامل معنا نباشد: کنار هر درصد، علامت ▲ یا ▼ هم بگذارید.<br>
+  <b>هشدار مخصوص این پالت:</b> نارنجی هشدار (<code>#D97706</code>) به طلایی برند خیلی نزدیک است. هشدار را با آیکون و متن نشان دهید، نه فقط با رنگ.</div>
+</div></section>
+
+<!-- CONTRAST -->
+<section class="sec"><div class="wrap">
+  <h2>۳. کنتراست — اعداد محاسبه‌شده</h2>
+  <p class="sub">همه ترکیب‌ها با فرمول WCAG حساب شده‌اند. حداقل لازم برای متن معمولی ۴.۵:۱ و برای متن درشت یا آیکون ۳:۱ است.</p>
+  <table>
+    <thead><tr><th>ترکیب</th><th>نسبت</th><th>سطح</th><th>کاربرد</th></tr></thead>
+    <tbody>
+      <tr><td><code>#1A1200</code> روی <code>#F0B429</code></td><td class="num">۹.۹۷:۱</td><td><span class="tag aaa">AAA</span></td><td>دکمه اصلی — متن تیره روی طلایی</td></tr>
+      <tr><td><code>#1A1200</code> روی <code>#FFD873</code></td><td class="num">۱۳.۵۵:۱</td><td><span class="tag aaa">AAA</span></td><td>بج «محبوب‌ترین»</td></tr>
+      <tr><td>سفید روی <code>#8A5A08</code></td><td class="num">۵.۹۲:۱</td><td><span class="tag aa">AA</span></td><td>دکمه طلایی تیره</td></tr>
+      <tr><td>سفید روی <code>#C9861A</code></td><td class="num">۳.۰۴:۱</td><td><span class="tag lg">فقط درشت</span></td><td>از متن سفید روی این گام پرهیز کنید</td></tr>
+      <tr><td><code>#6B4506</code> روی سفید</td><td class="num">۸.۴۷:۱</td><td><span class="tag aaa">AAA</span></td><td>متن طلایی، امن‌ترین گزینه</td></tr>
+      <tr><td><code>#8A5A08</code> روی سفید</td><td class="num">۵.۹۲:۱</td><td><span class="tag aa">AA</span></td><td>لینک و برچسب طلایی</td></tr>
+      <tr><td><code>#C9861A</code> روی سفید</td><td class="num">۳.۰۴:۱</td><td><span class="tag no">مردود</span></td><td>هرگز برای متن</td></tr>
+      <tr><td><code>#0B1220</code> روی سفید</td><td class="num">۱۸.۷۲:۱</td><td><span class="tag aaa">AAA</span></td><td>تیتر اصلی</td></tr>
+      <tr><td><code>#475569</code> روی سفید</td><td class="num">۷.۵۸:۱</td><td><span class="tag aaa">AAA</span></td><td>متن بدنه</td></tr>
+      <tr><td><code>#F0B429</code> روی <code>#0B1220</code></td><td class="num">۱۰.۰۴:۱</td><td><span class="tag aaa">AAA</span></td><td>طلایی در حالت تیره</td></tr>
+      <tr><td><code>#94A3B8</code> روی <code>#0B1220</code></td><td class="num">۷.۳۰:۱</td><td><span class="tag aaa">AAA</span></td><td>متن بدنه تیره</td></tr>
+      <tr><td><code>#16A34A</code> روی سفید</td><td class="num">۳.۳۰:۱</td><td><span class="tag lg">فقط درشت</span></td><td>نشانگر و مارک نمودار</td></tr>
+      <tr><td><code>#0F7233</code> روی سفید</td><td class="num">۶.۰۴:۱</td><td><span class="tag aa">AA</span></td><td>متن ریز درصد مثبت</td></tr>
+      <tr><td><code>#DC2626</code> روی سفید</td><td class="num">۴.۸۳:۱</td><td><span class="tag aa">AA</span></td><td>درصد منفی</td></tr>
+    </tbody>
+  </table>
+</div></section>
+
+<!-- CHART -->
+<section class="sec"><div class="wrap">
+  <h2>۴. پالت نمودار <span class="pass">هر دو حالت PASS</span></h2>
+  <p class="sub">ترتیب ثابت است و هرگز چرخانده نمی‌شود: سری اول همیشه طلایی، سری دوم همیشه آبی. رنگ به موجودیت می‌چسبد نه به رتبه — فیلتری که تعداد سری‌ها را عوض می‌کند نباید بازمانده‌ها را رنگ‌آمیزی مجدد کند.</p>
+
+  <div class="cd">
+    <div class="cbox">
+      <h4>حالت روشن — روی سفید</h4>
+      <p class="cap">بدترین جفت مجاور ΔE ۱۶.۸ (دوترانوپی) · کف دید عادی ΔE ۱۸.۸ · کنتراست همه بالای ۳:۱</p>
+      <div style="display:flex;gap:2px;border-radius:8px;overflow:hidden">
+        <div style="flex:1;height:56px;background:#B4790F"></div>
+        <div style="flex:1;height:56px;background:#2E5FE0"></div>
+        <div style="flex:1;height:56px;background:#D9482B"></div>
+        <div style="flex:1;height:56px;background:#0E9CAD"></div>
+        <div style="flex:1;height:56px;background:#9333EA"></div>
+        <div style="flex:1;height:56px;background:#B0197A"></div>
+      </div>
+      <div class="leg">
+        <span><i style="background:#B4790F"></i>طلایی <code>#B4790F</code></span>
+        <span><i style="background:#2E5FE0"></i>آبی <code>#2E5FE0</code></span>
+        <span><i style="background:#D9482B"></i>نارنجی <code>#D9482B</code></span>
+        <span><i style="background:#0E9CAD"></i>فیروزه <code>#0E9CAD</code></span>
+        <span><i style="background:#9333EA"></i>بنفش <code>#9333EA</code></span>
+        <span><i style="background:#B0197A"></i>سرخابی <code>#B0197A</code></span>
+      </div>
+    </div>
+
+    <div class="cbox dk">
+      <h4>حالت تیره — روی <code style="color:#FFD873">#0B1220</code></h4>
+      <p class="cap">گام‌های مستقل، نه معکوس‌کردن خودکار. بدترین جفت ΔE ۹.۲ · کف دید عادی ΔE ۱۵.۸</p>
+      <div style="display:flex;gap:2px;border-radius:8px;overflow:hidden">
+        <div style="flex:1;height:56px;background:#B8862A"></div>
+        <div style="flex:1;height:56px;background:#5B8DF5"></div>
+        <div style="flex:1;height:56px;background:#EC5F3A"></div>
+        <div style="flex:1;height:56px;background:#159FAD"></div>
+        <div style="flex:1;height:56px;background:#A970E8"></div>
+        <div style="flex:1;height:56px;background:#DE4E93"></div>
+      </div>
+      <div class="leg">
+        <span><i style="background:#B8862A"></i>طلایی <code>#B8862A</code></span>
+        <span><i style="background:#5B8DF5"></i>آبی <code>#5B8DF5</code></span>
+        <span><i style="background:#EC5F3A"></i>نارنجی <code>#EC5F3A</code></span>
+        <span><i style="background:#159FAD"></i>فیروزه <code>#159FAD</code></span>
+        <span><i style="background:#A970E8"></i>بنفش <code>#A970E8</code></span>
+        <span><i style="background:#DE4E93"></i>سرخابی <code>#DE4E93</code></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><b>رمپ ترتیبی (شدت حباب):</b> تک‌رنگ طلایی از روشن به تیره — <code>#FEF0CC → #FDE29B → #F0B429 → #C9861A → #8A5A08</code>. هرگز رنگین‌کمان.<br>
+  <b>رمپ دوقطبی (حباب منفی/مثبت):</b> <code>#0F7233 ← خاکستری #E2E8F0 → #B91C1C</code> — نقطه میانی همیشه خاکستری خنثی، نه یک رنگ سوم.<br>
+  <b>سری هفتم به بعد:</b> رنگ جدید نسازید. در «سایر» جمع کنید، یا به نمودارهای کوچک چندگانه بشکنید.</div>
+</div></section>
+
+<!-- PREVIEW -->
+<section class="sec"><div class="wrap">
+  <h2>۵. پیش‌نمایش روی رابط واقعی</h2>
+  <p class="sub">هیرو روشن، مطابق نسخه اولیه.</p>
+  <div class="prev">
+    <div class="phero">
+      <span class="pill">● الگوریتم آربیتراژ و کاوردکال بورس تهران — داده زنده</span>
+      <h3>سرمایه شما،<br><span class="gr">با دو موتور بازده کم‌ریسک</span></h3>
+      <p>حباب صندوق‌های طلا و فرصت‌های کاوردکال، لحظه‌به‌لحظه — تا تصمیم شما بر پایه داده باشد، نه حدس.</p>
+      <a class="btn b-gold" href="#">شروع رایگان</a>
+      <a class="btn b-ghost" href="#" style="margin-inline-start:8px">نمایش داشبورد</a>
+    </div>
+    <div class="pbody">
+      <div class="kpi"><small>حباب صندوق‌های طلا</small><b class="num">−۱.۷۹٪</b><span class="d d-up">▼ کم‌حباب‌ترین</span></div>
+      <div class="kpi"><small>فرصت‌های کاوردکال امروز</small><b class="num">۱۲ موقعیت</b><span class="d d-up">▲ تا ۶۹٪ سالانه</span></div>
+      <div class="kpi"><small>طلای ۱۸ عیار</small><b class="num">۱۸۲,۲۵۷,۰۰۰</b><span class="d d-dn">▼ ۰.۱۴٪</span></div>
+    </div>
+  </div>
+
+  <div class="note"><b>سهم رنگ در هر صفحه:</b> طلایی حدود ۱۰ تا ۱۵ درصد سطح رنگی — دکمه اصلی، بج‌ها، اعداد کلیدی و هایلایت تیتر. بقیه سفید، خاکستری و سرمه‌ای. حداکثر <b>یک</b> دکمه طلایی پررنگ در هر بخش دید.</div>
+</div></section>
+
+<!-- TOKENS -->
+<section class="sec" style="border:0"><div class="wrap">
+  <h2>۶. توکن‌های آماده</h2>
+  <p class="sub">مستقیم در پروژه کپی کنید. هیچ رنگ خامی نباید در کامپوننت‌ها نوشته شود — همیشه از توکن.</p>
+<pre>:root{
+  /* brand - gold */
+  --gold-50:#FFF9EC;  --gold-100:#FEF0CC; --gold-200:#FDE29B; --gold-300:#FFD873;
+  --gold-400:#F0B429; --gold-500:#E0A82E; --gold-600:#C9861A; --gold-700:#8A5A08;
+  --gold-800:#6B4506; --gold-900:#4A2F04; --gold-950:#2B1B02;
+
+  /* dark surfaces */
+  --ink-950:#070C16; --ink-900:#0B1220; --ink-800:#0F172A;
+  --panel:#111A2B;   --dark-border:#1E2A3F;
+
+  /* secondary accent - covered-call product & live data */
+  --blue-400:#5B8DF5; --blue-500:#2E5FE0; --blue-700:#1B3BA8; --cyan-600:#0891B2;
+
+  /* neutral */
+  --slate-600:#475569; --slate-500:#64748B; --slate-400:#94A3B8;
+  --surface:#FFFFFF; --surface-2:#F8FAFC; --surface-3:#F1F5F9;
+  --border:#E2E8F0; --border-strong:#CBD5E1;
+
+  /* semantic - market only */
+  --up:#16A34A; --up-text:#0F7233; --up-dark:#4ADE80;
+  --down:#DC2626; --down-dark:#FB7185; --warn:#D97706;
+
+  /* gradients */
+  --grad-gold:linear-gradient(135deg,#FFD873,#C9861A);
+  --grad-gold-text:linear-gradient(135deg,#C9861A,#8A5A08);
+  --grad-gold-dark:linear-gradient(135deg,#FFD873,#F0B429);
+
+  /* shadows */
+  --sh:0 4px 16px -4px rgba(11,18,32,.10);
+  --sh-lg:0 18px 44px -18px rgba(11,18,32,.24);
+  --sh-gold:0 14px 30px -12px rgba(184,120,26,.55);
+
+  /* chart - fixed order, never cycled */
+  --chart-1:#B4790F; --chart-2:#2E5FE0; --chart-3:#D9482B;
+  --chart-4:#0E9CAD; --chart-5:#9333EA; --chart-6:#B0197A;
+}
+:root[data-theme="dark"]{
+  --surface:#0B1220; --surface-2:#0F172A; --surface-3:#111A2B;
+  --border:#1E2A3F; --border-strong:#2A3852;
+  --chart-1:#B8862A; --chart-2:#5B8DF5; --chart-3:#EC5F3A;
+  --chart-4:#159FAD; --chart-5:#A970E8; --chart-6:#DE4E93;
+}</pre>
+</div></section>
+
+</body>
+</html>
