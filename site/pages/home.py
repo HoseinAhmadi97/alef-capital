@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Home page — hero, the two products, plans, wiki, FAQ, SEO copy."""
+import layout as L
 
 HTML = """<!-- HERO -->
 <section class="hero sec">
@@ -10,13 +11,13 @@ HTML = """<!-- HERO -->
     <p>الف کپیتال حباب صندوق‌های طلا و فرصت‌های کاوردکال بورس تهران را لحظه‌به‌لحظه رصد می‌کند و آن‌ها را به دو داشبورد قابل استفاده تبدیل می‌کند — تا تصمیم شما بر پایه داده باشد، نه حدس.</p>
     <div class="dblaunch">
       <a class="dbtn g" href="dashboard-gold.html">
-        <span class="ring">🪙</span>
+        <span class="ring">@@MARK@@</span>
         <span class="tx"><b>داشبورد طلا</b>
           <em><span class="pl"></span>۳۰ صندوق · میانگین حباب <span id="hbG">‎−۰٫۲٪</span></em></span>
         <span class="ar">←</span>
       </a>
       <a class="dbtn b" href="dashboard-covered-call.html">
-        <span class="ring">📈</span>
+        <span class="ring">@@MARK@@</span>
         <span class="tx"><b>داشبورد کاوردکال</b>
           <em><span class="pl"></span><span id="hbC">۱۲</span> فرصت · تا ۶۹٪ سالانه</em></span>
         <span class="ar">←</span>
@@ -182,10 +183,6 @@ HTML = """<!-- HERO -->
       <p>اجرای خودکار الگوریتم روی حساب کارگزاری شما، گزارش اختصاصی، و دسترسی چندکاربره برای تیم‌های سرمایه‌گذاری.</p>
     </div>
     <a class="btn btn-p" href="services.html">درخواست مشاوره</a>
-  </div>
-
-  <div class="trust">
-    <span>🔒 پرداخت امن</span><span>🧾 صدور فاکتور رسمی</span><span>↩️ بازگشت وجه تا ۷ روز</span><span>✕ لغو در هر زمان</span>
   </div>
 </div>
 </section>
@@ -392,3 +389,5 @@ document.querySelectorAll('.tab').forEach(function(t){
     t.classList.add('on');
   });
 });"""
+
+HTML = HTML.replace("@@MARK@@", L.MARK.format(s=24))

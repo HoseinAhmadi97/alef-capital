@@ -27,6 +27,15 @@ LOGO = ('<svg width="{s}" height="{s}" viewBox="0 0 64 64"><circle cx="32" cy="3
         '{ring}<path d="M32 16v32" stroke="#FFFAF0" stroke-width="7.6" stroke-linecap="round"/></svg>')
 RING = '<circle cx="32" cy="32" r="30" fill="none" stroke="#F0B429" stroke-width="2"/>'
 
+# A lighter reading of the same mark — the alef inside an open ring instead of
+# a filled disc — for places that sit next to text and must not shout.
+# It takes its colour from the CSS `color` of its container, so one shape
+# serves both products.
+MARK = ('<svg viewBox="0 0 64 64" width="{s}" height="{s}" aria-hidden="true" focusable="false">'
+        '<circle cx="32" cy="32" r="26" fill="none" stroke="currentColor" stroke-width="2.6" opacity=".38"/>'
+        '<path d="M32 20v24" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>'
+        '</svg>')
+
 
 def _u(key):
     """page key → output file name"""
@@ -88,10 +97,14 @@ def nav(active=""):
                 f'      <div class="mini" id="mm-{mid}" role="menu">\n'
                 + "\n".join(rows) + '\n      </div>\n    </li>')
 
-    cta = "\n".join(f'    <a class="{cls}" href="{_u(key)}{anch}">{label}</a>'
-                    for label, key, cls, anch in C.NAV_CTA)
+    cta = ('    <button class="tglt" id="tglt" type="button" aria-pressed="false"'
+           ' aria-label="تغییر تم روشن و تیره" title="تم روشن / تیره">'
+           '<span class="ic sun">☀</span><span class="ic moon">☾</span></button>\n'
+           + "\n".join(f'    <a class="{cls}" href="{_u(key)}{anch}">{label}</a>'
+                       for label, key, cls, anch in C.NAV_CTA))
 
-    return f"""<header>
+    return f"""<div class="topbar">
+<header>
 <div class="wrap nav">
   <a class="logo" href="{_u('home')}">
     {LOGO.format(s=32, ring=RING)}
@@ -109,6 +122,7 @@ def nav(active=""):
 <div class="ticker">
   <div class="tstate"><span class="dot"></span>بازار باز است</div>
   <div class="ttrack" id="ttrack"></div>
+</div>
 </div>"""
 
 
@@ -161,6 +175,37 @@ function tiHTML(t){var c=t.d>0?'u':(t.d<0?'d':'n'),a=t.d>0?'▲':(t.d<0?'▼':'�
  '</span><span class="tc '+c+'">'+a+' '+fa(Math.abs(t.d).toFixed(2)).replace('.','٫')+'٪</span></div>'}
 (function(){var e=document.getElementById('ttrack');if(e){var h=TICK.map(tiHTML).join('');e.innerHTML=h+h}})();
 
+/* Publish the real height of the sticky top bar, so anything that sticks
+   below it (the in-page sub-nav) lines up instead of guessing a pixel
+   value that goes stale the moment a menu label or the font changes. */
+(function(){
+  var t=document.querySelector('.topbar'); if(!t) return;
+  function set(){document.documentElement.style.setProperty(
+    '--topbar-h', Math.round(t.getBoundingClientRect().height)+'px')}
+  set();
+  addEventListener('resize',set,{passive:true});
+  addEventListener('load',set);
+  /* the web font changes the bar's height when it lands, so re-measure then */
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(set).catch(function(){});
+  if(window.ResizeObserver) new ResizeObserver(set).observe(t);
+})();
+
+/* light / dark theme — the stored choice wins, otherwise the OS preference.
+   The <script> in <head> has already applied it before first paint; this
+   only wires the button. */
+(function(){
+  var b=document.getElementById('tglt'); if(!b) return;
+  function sync(){var d=document.documentElement.getAttribute('data-theme')==='dark';
+    b.setAttribute('aria-pressed',d?'true':'false')}
+  sync();
+  b.addEventListener('click',function(){
+    var d=document.documentElement.getAttribute('data-theme')!=='dark';
+    document.documentElement.setAttribute('data-theme',d?'dark':'light');
+    try{localStorage.setItem('alef-theme',d?'dark':'light')}catch(e){}
+    sync();
+  });
+})();
+
 /* top-bar menus — one implementation for all of them (.has-menu) */
 (function(){
   document.querySelectorAll('.has-menu').forEach(function(li){
@@ -198,6 +243,15 @@ def page(title, description, active, body, js=""):
 <meta property="og:description" content="{description}">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fa_IR">
+<meta name="color-scheme" content="light dark">
+<script>
+/* Applied before the first paint, so a dark-theme visitor never sees a
+   white flash. Wrapped in try/catch: localStorage throws in a private
+   window and in some embedded views, and a theme is not worth a broken page. */
+(function(){{var t;try{{t=localStorage.getItem('alef-theme')}}catch(e){{}}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t)}})();
+</script>
 {font}
 <style>
 {THEME}

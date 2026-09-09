@@ -86,10 +86,6 @@ HTML = """
     </div>
     <a class="btn btn-p" href="services.html">درخواست مشاوره</a>
   </div>
-
-  <div class="trust">
-    <span>🔒 پرداخت امن</span><span>🧾 صدور فاکتور رسمی</span><span>↩️ بازگشت وجه تا ۷ روز</span><span>✕ لغو در هر زمان</span>
-  </div>
 </div>
 </section>
 

@@ -29,6 +29,7 @@ Always change the source file and build again.
 | Footer columns | `site/config.py` → `FOOTER` |
 | Mobile bottom bar | `site/config.py` → `BOTTOM_NAV` |
 | Items in the scrolling price ticker | `site/config.py` → `TICKER` |
+| **Lock the dashboards behind sign-up again** | `site/config.py` → `PAYWALL` |
 | **Colors, fonts, spacing, shadows** | `site/theme.css` → the `:root` block at the top of the file |
 | A component's look (button, card, table…) | `site/theme.css` |
 | **The text of a page** | `site/pages/<page name>.py` |
@@ -111,6 +112,22 @@ Installing the test prerequisites (optional — the build works without them):
 ```bash
 pip install -r requirements.txt && playwright install chromium
 ```
+
+---
+
+## Light and dark
+
+Both themes ship. The top bar has a toggle; the choice is stored in
+`localStorage`, and with nothing stored the visitor's OS preference decides. A
+small script in `<head>` applies the theme before the first paint, so a
+dark-theme visitor never gets a white flash.
+
+Dark is **selected, not inverted**: `:root[data-theme="dark"]` in `theme.css`
+redefines the same tokens with values chosen against the dark surface. No
+component is restyled — that is the point of keeping every colour in one block.
+If you add a component, use the tokens (`var(--surface)`, `var(--ink-800)`,
+`var(--border)`) and it works in both themes for free. A literal `#fff` will
+not.
 
 ---
 

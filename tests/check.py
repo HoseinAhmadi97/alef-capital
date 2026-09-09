@@ -12,6 +12,7 @@ What it checks:
   4) top-bar menus: hidden when closed, genuinely visible when open,
      and not running off the edge of the screen
   5) the top bar does not blow past its height
+  6) the sticky bars (header, ticker, sub-nav) stack flush at every width
 
 Note: check 4 deliberately measures the VISUAL state, not the JavaScript state.
 The menu CSS once failed to reach a page, and because the test only asserted
@@ -72,11 +73,46 @@ def check_render():
                     bad.append(f"{f} @{w}px — top bar broke (height {navh})")
                 if errs:
                     bad.append(f"{f} @{w}px — JS error: {errs[0][:90]}")
+                bad += _check_sticky(pg, f, w)
                 if w == 1280:
                     bad += _check_menus(pg, f)
                 pg.close()
         b.close()
     return bad
+
+
+def _check_sticky(pg, f, w):
+    """The sticky bars must stack flush at every width.
+
+    The header, the price ticker and the in-page sub-nav all pin to the top.
+    They used to do it with hard-coded offsets (top:59px, top:101px, and a
+    top:99px override under 900px), so any change to the bar's real height —
+    a longer menu label, a different font, a breakpoint — left the ticker
+    bleeding through the header on scroll. Measured, not assumed.
+    """
+    out = []
+    pg.evaluate("scrollTo(0,1600)")
+    pg.wait_for_timeout(220)
+    r = pg.evaluate("""(()=>{const q=s=>document.querySelector(s);
+        const t=q('.topbar'),h=q('header'),k=q('.ticker'),s=q('.subnav');
+        if(!t) return null;
+        const T=t.getBoundingClientRect();
+        const o={top:Math.round(T.top),
+                 tickerGap:k?Math.round(k.getBoundingClientRect().top-h.getBoundingClientRect().bottom):0};
+        if(s) o.subGap=Math.round(s.getBoundingClientRect().top-T.bottom);
+        return o})()""")
+    pg.evaluate("scrollTo(0,0)")
+    if r is None:
+        return ["%s @%dpx — .topbar is missing" % (f, w)]
+    if r["top"] != 0:
+        out.append("%s @%dpx — the top bar did not stick (top %d)" % (f, w, r["top"]))
+    if r["tickerGap"] != 0:
+        out.append("%s @%dpx — a %dpx gap between the header and the ticker"
+                   % (f, w, r["tickerGap"]))
+    if "subGap" in r and r["subGap"] != 0:
+        out.append("%s @%dpx — the sub-nav is %dpx out of line with the top bar"
+                   % (f, w, r["subGap"]))
+    return out
 
 
 def _check_menus(pg, f):

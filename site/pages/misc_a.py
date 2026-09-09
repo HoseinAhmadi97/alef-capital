@@ -32,24 +32,22 @@ PERF = """
 <div class="wrap">
   <h2 class="h2">الگوریتم در برابر نگهداری ساده صندوق طلا</h2>
   <p class="lead">محور عمودی مقدار طلا را نشان می‌دهد، نه ریال. یعنی اثر تغییر قیمت طلا از هر دو خط حذف شده است.</p>
-  <div class="card" style="margin-top:24px">
-    <svg viewBox="0 0 900 340" style="width:100%;height:auto;display:block">
-      <line x1="70" y1="30" x2="70" y2="285" stroke="#CBD5E1"/>
-      <line x1="70" y1="285" x2="870" y2="285" stroke="#CBD5E1"/>
-      <line x1="70" y1="285" x2="870" y2="285" stroke="#94A3B8" stroke-width="2.5" stroke-dasharray="0"/>
-      <path id="algoPath" fill="none" stroke="#C9861A" stroke-width="3" stroke-linejoin="round"/>
-      <path id="algoFill" fill="rgba(240,180,41,.13)"/>
-      <text x="866" y="322" font-size="13" fill="#64748B" text-anchor="end" font-family="Vazirmatn">شهریور ۱۴۰۵</text>
-      <text x="74" y="322" font-size="13" fill="#64748B" font-family="Vazirmatn">فروردین ۱۴۰۴</text>
-      <text x="60" y="290" font-size="13" fill="#64748B" text-anchor="end" font-family="Vazirmatn">۱۰۰</text>
-      <text x="60" y="60" font-size="13" fill="#64748B" text-anchor="end" font-family="Vazirmatn">۱۱۰</text>
-      <text x="878" y="290" font-size="13" fill="#475569" font-family="Vazirmatn" text-anchor="end" dy="-8">نگهداری ساده</text>
-    </svg>
-    <div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:14px;font-size:13px;color:var(--slate-600)">
-      <span><i style="width:12px;height:3px;background:#C9861A;display:inline-block;margin-inline-end:6px;vertical-align:middle"></i>استراتژی آربیتراژ</span>
-      <span><i style="width:12px;height:3px;background:#94A3B8;display:inline-block;margin-inline-end:6px;vertical-align:middle"></i>نگهداری ساده صندوق طلا</span>
+  <figure class="chart" id="perf">
+    <figcaption>
+      <span class="lg"><i class="algo"></i>استراتژی آربیتراژ</span>
+      <span class="lg"><i class="base"></i>نگهداری ساده صندوق طلا</span>
+      <span class="unit">شاخص مقدار طلا · مبنا&nbsp;=&nbsp;۱۰۰</span>
+    </figcaption>
+    <div class="plot">
+      <svg id="perfSvg" viewBox="0 0 880 320" role="img"
+           aria-label="نمودار بازده استراتژی آربیتراژ در برابر نگهداری ساده صندوق طلا از فروردین ۱۴۰۴ تا شهریور ۱۴۰۵"></svg>
+      <div class="tip" id="perfTip" hidden></div>
     </div>
-  </div>
+    <table class="sr" id="perfTable"><caption>همان داده، در قالب جدول</caption>
+      <thead><tr><th>ماه</th><th>استراتژی آربیتراژ</th><th>نگهداری ساده</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </figure>
 </div>
 </section>
 
@@ -117,14 +115,116 @@ PERF = """
 """
 
 PERF_JS = """
+/* ── Performance chart ────────────────────────────────────────────────
+   One measured series (the strategy) against a flat reference line
+   (holding the fund). Both are indexed to 100 so a single y-scale carries
+   them — never two axes.
+   Values are fixed, not random: a demo chart that redraws differently on
+   every load is not a performance report.
+   ─────────────────────────────────────────────────────────────────── */
+var V=[100.00,100.62,100.93,101.69,101.97,102.52,102.94,103.64,103.87,104.49,
+       104.87,105.62,105.89,106.40,107.07,107.43,108.05,108.36];
+var M=['فروردین ۱۴۰۴','اردیبهشت ۱۴۰۴','خرداد ۱۴۰۴','تیر ۱۴۰۴','مرداد ۱۴۰۴','شهریور ۱۴۰۴',
+       'مهر ۱۴۰۴','آبان ۱۴۰۴','آذر ۱۴۰۴','دی ۱۴۰۴','بهمن ۱۴۰۴','اسفند ۱۴۰۴',
+       'فروردین ۱۴۰۵','اردیبهشت ۱۴۰۵','خرداد ۱۴۰۵','تیر ۱۴۰۵','مرداد ۱۴۰۵','شهریور ۱۴۰۵'];
+/* PR is a gutter: the value ticks and the end label live outside the plot,
+   so no text can ever land on the line */
+var W=880,H=320,PL=26,PR=58,PT=22,PB=36,LO=99,HI=109;
+/* Every label is middle-anchored. The SVG inherits the page's RTL
+   direction, where text-anchor start/end flip sides — near an edge that
+   silently clips the text (it ate 'فروردین ۱۴۰۴' down to 'فرو'). */
+
+function n2(v){return fa(v.toFixed(2)).replace('.','٫')}
+function n1(v){return fa(v.toFixed(1)).replace('.','٫')}
+function X(i){return PL+i*(W-PL-PR)/(V.length-1)}
+function Y(v){return PT+(HI-v)/(HI-LO)*(H-PT-PB)}
+
 (function(){
-  var p=document.getElementById('algoPath'), f=document.getElementById('algoFill');
-  if(!p) return;
-  var d='M70 285', pts=[[70,285]], y=285;
-  for(var i=1;i<=48;i++){var x=70+i*16.67; y-=Math.random()*3.6; y+=Math.random()*1.1;
-    y=Math.max(48,y); d+=' L'+x.toFixed(1)+' '+y.toFixed(1); pts.push([x,y])}
-  p.setAttribute('d',d);
-  f.setAttribute('d',d+' L870 285 L70 285 Z');
+  var svg=document.getElementById('perfSvg'); if(!svg) return;
+  var NS='http://www.w3.org/2000/svg';
+  function el(t,a){var e=document.createElementNS(NS,t);
+    for(var k in a) e.setAttribute(k,a[k]); return e}
+  var out=[];
+
+  /* recessive gridlines — three, labelled, no axis rules */
+  [101,104,107].forEach(function(g){
+    out.push(el('line',{x1:PL,x2:W-PR,y1:Y(g),y2:Y(g),class:'grid'}));
+    out.push(Object.assign(el('text',{x:W-PR+28,y:Y(g),dy:'.32em',class:'gl','text-anchor':'middle'}),{textContent:fa(g)}));
+  });
+
+  /* the reference line: holding the fund is flat at 100 by construction */
+  out.push(el('line',{x1:PL,x2:W-PR,y1:Y(100),y2:Y(100),class:'base'}));
+
+  var d=V.map(function(v,i){return (i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)}).join(' ');
+  out.push(el('path',{d:d+' L'+(W-PR)+' '+Y(LO)+' L'+PL+' '+Y(LO)+' Z',class:'fill'}));
+  out.push(el('path',{d:d,class:'line'}));
+
+  /* direct labels — identity never rests on colour alone */
+  out.push(Object.assign(el('text',{x:W-PR+28,y:Y(V[V.length-1]),dy:'.32em',class:'dl algo',
+                                    'text-anchor':'middle'}),{textContent:n1(V[V.length-1])}));
+  /* on the right, where the two lines are furthest apart — on the left it
+     sits directly on top of the strategy line, which starts at 100 too */
+  out.push(Object.assign(el('text',{x:W-PR-58,y:Y(100)-11,class:'dl base','text-anchor':'middle'}),
+                         {textContent:'نگهداری ساده'}));
+
+  /* time axis: only the two ends and the midpoint, so nothing collides */
+  [[0,50],[Math.floor(V.length/2),0],[V.length-1,-48]].forEach(function(t){
+    out.push(Object.assign(el('text',{x:X(t[0])+t[1],y:H-12,class:'ax','text-anchor':'middle'}),
+                           {textContent:M[t[0]]}));
+  });
+
+  /* hidden by default in CSS, not by a presentation attribute — an SVG
+     attribute loses to any stylesheet rule, and a dot parked at 0,0 shows
+     up as a wedge in the corner the moment it does */
+  var guide=el('line',{class:'guide',y1:PT,y2:H-PB,x1:0,x2:0});
+  /* 'pt', not 'dot': .dot is already a site-wide pulsing indicator whose
+   keyframes force opacity:1, which beat the rule hiding this one */
+  var dot=el('circle',{class:'pt',r:5,cx:0,cy:0});
+  out.push(guide); out.push(dot);
+  out.forEach(function(n){svg.appendChild(n)});
+
+  /* ── hover / touch ── */
+  var tip=document.getElementById('perfTip'), plot=svg.parentNode;
+  function show(i,px){
+    guide.setAttribute('x1',X(i)); guide.setAttribute('x2',X(i));
+    dot.setAttribute('cx',X(i)); dot.setAttribute('cy',Y(V[i]));
+    guide.classList.add('on'); dot.classList.add('on');
+    tip.innerHTML='<b>'+M[i]+'</b>'+
+      '<span><i class="algo"></i>استراتژی <em>'+n2(V[i])+'</em></span>'+
+      '<span><i class="base"></i>نگهداری ساده <em>'+n2(100)+'</em></span>';
+    tip.hidden=false;
+    var w=plot.clientWidth, x=px/W*w;
+    tip.style.insetInlineStart=Math.min(Math.max(x,90),w-90)+'px';
+  }
+  function hide(){guide.classList.remove('on');dot.classList.remove('on');tip.hidden=true}
+  function at(ev){
+    var r=svg.getBoundingClientRect();
+    var cx=(ev.touches?ev.touches[0].clientX:ev.clientX)-r.left;
+    var vx=cx/r.width*W, best=0, bd=1e9;
+    for(var i=0;i<V.length;i++){var dd=Math.abs(X(i)-vx); if(dd<bd){bd=dd;best=i}}
+    show(best,X(best));
+  }
+  svg.addEventListener('mousemove',at);
+  svg.addEventListener('mouseleave',hide);
+  svg.addEventListener('touchstart',function(e){at(e)},{passive:true});
+  svg.addEventListener('touchmove',function(e){at(e)},{passive:true});
+  svg.addEventListener('touchend',hide);
+
+  /* keyboard: the chart is focusable and walks point to point */
+  svg.setAttribute('tabindex','0');
+  var k=-1;
+  svg.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='ArrowLeft'){
+      k=Math.min(V.length-1,Math.max(0,(k<0?V.length-1:k)+(e.key==='ArrowRight'?1:-1)));
+      show(k,X(k)); e.preventDefault();
+    } else if(e.key==='Escape'){k=-1;hide()}
+  });
+  svg.addEventListener('blur',hide);
+
+  /* the same numbers as a table, for screen readers and for copying */
+  var tb=document.querySelector('#perfTable tbody');
+  if(tb) tb.innerHTML=V.map(function(v,i){
+    return '<tr><td>'+M[i]+'</td><td>'+n2(v)+'</td><td>'+n2(100)+'</td></tr>'}).join('');
 })();
 """
 
