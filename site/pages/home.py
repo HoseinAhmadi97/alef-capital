@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""صفحه اصلی — hero، دو محصول، پلن‌ها، دانشنامه، سوالات، متن سئو."""
+"""Home page — hero, the two products, plans, wiki, FAQ, SEO copy."""
 
 HTML = """<!-- HERO -->
 <section class="hero sec">
@@ -267,7 +267,7 @@ function flash(el,up){el.classList.remove('fu','fd');void el.offsetWidth;el.clas
   setTimeout(function(){el.classList.remove('fu','fd')},700)}
 var CALM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
 
-/* ---------- ۱. حباب ۳۰ صندوق ---------- */
+/* ---------- 1. bubble across the 30 funds ---------- */
 var FUNDS=[['گوهر',-1.79],['کهربا',2.50],['عیار',0.42],['طلا',-0.11],['زر',0.88],['مثقال',-0.63],
  ['آلتون',1.16],['نفیس',-0.27],['قیراط',0.35],['تابش',-0.94],['زرفام',1.42],['گنج',-0.05],
  ['آتون',0.71],['وحید',-1.22],['کیان',0.19],['ناب',0.96],['زروان',-0.48],['سیام',1.73],
@@ -298,8 +298,8 @@ function drawFunds(){
   var hb=document.getElementById('hbG'); if(hb) hb.textContent=pct(avg,1);
 }
 
-/* ---------- ۲. فرصت‌های کاوردکال ---------- */
-/* همان اعدادی که در داشبورد و ماشین‌حساب استفاده شده — از یک پارامتر واحد */
+/* ---------- 2. covered-call opportunities ---------- */
+/* same numbers as the dashboard and the calculator — one parameter set */
 var OPTS=[['ضستا۳۰۱۰',15,69.4],['ضشنا۶۰۴۹',20,61.2],['ضخود۶۰۵۵',57,48.7],['ضملی۳۰۵۸',43,42.3]];
 function drawOpts(){
   var b=document.getElementById('optBody'); if(!b) return;
@@ -311,8 +311,8 @@ function drawOpts(){
   var h=document.getElementById('hbC'); if(h) h.textContent=fa(OPTS.length+8);
 }
 
-/* ---------- ۳. قیمت طلا و نمودار کوچک ---------- */
-var GPX=182257000, GOPEN=182512000, GHIST=[];   /* GOPEN = قیمت باز شدن روز */
+/* ---------- 3. gold price and sparkline ---------- */
+var GPX=182257000, GOPEN=182512000, GHIST=[];   /* GOPEN = the day's opening price */
 (function(){var v=GPX*0.994; for(var i=0;i<40;i++){v*=1+(Math.sin(i/3.1)*0.0016+(i/40)*0.0004);GHIST.push(v)}})();
 function drawSpark(){
   var line=document.getElementById('sparkLine'), fill=document.getElementById('sparkFill'),
@@ -329,7 +329,7 @@ function drawSpark(){
 }
 function tickGold(){
   var prev=GPX;
-  GPX=Math.round(GPX*(1+(Math.random()-0.5)*0.0009)/1000)*1000;   /* قیمت واقعی رند هزار است */
+  GPX=Math.round(GPX*(1+(Math.random()-0.5)*0.0009)/1000)*1000;   /* real prices are round to the nearest thousand */
   GHIST.push(GPX); if(GHIST.length>40) GHIST.shift();
   drawSpark();
   var el=document.getElementById('goldPx');
@@ -340,7 +340,7 @@ function tickGold(){
     ch.textContent=(d>0?'▲':(d<0?'▼':'—'))+' '+fa(Math.abs(d).toFixed(2)).replace('.','٫')+'٪'}
 }
 
-/* ---------- ۴. ساعت و نوار پیشرفت ---------- */
+/* ---------- 4. clock and progress bar ---------- */
 function tickClock(){
   var c=document.getElementById('clock'); if(!c) return;
   var n=new Date(), p=function(x){return (x<10?'۰':'')+fa(x)};
@@ -348,7 +348,7 @@ function tickClock(){
 }
 (function(){
   drawFunds(); drawOpts(); drawSpark(); tickGold(); tickClock();
-  if(CALM) return;                       /* احترام به prefers-reduced-motion */
+  if(CALM) return;                       /* respect prefers-reduced-motion */
   var prog=document.getElementById('prog'), t=0;
   setInterval(function(){
     t+=100;
@@ -362,7 +362,7 @@ function tickClock(){
   },100);
 })();
 
-/* ---------- ۵. تب‌ها ---------- */
+/* ---------- 5. tabs ---------- */
 document.querySelectorAll('.tab').forEach(function(t){
   t.addEventListener('click',function(){
     document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on')});

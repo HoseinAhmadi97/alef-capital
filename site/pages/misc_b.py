@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Covered-call article, calculator, and the three legal pages."""
 
 # ─────────────────────────── ARTICLE ───────────────────────────
 ARTICLE = """

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+"""Gold-fund arbitrage dashboard — product introduction page."""
+
 HTML = """
 <!-- HERO -->
 <section class="phero">
@@ -208,7 +210,7 @@ HTML = """
 """
 
 JS = """
-/* پراکندگی حباب — کارت هیرو */
+/* bubble distribution — hero card */
 var FUNDS=['طلا','کهربا','گوهر','زر','عیار','مثقال','آلتون','ناب','نفیس','تابش',
  'زرفام','قیراط','لطفی','آبان','کیان','سحرخیز','گنج','درسا','آرام','نهال',
  'ماهور','سیمرغ','پارس','آوا','رستا','بهار','نیکو','ثمین','هستی','ایده'];
@@ -228,7 +230,7 @@ function drawDist(){
   document.getElementById('pMin').textContent=FUNDS[lo]+' '+pct(bub[lo]);
   document.getElementById('pMax').textContent=FUNDS[hi]+' '+pct(bub[hi]);
 }
-/* نمودار پراکندگی */
+/* scatter chart */
 (function(){
   var g=document.getElementById('scatter'); if(!g) return;
   var pts='';
@@ -241,7 +243,7 @@ function drawDist(){
   }
   g.innerHTML=pts;
 })();
-/* ساعت */
+/* clock */
 var t0=new Date(); t0.setHours(17,31,4,0);
 function clk(){t0=new Date(t0.getTime()+1000);
   var c=document.getElementById('pClock'); if(!c) return;

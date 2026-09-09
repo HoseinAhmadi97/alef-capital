@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-قالب مشترک همه صفحات: <head>، نوار بالا، نوار قیمت، فوتر، نوار پایین موبایل.
+Shared shell for every page: <head>, top bar, price ticker, footer, mobile bottom bar.
 
-هیچ متن یا لینکی اینجا hard-code نشده — همه از config.py می‌آید.
-اگر ساختار منو را می‌خواهید عوض کنید، به config.NAV بروید، نه اینجا.
+No text or link is hard-coded here — it all comes from config.py.
+To change the menu structure, edit config.NAV, not this file.
 """
 import io, os, config as C
 
@@ -29,7 +29,7 @@ RING = '<circle cx="32" cy="32" r="30" fill="none" stroke="#F0B429" stroke-width
 
 
 def _u(key):
-    """کلید صفحه → نام فایل"""
+    """page key → output file name"""
     return C.PAGES[key]
 
 
@@ -141,15 +141,15 @@ def footer():
 </div></nav>"""
 
 
-# ─────────────────────── JS مشترک همه صفحات ────────────────────
+# ─────────────────────── JS shared by every page ───────────────
 def _ticker_rows():
     return ",\n ".join("{n:'%s',p:%d,d:%s}" % (n, p, d) for n, p, d in C.TICKER)
 
 
 COMMON_JS = lambda: """
 /* ═══════════════ LIVE DATA LAYER ═══════════════
-   TODO(اتصال): مقادیر زیر را به API بازار وصل کنید.
-   ساختار خروجی مورد انتظار همین است.
+   TODO(wire-up): point the values below at the market API.
+   The expected output shape is exactly what you see here.
    ═══════════════════════════════════════════════ */
 var FA='۰۱۲۳۴۵۶۷۸۹';
 function fa(x){return String(x).replace(/\\d/g,function(d){return FA[+d]})}
@@ -161,7 +161,7 @@ function tiHTML(t){var c=t.d>0?'u':(t.d<0?'d':'n'),a=t.d>0?'▲':(t.d<0?'▼':'�
  '</span><span class="tc '+c+'">'+a+' '+fa(Math.abs(t.d).toFixed(2)).replace('.','٫')+'٪</span></div>'}
 (function(){var e=document.getElementById('ttrack');if(e){var h=TICK.map(tiHTML).join('');e.innerHTML=h+h}})();
 
-/* منوهای نوار بالا — یک کد برای همه (.has-menu) */
+/* top-bar menus — one implementation for all of them (.has-menu) */
 (function(){
   document.querySelectorAll('.has-menu').forEach(function(li){
     var btn=li.querySelector('.navbtn'), t;

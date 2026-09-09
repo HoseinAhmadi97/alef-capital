@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-صفحه قیمت‌گذاری.
+Pricing page.
 
-اعداد قیمت اینجا نیستند — از config.PRICING می‌آیند.
-در متن با نشانه‌گذاری @@NAME@@ گذاشته شده‌اند و پایین فایل جایگزین می‌شوند.
+The price numbers do not live here — they come from config.PRICING.
+They appear in the markup as @@NAME@@ placeholders and are substituted
+at the bottom of this file.
 """
 import config as C
 
@@ -168,7 +169,7 @@ function setP(k){var p=PRICES[k];
 """
 
 
-# ─── جایگزینی اعداد از config ───
+# ─── substitute the numbers from config ───
 _MAP = {}
 for _pfx, _key in (("M", "monthly"), ("Q", "quarterly"), ("Y", "yearly")):
     _p = C.PRICING[_key]

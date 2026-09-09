@@ -1,5 +1,5 @@
-# انتشار خودکار با هر push روی main.
-# در تنظیمات مخزن این Secretها را بسازید:
+# Publishes automatically on every push to main.
+# Create these Secrets in the repository settings:
 #   SSH_HOST · SSH_USER · SSH_KEY
 name: build & deploy
 on:
@@ -12,11 +12,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - name: ساخت
+      - name: Build
         run: python site/build.py
-      - name: بررسی لینک‌ها
+      - name: Check links
         run: python -c "import sys;sys.path.insert(0,'tests');import check;b=check.check_links();print(*b,sep='\n');sys.exit(1 if b else 0)"
-      - name: ارسال به سرور
+      - name: Ship to server
         uses: burnett01/rsync-deployments@7.0.1
         with:
           switches: -avzr --delete

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+"""Market pulse — free live gold/fund table, no sign-up required."""
+
 HTML = """
 <section class="phero" style="padding-block:clamp(36px,4vw,56px)">
 <div class="wrap">

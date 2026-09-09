@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-ساخت کل سایت در پوشه dist/.
+Build the whole site into dist/.
 
-    python site/build.py          یا      make build
+    python site/build.py          or      make build
 
-هر صفحه یک ردیف در SITE پایین است. برای اضافه کردن صفحه جدید:
-  ۱) محتوایش را در site/pages/<something>.py بنویسید
-  ۲) کلیدش را به config.PAGES اضافه کنید
-  ۳) یک ردیف اینجا اضافه کنید
+Every page is one row in SITE below. To add a new page:
+  1) write its content in site/pages/<something>.py
+  2) add its key to config.PAGES
+  3) add one row here
 """
 import io, os, shutil, sys, time
 
-sys.dont_write_bytecode = True   # جلوگیری از کش شدن config قدیمی
+sys.dont_write_bytecode = True   # keeps a stale config from being cached
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -29,7 +29,7 @@ DIST = os.path.join(ROOT, "dist")
 SITE = [
     ("home", "الف کپیتال — داشبورد آربیتراژ صندوق طلا و کاوردکال بورس تهران",
      "پایش لحظه‌ای حباب صندوق‌های طلا و فرصت‌های کاوردکال. دو داشبورد تخصصی برای کسب بازده کم‌ریسک.",
-     None, None),  # ← صفحه اصلی از home.py می‌آید (پایین جایگزین می‌شود)
+     None, None),  # ← home page comes from home.py (substituted below)
 
     ("dgold", "داشبورد آربیتراژ صندوق طلا | الف کپیتال",
      "حباب، ارزش ذاتی و ترکیب دارایی ۳۰ صندوق طلای بورس تهران. نسخه مهمان رایگان.",
@@ -112,7 +112,7 @@ def build():
         io.open(out, "w", encoding="utf-8").write(html)
         n += 1
 
-    # فایل‌های ثابت (فونت، تصاویر، robots، sitemap)
+    # static files (fonts, images) copied verbatim into dist/
     static = os.path.join(HERE, "static")
     if os.path.isdir(static):
         for item in os.listdir(static):
@@ -121,7 +121,7 @@ def build():
             shutil.copytree(s, d) if os.path.isdir(s) else shutil.copy2(s, d)
 
     _write_seo()
-    print(f"✓ {n} صفحه ساخته شد در dist/  ({time.time()-t0:.2f}s)")
+    print(f"✓ built {n} pages into dist/  ({time.time()-t0:.2f}s)")
 
 
 def _write_seo():

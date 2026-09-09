@@ -1,9 +1,9 @@
 /* ============================================================
-   الف کپیتال — تم واحد (تنها فایل استایل پروژه)
-   ۱) توکن‌ها (رنگ/فاصله/سایه) در :root درست پایین
-   ۲) کامپوننت‌های عمومی
-   ۳) نوار بالا و منوها
-   ۴) کامپوننت‌های صفحات داخلی
+   Alef Capital — single theme (the project's only stylesheet)
+   1) tokens (color / spacing / shadow) in :root just below
+   2) shared components
+   3) top bar and menus
+   4) inner-page components
    ============================================================ */
 
 :root{
@@ -219,7 +219,7 @@ footer a:hover{color:var(--gold-300)}
 .opt .rt{text-align:left;font-weight:800;color:var(--up-text)}
 .opt .rt em{font-style:normal;font-size:11px;color:var(--slate-400);font-weight:600}
 
-/* دکمه‌های ورود به داشبورد در hero */
+/* hero dashboard-launch buttons */
 .dblaunch{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:26px}
 .dbtn{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--r-lg);
   background:var(--surface);border:1px solid var(--border);box-shadow:var(--sh-md);
@@ -277,7 +277,7 @@ footer a:hover{color:var(--gold-300)}
 .bnav i{font-size:19px;font-style:normal}
 @media(max-width:900px){.bnav{display:block}body{padding-bottom:70px}}
 
-/* ===== MEGA MENU (درختی) ===== */
+/* ===== MEGA MENU (tree) ===== */
 .has-menu{position:relative}
 .navbtn{background:none;border:0;font-family:inherit;color:var(--slate-600);font-size:14.5px;font-weight:600;
   cursor:pointer;display:inline-flex;align-items:center;gap:5px;padding:6px 0}
@@ -312,7 +312,7 @@ footer a:hover{color:var(--gold-300)}
 .mm-promo a{font-size:13px;font-weight:800;color:var(--gold-700)}
 @media(max-width:1080px){.mm{width:min(560px,92vw)}.mm-in{grid-template-columns:1fr 1fr}.mm-promo{grid-column:span 2}}
 @media (prefers-reduced-motion: reduce){.mm,.mini{transition:none}.navbtn .cv{transition:none}}
-/* ===== MINI DROPDOWN (درباره ما) ===== */
+/* ===== MINI DROPDOWN (About) ===== */
 .mini{position:absolute;top:calc(100% + 16px);inset-inline-start:-16px;min-width:212px;
   background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--sh-lg);
   padding:8px;opacity:0;visibility:hidden;transform:translateY(-6px);

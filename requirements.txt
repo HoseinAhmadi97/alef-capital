@@ -1,2 +1,2 @@
-# فقط برای تست‌ها لازم است. ساخت سایت هیچ وابستگی‌ای ندارد.
+# Needed only for the tests. Building the site has no dependencies.
 playwright==1.47.0

@@ -1,43 +1,43 @@
 #!/usr/bin/env bash
 # ════════════════════════════════════════════════════════════════
-#  انتشار نسخه جدید روی سرور
-#  روی سرور اجرا کنید:   ./deploy/deploy.sh
+#  Publish a new version on the server
+#  Run this on the server:   ./deploy/deploy.sh
 # ════════════════════════════════════════════════════════════════
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-echo "→ دریافت آخرین تغییرات"
+echo "→ pulling latest changes"
 git pull --ff-only
 
-echo "→ ساخت سایت"
+echo "→ building the site"
 python3 site/build.py
 
-echo "→ بررسی لینک‌ها"
+echo "→ checking links"
 python3 - <<'PY'
 import sys, os
 sys.path.insert(0, 'tests')
 import check
 bad = check.check_links()
 if bad:
-    print("✗ لینک شکسته:", *bad, sep="\n  ")
+    print("✗ broken links:", *bad, sep="\n  ")
     sys.exit(1)
-print("✓ لینک‌ها سالم")
+print("✓ links are healthy")
 PY
 
-# ── وب‌سرور ──
-# هر دو حالت پشتیبانی می‌شود. در هیچ‌کدام restart لازم نیست،
-# چون وب‌سرور فایل‌ها را مستقیم از dist/ می‌خواند.
+# ── web server ──
+# Both setups are supported. Neither needs a restart, because the
+# web server reads the files straight out of dist/.
 if systemctl is-active --quiet nginx 2>/dev/null; then
-  echo "✓ nginx فعال است — مستقیم از dist/ سرو می‌کند"
+  echo "✓ nginx is active — serving straight from dist/"
 elif command -v docker >/dev/null 2>&1; then
   if ! docker ps --format '{{.Names}}' | grep -q alef-caddy; then
-    echo "→ بالا آوردن Caddy"
+    echo "→ bringing Caddy up"
     docker compose -f deploy/docker-compose.yml up -d
   else
-    echo "✓ Caddy بالاست"
+    echo "✓ Caddy is already up"
   fi
 else
-  echo "⚠ هیچ وب‌سروری پیدا نشد — docs/DEPLOY.md بخش ۳ را ببینید"
+  echo "⚠ no web server found — see docs/DEPLOY.md section 3"
 fi
 
-echo "✓ منتشر شد — https://alefcapital.ir"
+echo "✓ published — https://alefcapital.ir"

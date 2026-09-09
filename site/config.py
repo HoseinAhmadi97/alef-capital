@@ -1,19 +1,22 @@
 # -*- coding: utf-8 -*-
 """
 ╔══════════════════════════════════════════════════════════════════╗
-║  تنظیمات سایت — چیزهایی که بیشتر از همه عوض می‌شوند              ║
+║  Site settings — the things that change most often               ║
 ║                                                                  ║
-║  اگر می‌خواهید نام، تلفن، قیمت پلن‌ها یا آیتم‌های منو را           ║
-║  تغییر دهید، فقط همین فایل را ویرایش کنید و `make build` بزنید.  ║
+║  To change the brand name, phone, plan prices or menu items,     ║
+║  edit ONLY this file and run `make build`.                       ║
 ╚══════════════════════════════════════════════════════════════════╝
+
+Note: the values below are the website's own copy, so they stay in Persian.
+Only the comments are English.
 """
 
-# ─────────────────────────── برند و تماس ───────────────────────────
+# ─────────────────────────── Brand & contact ───────────────────────
 BRAND = {
     "name":     "الف کپیتال",
     "domain":   "alefcapital.ir",
     "phone":    "۰۲۱-۹۱۰۰۱۲۳۴",
-    "phone_ltr": "+982191001234",      # برای href="tel:"
+    "phone_ltr": "+982191001234",      # used by href="tel:"
     "email":    "info@alefcapital.ir",
     "telegram": "@alefcapital",
     "address":  "{{ نشانی کامل }}",
@@ -23,8 +26,8 @@ BRAND = {
     "tagline":  "پایش لحظه‌ای حباب صندوق‌های طلا و فرصت‌های کاوردکال بورس تهران.",
 }
 
-# ─────────────────────────── مسیر صفحات ────────────────────────────
-# کلید = نامی که در کد استفاده می‌شود، مقدار = نام فایل خروجی
+# ─────────────────────────── Page map ──────────────────────────────
+# key = the name used in code, value = the output file name
 PAGES = {
     "home":     "index.html",
     "dgold":    "dashboard-gold.html",
@@ -46,11 +49,11 @@ PAGES = {
     "privacy":  "legal-privacy.html",
 }
 
-# ─────────────────────────── نوار بالا ─────────────────────────────
-# برای اضافه/حذف/جابه‌جایی آیتم‌های منو فقط این ساختار را عوض کنید.
-#   ("link",  برچسب, کلید صفحه)
-#   ("mega",  برچسب, id, ستون‌ها, کارت تبلیغی)     ← منوی بزرگ
-#   ("mini",  برچسب, id, آیتم‌ها)                   ← منوی کوچک
+# ─────────────────────────── Top navigation ────────────────────────
+# To add / remove / reorder menu items, change only this structure.
+#   ("link",  label, page key)
+#   ("mega",  label, id, columns, promo card)      ← mega menu
+#   ("mini",  label, id, items)                    ← small dropdown
 NAV = [
     ("mega", "محصولات", "pmenu", [
         ("داشبوردها", [
@@ -71,25 +74,25 @@ NAV = [
         ("🏛",  "درباره الف کپیتال", "about"),
         ("✉️", "تماس با ما",        "contact"),
         ("❓",  "سوالات متداول",     "faq"),
-        ("--", "", ""),                       # جداکننده
+        ("--", "", ""),                       # separator
         ("📊", "گزارش عملکرد",       "perf"),
     ]),
 ]
 
-# دکمه‌های سمت چپ نوار بالا — (برچسب, کلید صفحه, کلاس, لنگر)
+# Buttons on the left of the top bar — (label, page key, css class, anchor)
 NAV_CTA = [
     ("مشاوره رایگان",  "services", "btn btn-s btn-consult", "#lead"),
     ("ورود / ثبت‌نام", "pricing",  "btn btn-p",             ""),
 ]
 
-# کدام آیتم منو برای کدام صفحه «فعال» شود
+# Which menu item is highlighted as "active" on which page
 NAV_ACTIVE_GROUP = {
     "about": "amenu", "contact": "amenu", "faq": "amenu", "perf": "amenu",
     "gold": "pmenu", "cc": "pmenu", "dgold": "pmenu", "dcc": "pmenu",
     "services": "pmenu", "calc": "pmenu",
 }
 
-# ─────────────────────────── فوتر ──────────────────────────────────
+# ─────────────────────────── Footer ────────────────────────────────
 FOOTER = [
     ("محصولات", [("داشبورد طلا","dgold"), ("داشبورد کاوردکال","dcc"),
                  ("معرفی آربیتراژ طلا","gold"), ("معرفی کاوردکال","cc"),
@@ -100,7 +103,7 @@ FOOTER = [
     ("قوانین",  [("شرایط استفاده","terms"), ("حریم خصوصی","privacy"), ("افشای ریسک","risk")]),
 ]
 
-# نوار پایین موبایل — (آیکون, برچسب, کلید صفحه)
+# Mobile bottom bar — (icon, label, page key)
 BOTTOM_NAV = [
     ("🏠", "خانه",      "home"),
     ("📊", "بازار",     "market"),
@@ -109,16 +112,16 @@ BOTTOM_NAV = [
     ("👤", "حساب من",   "pricing"),
 ]
 
-# ─────────────────────────── قیمت پلن‌ها ───────────────────────────
-# فقط این اعداد را عوض کنید؛ صفحه قیمت‌گذاری و تاگل دوره خودکار به‌روز می‌شوند.
+# ─────────────────────────── Plan prices ───────────────────────────
+# Change only these numbers; the pricing page and its period toggle follow.
 PRICING = {
     "monthly":   {"gold": "۱,۹۰۰,۰۰۰", "pro": "۳,۹۰۰,۰۰۰", "note": "ماهانه"},
     "quarterly": {"gold": "۱,۶۱۵,۰۰۰", "pro": "۳,۳۱۵,۰۰۰", "note": "ماهانه، با پرداخت ۳ ماهه (۱۵٪ تخفیف)"},
     "yearly":    {"gold": "۱,۳۳۰,۰۰۰", "pro": "۲,۷۳۰,۰۰۰", "note": "ماهانه، با پرداخت سالانه (۳۰٪ تخفیف)"},
 }
 
-# ─────────────────────────── نوار قیمت متحرک ───────────────────────
-# تا وقتی به API وصل نشده، همین اعداد نمایش داده می‌شوند.
+# ─────────────────────────── Price ticker ──────────────────────────
+# Until the API is wired up, these are the numbers that get displayed.
 TICKER = [
     ("طلای ۱۸ عیار",    182257000, -0.14),
     ("مثقال طلا",       789500000, -0.14),
@@ -130,12 +133,12 @@ TICKER = [
     ("شاخص صندوق طلا",  23418,      0.62),
 ]
 
-# ─────────────────────────── متن‌های تکراری ────────────────────────
+# ─────────────────────────── Repeated copy ─────────────────────────
 RISK_SHORT = ("اطلاعات ارائه‌شده در این وب‌سایت صرفاً جنبه تحلیلی و اطلاع‌رسانی دارد و توصیه به خرید "
               "یا فروش هیچ اوراق بهاداری محسوب نمی‌شود. سرمایه‌گذاری در بازار سرمایه با ریسک همراه است "
               "و مسئولیت تصمیم‌های معاملاتی بر عهده کاربر است. بازده گذشته تضمینی برای بازده آینده نیست.")
 
-# ─────────────────────────── فونت ──────────────────────────────────
-# False = از Google Fonts (برای توسعه محلی)
-# True  = از /assets/fonts داخل خود سایت (برای انتشار در ایران) — `make fonts`
+# ─────────────────────────── Font ──────────────────────────────────
+# False = load from Google Fonts (fine for local development)
+# True  = serve from /assets/fonts in the site itself (for Iranian users) — `make fonts`
 SELF_HOSTED_FONT = False

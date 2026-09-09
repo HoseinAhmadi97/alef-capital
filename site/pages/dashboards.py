@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Guest dashboards — gold arbitrage and covered call, with the per-cell paywall."""
 
 SIGNUP = """
   <div class="signup">

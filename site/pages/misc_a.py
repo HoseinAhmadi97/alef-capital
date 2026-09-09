@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Performance report, portfolio services, wiki, about, FAQ, contact."""
 
 # ─────────────────────────── PERFORMANCE ───────────────────────────
 PERF = """

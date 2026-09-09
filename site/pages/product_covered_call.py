@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+"""Covered-call dashboard — product introduction page."""
+
 HTML = """
 <!-- HERO -->
 <section class="phero">
