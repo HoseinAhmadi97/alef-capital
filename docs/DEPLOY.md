@@ -59,6 +59,14 @@ dig +short alefcapital.ir
 
 ## ۳. بالا آوردن
 
+اول ببینید پورت ۸۰ و ۴۴۳ آزادند یا نه — این تعیین می‌کند کدام مسیر را بروید:
+
+```bash
+sudo ss -ltnp | grep -E ':(80|443)\s'
+```
+
+### حالت الف — پورت‌ها آزادند (سرور تازه)
+
 ```bash
 sudo mkdir -p /srv && cd /srv
 git clone <آدرس مخزن شما> alef-capital
@@ -70,11 +78,45 @@ docker compose -f deploy/docker-compose.yml up -d
 
 تمام. چند ثانیه بعد `https://alefcapital.ir` با گواهی معتبر بالاست.
 
-بررسی وضعیت:
-
 ```bash
 docker compose -f deploy/docker-compose.yml logs -f caddy
 ```
+
+### حالت ب — nginx از قبل روی سرور هست
+
+اگر خروجی `ss` نشان داد nginx روی ۸۰/۴۴۳ نشسته (مثلاً برای گرافانا)،
+Caddy نمی‌تواند bind کند. سایت را به همان nginx اضافه کنید — Docker لازم نیست.
+
+> ⚠️ روی چنین ماشینی Docker را نیاورید: Docker قواعد iptables خودش را
+> می‌نویسد و ufw را دور می‌زند. روی سروری که پستگرس دارد، `ports:` در
+> docker-compose می‌تواند چیزی را که فکر می‌کنید بسته است باز کند.
+
+```bash
+sudo mkdir -p /srv && sudo chown $USER /srv
+cd /srv && git clone <آدرس مخزن شما> alef-capital
+cd alef-capital && make build
+
+sudo ln -sfn /srv/alef-capital/dist /srv/site
+sudo cp deploy/nginx.conf /etc/nginx/sites-available/alefcapital.ir
+sudo ln -s /etc/nginx/sites-available/alefcapital.ir /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+`nginx -t` حتماً باید `syntax is ok` بدهد؛ اگر نداد reload نزنید تا
+سایت‌های فعلی سالم بمانند.
+
+بعد گواهی (وقتی رکوردهای A منتشر شدند):
+
+```bash
+sudo apt install -y certbot python3-certbot-nginx
+sudo certbot --nginx -d alefcapital.ir -d www.alefcapital.ir
+sudo certbot renew --dry-run
+```
+
+certbot فقط همین بلوک را تغییر می‌دهد و بلوک‌های دیگر nginx را کاری ندارد.
+
+> تا قبل از اجرای certbot، `https://alefcapital.ir` شما را به سرویس دیگری
+> می‌برد با خطای گواهی — چون تنها بلوک ۴۴۳ همان است. بعد از certbot درست می‌شود.
 
 ---
 
@@ -98,7 +140,14 @@ git push
 ```
 
 این اسکریپت `git pull` می‌کند، سایت را می‌سازد، لینک‌ها را چک می‌کند و تمام.
-**کانتینر restart نمی‌شود** چون Caddy فایل‌ها را مستقیم از `dist/` می‌خواند.
+خودش تشخیص می‌دهد nginx دارید یا Caddy.
+
+**نه restart لازم است نه reload** — وب‌سرور در هر دو حالت فایل‌ها را مستقیم
+از `dist/` می‌خواند. اگر ترجیح می‌دهید دستی باشد، همین دو دستور کافی است:
+
+```bash
+cd /srv/alef-capital && git pull && make build
+```
 
 اگر می‌خواهید این هم خودکار شود، `.github/workflows/deploy.yml` آماده است:
 سه Secret (`SSH_HOST`، `SSH_USER`، `SSH_KEY`) در تنظیمات مخزن بسازید و با هر

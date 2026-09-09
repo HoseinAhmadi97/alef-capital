@@ -24,10 +24,20 @@ if bad:
 print("✓ لینک‌ها سالم")
 PY
 
-# Caddy فایل‌ها را مستقیم از dist/ می‌خواند — restart لازم نیست.
-if ! docker ps --format '{{.Names}}' | grep -q alef-caddy; then
-  echo "→ بالا آوردن Caddy"
-  docker compose -f deploy/docker-compose.yml up -d
+# ── وب‌سرور ──
+# هر دو حالت پشتیبانی می‌شود. در هیچ‌کدام restart لازم نیست،
+# چون وب‌سرور فایل‌ها را مستقیم از dist/ می‌خواند.
+if systemctl is-active --quiet nginx 2>/dev/null; then
+  echo "✓ nginx فعال است — مستقیم از dist/ سرو می‌کند"
+elif command -v docker >/dev/null 2>&1; then
+  if ! docker ps --format '{{.Names}}' | grep -q alef-caddy; then
+    echo "→ بالا آوردن Caddy"
+    docker compose -f deploy/docker-compose.yml up -d
+  else
+    echo "✓ Caddy بالاست"
+  fi
+else
+  echo "⚠ هیچ وب‌سروری پیدا نشد — docs/DEPLOY.md بخش ۳ را ببینید"
 fi
 
 echo "✓ منتشر شد — https://alefcapital.ir"
