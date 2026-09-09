@@ -37,7 +37,7 @@ HTML = """
 <div class="wrap">
   <h2 class="h2">جدول حباب صندوق‌های طلا</h2>
   <p class="lead">پنج ردیف اول برای مهمان باز است. جدول کامل ۳۰ صندوق با ثبت‌نام رایگان، و نسخه لحظه‌ای با پلن طلا.</p>
-  <div class="panel" style="margin-top:24px;background:#fff;border-color:var(--border)">
+  <div class="panel" style="margin-top:24px;background:var(--surface);border-color:var(--border)">
     <div class="tscroll">
     <table style="color:var(--ink-800)">
       <thead><tr>

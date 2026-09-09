@@ -247,9 +247,10 @@ var SPOT=[['طلا گرم ۱۸ عیار',182257000,-0.14,-255000,182257000],['س
    ['آلتون',1,1],['ناب',1,1],['نفیس',1,1],['تابش',1,1],['زرفام',1,1],['قیراط',1,1],
    ['لطفی',1,1],['آبان',1,1],['کیان',1,1],['گنج',1,1]];
   var C=['#B91C1C','#EF4444','#94A3B8','#4ADE80','#15803D'];
+  var TXT=['#FFFFFF','#FFFFFF','#0B1220','#0B1220','#FFFFFF'];  /* ink per cell */
   m.innerHTML=F.map(function(f){
     var r=(Math.random()*6-3), k=r<-1.5?0:(r<-0.4?1:(r<0.4?2:(r<1.5?3:4)));
-    return '<div style="grid-column:span '+f[1]+';grid-row:span '+f[2]+';background:'+C[k]+'">'+
+    return '<div style="grid-column:span '+f[1]+';grid-row:span '+f[2]+';background:'+C[k]+';color:'+TXT[k]+'">'+
       f[0]+'<br><span style="font-size:10px;opacity:.9">'+pct(r)+'</span></div>'}).join('');
 })();
 (function(){
