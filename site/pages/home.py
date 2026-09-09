@@ -265,9 +265,104 @@ function setP(k){
 function pct(v,dec){return (v<0?'‎−':'‎+')+fa(Math.abs(v).toFixed(dec||2)).replace('.','٫')+'٪'}
 function flash(el,up){el.classList.remove('fu','fd');void el.offsetWidth;el.classList.add(up?'fu':'fd');
   setTimeout(function(){el.classList.remove('fu','fd')},700)}
+var CALM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
 
-/* ---------- 1. نوار قیمت متحرک ---------- */
+/* ---------- ۱. حباب ۳۰ صندوق ---------- */
+var FUNDS=[['گوهر',-1.79],['کهربا',2.50],['عیار',0.42],['طلا',-0.11],['زر',0.88],['مثقال',-0.63],
+ ['آلتون',1.16],['نفیس',-0.27],['قیراط',0.35],['تابش',-0.94],['زرفام',1.42],['گنج',-0.05],
+ ['آتون',0.71],['وحید',-1.22],['کیان',0.19],['ناب',0.96],['زروان',-0.48],['سیام',1.73],
+ ['درسا',-0.31],['بحیره',0.58],['ثمین',-0.86],['رادین',1.05],['شمش',0.24],['اکسیر',-0.69],
+ ['هرمز',0.81],['آبان',-0.15],['فراز',1.31],['نهال',-1.04],['سپهر',0.47],['یاقوت',0.62]];
 
+function drawFunds(){
+  var d=document.getElementById('dist'); if(!d) return;
+  var mx=0; FUNDS.forEach(function(f){mx=Math.max(mx,Math.abs(f[1]))});
+  if(!d.children.length){
+    d.innerHTML=FUNDS.map(function(f){
+      return '<span title="'+f[0]+'"></span>'}).join('');
+  }
+  var sum=0,lo=FUNDS[0],hi=FUNDS[0];
+  FUNDS.forEach(function(f,i){
+    sum+=f[1]; if(f[1]<lo[1])lo=f; if(f[1]>hi[1])hi=f;
+    var b=d.children[i], up=f[1]>=0;
+    b.style.height=(18+Math.abs(f[1])/mx*82)+'%';
+    b.style.alignSelf=up?'flex-end':'flex-start';
+    b.style.background=up?'rgba(22,163,74,.55)':'rgba(220,38,38,.5)';
+  });
+  var avg=sum/FUNDS.length, el=document.getElementById('bubAvg');
+  if(el){var prev=el.textContent; el.textContent=pct(avg);
+    if(prev!==el.textContent) flash(el,avg>=0)}
+  var mn=document.getElementById('bubMin'), mxEl=document.getElementById('bubMax');
+  if(mn) mn.textContent=lo[0]+' '+pct(lo[1]);
+  if(mxEl) mxEl.textContent=hi[0]+' '+pct(hi[1]);
+  var hb=document.getElementById('hbG'); if(hb) hb.textContent=pct(avg,1);
+}
+
+/* ---------- ۲. فرصت‌های کاوردکال ---------- */
+/* همان اعدادی که در داشبورد و ماشین‌حساب استفاده شده — از یک پارامتر واحد */
+var OPTS=[['ضستا۳۰۱۰',15,69.4],['ضشنا۶۰۴۹',20,61.2],['ضخود۶۰۵۵',57,48.7],['ضملی۳۰۵۸',43,42.3]];
+function drawOpts(){
+  var b=document.getElementById('optBody'); if(!b) return;
+  b.innerHTML=OPTS.map(function(o){
+    return '<tr><td class="sym">'+o[0]+'</td>'+
+           '<td class="dtm">'+fa(o[1])+' روز</td>'+
+           '<td class="rt">'+fa(o[2].toFixed(1)).replace('.','٫')+'٪ <em>سالانه</em></td></tr>'}).join('');
+  var c=document.getElementById('ccCount'); if(c) c.textContent=fa(OPTS.length+8);
+  var h=document.getElementById('hbC'); if(h) h.textContent=fa(OPTS.length+8);
+}
+
+/* ---------- ۳. قیمت طلا و نمودار کوچک ---------- */
+var GPX=182257000, GOPEN=182512000, GHIST=[];   /* GOPEN = قیمت باز شدن روز */
+(function(){var v=GPX*0.994; for(var i=0;i<40;i++){v*=1+(Math.sin(i/3.1)*0.0016+(i/40)*0.0004);GHIST.push(v)}})();
+function drawSpark(){
+  var line=document.getElementById('sparkLine'), fill=document.getElementById('sparkFill'),
+      dot=document.getElementById('sparkDot');
+  if(!line) return;
+  var W=240,H=44,lo=Math.min.apply(null,GHIST),hi=Math.max.apply(null,GHIST),rng=(hi-lo)||1;
+  var pts=GHIST.map(function(v,i){
+    return [i/(GHIST.length-1)*W, H-4-((v-lo)/rng)*(H-10)]});
+  var d=pts.map(function(p,i){return (i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)}).join(' ');
+  line.setAttribute('d',d);
+  fill.setAttribute('d',d+' L'+W+' '+H+' L0 '+H+' Z');
+  var last=pts[pts.length-1];
+  dot.setAttribute('cx',last[0]); dot.setAttribute('cy',last[1]);
+}
+function tickGold(){
+  var prev=GPX;
+  GPX=Math.round(GPX*(1+(Math.random()-0.5)*0.0009)/1000)*1000;   /* قیمت واقعی رند هزار است */
+  GHIST.push(GPX); if(GHIST.length>40) GHIST.shift();
+  drawSpark();
+  var el=document.getElementById('goldPx');
+  if(el){el.textContent=fa(grp(GPX)); flash(el,GPX>=prev)}
+  var ch=document.getElementById('goldD');
+  if(ch){var d=(GPX/GOPEN-1)*100;
+    ch.className='chip '+(d>0?'up':(d<0?'down':'neu'));
+    ch.textContent=(d>0?'▲':(d<0?'▼':'—'))+' '+fa(Math.abs(d).toFixed(2)).replace('.','٫')+'٪'}
+}
+
+/* ---------- ۴. ساعت و نوار پیشرفت ---------- */
+function tickClock(){
+  var c=document.getElementById('clock'); if(!c) return;
+  var n=new Date(), p=function(x){return (x<10?'۰':'')+fa(x)};
+  c.textContent=p(n.getHours())+':'+p(n.getMinutes())+':'+p(n.getSeconds());
+}
+(function(){
+  drawFunds(); drawOpts(); drawSpark(); tickGold(); tickClock();
+  if(CALM) return;                       /* احترام به prefers-reduced-motion */
+  var prog=document.getElementById('prog'), t=0;
+  setInterval(function(){
+    t+=100;
+    if(prog) prog.style.width=(t%5000)/50+'%';
+    if(t%1000===0) tickClock();
+    if(t%5000===0){
+      tickGold();
+      FUNDS.forEach(function(f){f[1]=Math.max(-3,Math.min(3,f[1]+(Math.random()-0.5)*0.12))});
+      drawFunds();
+    }
+  },100);
+})();
+
+/* ---------- ۵. تب‌ها ---------- */
 document.querySelectorAll('.tab').forEach(function(t){
   t.addEventListener('click',function(){
     document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on')});

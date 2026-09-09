@@ -219,6 +219,38 @@ footer a:hover{color:var(--gold-300)}
 .opt .rt{text-align:left;font-weight:800;color:var(--up-text)}
 .opt .rt em{font-style:normal;font-size:11px;color:var(--slate-400);font-weight:600}
 
+/* دکمه‌های ورود به داشبورد در hero */
+.dblaunch{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:26px}
+.dbtn{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--r-lg);
+  background:var(--surface);border:1px solid var(--border);box-shadow:var(--sh-md);
+  color:var(--ink-800);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.dbtn:hover{transform:translateY(-2px);box-shadow:var(--sh-lg)}
+.dbtn .ring{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:19px}
+.dbtn .tx{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.45}
+.dbtn .tx b{font-size:15px;font-weight:800}
+.dbtn .tx em{font-style:normal;font-size:12.5px;color:var(--slate-500);font-variant-numeric:tabular-nums;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dbtn .pl{display:inline-block;width:6px;height:6px;border-radius:50%;margin-inline-end:6px;
+  vertical-align:middle;animation:pulse 1.8s infinite}
+.dbtn .ar{flex:none;font-size:17px;font-weight:800;transition:transform .18s ease}
+.dbtn:hover .ar{transform:translateX(-4px)}
+.dbtn.g{border-color:rgba(184,120,26,.32)}
+.dbtn.g:hover{border-color:var(--gold-400)}
+.dbtn.g .ring{background:rgba(240,180,41,.16)}
+.dbtn.g .pl{background:var(--gold-400)}
+.dbtn.g .ar{color:var(--gold-700)}
+.dbtn.b{border-color:rgba(14,116,144,.28)}
+.dbtn.b:hover{border-color:var(--info)}
+.dbtn.b .ring{background:rgba(14,116,144,.12)}
+.dbtn.b .pl{background:var(--info)}
+.dbtn.b .ar{color:var(--info)}
+@media(max-width:640px){.dblaunch{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){
+  .dbtn,.dbtn .ar{transition:none}
+  .dbtn:hover{transform:none}
+  .dbtn .pl{animation:none}
+}
+
 /* sparkline */
 .spark{width:100%;height:44px;display:block;margin-top:10px;overflow:visible}
 
