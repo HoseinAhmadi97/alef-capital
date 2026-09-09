@@ -1,0 +1,11 @@
+# Keep line endings LF in the repository on every platform.
+# Without this, a checkout on Windows rewrites every file to CRLF and the
+# next `git status` shows all 25 files as modified with 0 real changes.
+* text=auto eol=lf
+
+# Binary — never touch these.
+*.woff2 binary
+*.png   binary
+*.jpg   binary
+*.ico   binary
+*.zip   binary
