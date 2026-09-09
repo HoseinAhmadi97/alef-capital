@@ -120,10 +120,24 @@ By default Vazirmatn comes from Google Fonts, which is fine for local developmen
 but **for Iranian users it is slow or blocked**. Before publishing:
 
 ```bash
-make fonts                                    # download the font
-# then in site/config.py:  SELF_HOSTED_FONT = True
+make fonts
 make build
 ```
+
+That is the whole procedure — there is no setting to flip. If the woff2 files are
+present under `site/static/assets/fonts/`, the build self-hosts the font; if they
+are not, it falls back to Google Fonts. Those files are gitignored, so the server
+self-hosts and your laptop does not, from the same commit.
+
+To force it either way (CI, or testing the fallback):
+
+```bash
+ALEF_SELF_HOSTED_FONT=1 make build     # force self-hosted
+ALEF_SELF_HOSTED_FONT=0 make build     # force Google Fonts
+```
+
+**Do not edit `SELF_HOSTED_FONT` on the server.** A local edit there is what makes
+`git pull` abort with "local changes would be overwritten by merge".
 
 ---
 

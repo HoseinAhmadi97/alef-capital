@@ -235,7 +235,7 @@ The `dist/` folder needs no backup; a single `make build` recreates it.
 
 ## 8. Checklist before going public
 
-- [ ] `make fonts` and `SELF_HOSTED_FONT = True`
+- [ ] `make fonts` has run on the server (the build then self-hosts the font automatically — do not edit `site/config.py` there)
 - [ ] The data layer is connected to a real API (the `LIVE DATA LAYER` comment on each page)
 - [ ] The `{{ }}` placeholders are filled in: team name, registration number, address, minimum capital
 - [ ] `make check` is green

@@ -22,7 +22,7 @@ fonts:           ## download the Vazirmatn font for self-hosting
 	    "https://cdn.jsdelivr.net/npm/vazirmatn@33.0.3/fonts/webfonts/Vazirmatn-$$w.woff2" \
 	  || echo "    ✗ failed — grab it manually from github.com/rastikerdar/vazirmatn"; \
 	done
-	@echo "→ now set SELF_HOSTED_FONT = True in site/config.py and run make build"
+	@echo "→ done. Just run make build — the fonts are picked up automatically."
 
 deploy:          ## publish to the server
 	@./deploy/deploy.sh
