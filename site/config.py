@@ -59,8 +59,8 @@ PAGES = {
 NAV = [
     ("mega", "محصولات", "pmenu", [
         ("داشبوردها", [
-            ("g", "🟡", "داشبورد طلا", "حباب، NAV و ترکیب دارایی ۳۰ صندوق طلا", "dgold", "معرفی محصول ←"),
-            ("b", "🔵", "داشبورد کاوردکال", "دیدبان اختیار خرید با نرخ معادل سالانه و حاشیه ریسک", "dcc", "معرفی محصول ←"),
+            ("g", "🪙", "داشبورد طلا", "حباب، NAV و ترکیب دارایی ۳۰ صندوق طلا", "dgold", "معرفی محصول ←"),
+            ("b", "📈", "داشبورد کاوردکال", "دیدبان اختیار خرید با نرخ معادل سالانه و حاشیه ریسک", "dcc", "معرفی محصول ←"),
         ]),
         ("خدمات و ابزار", [
             ("n", "📈", "مدیریت پرتفوی", "اجرای الگوریتم روی حساب کارگزاری شما", "services", ""),
@@ -139,6 +139,14 @@ TICKER = [
 RISK_SHORT = ("اطلاعات ارائه‌شده در این وب‌سایت صرفاً جنبه تحلیلی و اطلاع‌رسانی دارد و توصیه به خرید "
               "یا فروش هیچ اوراق بهاداری محسوب نمی‌شود. سرمایه‌گذاری در بازار سرمایه با ریسک همراه است "
               "و مسئولیت تصمیم‌های معاملاتی بر عهده کاربر است. بازده گذشته تضمینی برای بازده آینده نیست.")
+
+# ─────────────────────────── Paywall ───────────────────────────────
+# False = every dashboard column, row and tool is open to every visitor.
+# True  = the computed columns sit behind sign-up (the launch behaviour).
+#
+# This is the ONLY switch. The markup keeps both variants, so flipping this
+# back once the site has traffic needs no edits anywhere else.
+PAYWALL = False
 
 # ─────────────────────────── Font ──────────────────────────────────
 # Google Fonts is fine for local development but slow or blocked for Iranian

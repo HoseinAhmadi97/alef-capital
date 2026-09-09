@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Covered-call dashboard — product introduction page."""
+import paywall
 
 HTML = """
 <!-- HERO -->
@@ -12,7 +13,7 @@ HTML = """
       <h1>بهره ثابت سالانه،<br><span class="grad">بدون خروج از بازار سرمایه</span></h1>
       <p class="lead">استراتژی کاوردکال امکان دستیابی به بهره ثابت سالانه ۶۰ تا ۱۰۰ درصد را با ریسک پایین فراهم می‌کند — فرصتی که در بازار سرمایه ایران کمتر شناخته شده است. داشبورد ما هزاران قرارداد اختیار خرید را می‌سنجد و بهترین نسبت بازده به ریسک را بیرون می‌کشد.</p>
       <div class="pcta">
-        <a class="btn btn-blue" href="dashboard-covered-call.html"><ico>🔵</ico>ورود به داشبورد کاوردکال</a>
+        <a class="btn btn-blue" href="dashboard-covered-call.html"><ico>📈</ico>ورود به داشبورد کاوردکال</a>
         <a class="btn btn-s" href="#calc">دیدن مثال عددی</a>
       </div>
     </div>
@@ -156,12 +157,12 @@ HTML = """
         <tr><td>ضخود۶۰۵۵</td><td>خودرو</td><td>۵۷</td><td>۳,۰۰۰</td><td><span class="chip neu">۳۴٫۶٪</span></td><td>۸٫۱٪</td><td><span class="chip up">۶۴٫۴٪</span></td></tr>
         <tr><td>ضملی۳۰۵۸</td><td>ملی</td><td>۴۳</td><td>۱,۲۶۰</td><td><span class="chip neu">۳۰٫۵٪</span></td><td>۵٫۹٪</td><td><span class="chip up">۶۲٫۴٪</span></td></tr>
         <tr><td>ضفولا۶۰۳۲</td><td>فولاد</td><td>۲۹</td><td>۴,۵۰۰</td><td><span class="chip neu">۲۶٫۲٪</span></td><td>۳٫۷٪</td><td><span class="chip up">۵۷٫۳٪</span></td></tr>
-        <tr class="lock"><td>ضهرم۷۰۲۲</td><td>اهرم</td><td>۲۶</td><td>۲,۱۰۰</td><td><span class="chip neu">۲۴٫۹٪</span></td><td>۳٫۲٪</td><td><span class="chip up">۵۵٫۵٪</span></td></tr>
-        <tr class="lock"><td>ضفزر۱۰۱۳</td><td>فزر</td><td>۷۱</td><td>۷,۵۰۰</td><td><span class="chip neu">۲۲٫۴٪</span></td><td>۸٫۷٪</td><td><span class="chip up">۵۳٫۹٪</span></td></tr>
+        <tr@@IFLOCK@@ class="lock"@@END@@><td>ضهرم۷۰۲۲</td><td>اهرم</td><td>۲۶</td><td>۲,۱۰۰</td><td><span class="chip neu">۲۴٫۹٪</span></td><td>۳٫۲٪</td><td><span class="chip up">۵۵٫۵٪</span></td></tr>
+        <tr@@IFLOCK@@ class="lock"@@END@@><td>ضفزر۱۰۱۳</td><td>فزر</td><td>۷۱</td><td>۷,۵۰۰</td><td><span class="chip neu">۲۲٫۴٪</span></td><td>۸٫۷٪</td><td><span class="chip up">۵۳٫۹٪</span></td></tr>
       </tbody>
     </table>
     </div>
-    <div class="lockmsg">🔒 <b>۳۶۱ قرارداد دیگر</b>، فیلتر سفارشی، هشدار و نمودار سود و زیان — با پلن حرفه‌ای.</div>
+@@IFLOCK@@    <div class="lockmsg">🔒 <b>۳۶۱ قرارداد دیگر</b>، فیلتر سفارشی، هشدار و نمودار سود و زیان — با پلن حرفه‌ای.</div>@@END@@
   </div>
 
   <div class="feat4" style="margin-top:30px">
@@ -253,7 +254,7 @@ HTML = """
   <div class="ctaband">
     <h2>همین حالا دیدبان را ببینید</h2>
     <p>نسخه مهمان بدون ثبت‌نام باز است؛ ستون‌های نرخ و حاشیه ریسک با عضویت رایگان باز می‌شوند.</p>
-    <a class="btn btn-blue" href="dashboard-covered-call.html"><ico>🔵</ico>ورود به داشبورد کاوردکال</a>
+    <a class="btn btn-blue" href="dashboard-covered-call.html"><ico>📈</ico>ورود به داشبورد کاوردکال</a>
     <a class="btn btn-s" href="tools-covered-call.html" style="color:#DBE6FE;border-color:#334155;margin-inline-start:8px">ماشین‌حساب کاوردکال</a>
   </div>
 </div>
@@ -299,3 +300,5 @@ if(!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').ma
   },4200);
 }
 """
+
+HTML = paywall.apply(HTML)

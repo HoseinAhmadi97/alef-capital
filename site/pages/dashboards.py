@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-"""Guest dashboards — gold arbitrage and covered call, with the per-cell paywall."""
+"""Guest dashboards — gold arbitrage and covered call.
+
+Whether the computed columns are open or behind sign-up is decided by
+config.PAYWALL; see site/paywall.py for the markers.
+"""
+import paywall
 
 SIGNUP = """
   <div class="signup">
@@ -65,8 +70,8 @@ GOLD = """
 <section class="dsec" id="funds">
 <div class="wrap">
   <div class="sh">
-    <div><h2>صندوق‌های طلای بورس</h2><p>سه ستون آخر — ارزش ذاتی، حباب و دلار محاسباتی — با عضویت باز می‌شوند</p></div>
-    <a class="lockcell" href="pricing.html" style="font-size:12.5px;padding:7px 14px">🔒 باز کردن همه ستون‌ها</a>
+    <div><h2>صندوق‌های طلای بورس</h2><p>ارزش ذاتی، حباب و دلار محاسباتی هر صندوق — لحظه‌ای و بدون ثبت‌نام</p></div>
+@@IFLOCK@@    <a class="lockcell" href="pricing.html" style="font-size:12.5px;padding:7px 14px">🔒 باز کردن همه ستون‌ها</a>@@END@@
   </div>
   <div class="dwrap"><div class="tscroll">
     <table class="dt">
@@ -75,7 +80,7 @@ GOLD = """
       <tbody id="gBody"></tbody>
     </table>
   </div></div>
-  <p style="font-size:12px;color:var(--slate-400);margin-top:10px">۳۰ صندوق در حال نمایش · مرتب‌سازی و فیلتر سفارشی با عضویت</p>
+  <p style="font-size:12px;color:var(--slate-400);margin-top:10px">۳۰ صندوق در حال نمایش · مرتب‌سازی و فیلتر سفارشی به‌زودی</p>
 </div>
 </section>
 
@@ -146,11 +151,11 @@ GOLD = """
     <table class="dt">
       <thead><tr><th>صندوق</th><th>سهم گواهی سکه</th><th>سهم گواهی شمش</th><th>سایر / نقد</th><th>همبستگی با سکه</th><th>حباب تعدیل‌شده</th></tr></thead>
       <tbody>
-        <tr><td>طلا</td><td>۶۲٪</td><td>۳۴٪</td><td>۴٪</td><td><a class="lockcell" href="pricing.html">🔒 ورود / عضویت</a></td><td><a class="lockcell" href="pricing.html">🔒 ورود / عضویت</a></td></tr>
-        <tr><td>کهربا</td><td>۷۱٪</td><td>۲۵٪</td><td>۴٪</td><td><a class="lockcell" href="pricing.html">🔒 ورود / عضویت</a></td><td><a class="lockcell" href="pricing.html">🔒 ورود / عضویت</a></td></tr>
-        <tr><td>گوهر</td><td>۴۸٪</td><td>۴۹٪</td><td>۳٪</td><td><a class="lockcell" href="pricing.html">🔒 ورود / عضویت</a></td><td><a class="lockcell" href="pricing.html">🔒 ورود / عضویت</a></td></tr>
-        <tr><td>زر</td><td>۵۵٪</td><td>۴۱٪</td><td>۴٪</td><td><a class="lockcell" href="pricing.html">🔒 ورود / عضویت</a></td><td><a class="lockcell" href="pricing.html">🔒 ورود / عضویت</a></td></tr>
-        <tr><td>عیار</td><td>۶۸٪</td><td>۲۹٪</td><td>۳٪</td><td><a class="lockcell" href="pricing.html">🔒 ورود / عضویت</a></td><td><a class="lockcell" href="pricing.html">🔒 ورود / عضویت</a></td></tr>
+        <tr><td>طلا</td><td>۶۲٪</td><td>۳۴٪</td><td>۴٪</td><td>@@L:۰٫۹۴@@</td><td>@@L:‎−۰٫۳۱٪@@</td></tr>
+        <tr><td>کهربا</td><td>۷۱٪</td><td>۲۵٪</td><td>۴٪</td><td>@@L:۰٫۹۶@@</td><td>@@L:‎+۱٫۸۲٪@@</td></tr>
+        <tr><td>گوهر</td><td>۴۸٪</td><td>۴۹٪</td><td>۳٪</td><td>@@L:۰٫۸۹@@</td><td>@@L:‎−۱٫۴۴٪@@</td></tr>
+        <tr><td>زر</td><td>۵۵٪</td><td>۴۱٪</td><td>۴٪</td><td>@@L:۰٫۹۲@@</td><td>@@L:‎−۰٫۱۸٪@@</td></tr>
+        <tr><td>عیار</td><td>۶۸٪</td><td>۲۹٪</td><td>۳٪</td><td>@@L:۰٫۹۵@@</td><td>@@L:‎+۰٫۲۷٪@@</td></tr>
       </tbody>
     </table>
   </div></div>
@@ -166,18 +171,17 @@ GOLD = """
       <div class="ic">🧮</div>
       <h3>محاسبه‌گر ارزش ذاتی و حباب</h3>
       <p>ارزش ذاتی و حباب هر صندوق را بر اساس مقادیر دلخواه خودتان (انس، دلار، وزن سکه) محاسبه کنید و نتیجه را در جدول ببینید.</p>
-      <a class="btn btn-p" href="pricing.html" style="padding:11px 24px;font-size:14px">ورود / عضویت</a>
+      <span class="soon">به‌زودی</span>
     </div>
     <div class="lockpanel">
       <div class="ic">📁</div>
       <h3>ساخت سبد دارایی</h3>
       <p>صندوق‌های خودتان را وارد کنید و سود و زیان و ارزش دارایی طلای پرتفوتان را لحظه‌ای ببینید. هشدار عبور حباب از آستانه هم می‌گذارید.</p>
-      <a class="btn btn-p" href="pricing.html" style="padding:11px 24px;font-size:14px">ورود / عضویت</a>
+      <span class="soon">به‌زودی</span>
     </div>
   </div>
-
-""" + SIGNUP.format(h="ارزش ذاتی، حباب و دلار محاسباتی را باز کنید",
-                    p="با عضویت رایگان، جدول کامل ۳۰ صندوق با تأخیر ۱۵ دقیقه در اختیارتان است. با پلن طلا، همان جدول لحظه‌ای می‌شود و محاسبه‌گر، تاریخچه ۶ ماهه و هشدار هم اضافه می‌شود.") + """
+@@IFLOCK@@""" + SIGNUP.format(h="ارزش ذاتی، حباب و دلار محاسباتی را باز کنید",
+                    p="با عضویت رایگان، جدول کامل ۳۰ صندوق با تأخیر ۱۵ دقیقه در اختیارتان است. با پلن طلا، همان جدول لحظه‌ای می‌شود و محاسبه‌گر، تاریخچه ۶ ماهه و هشدار هم اضافه می‌شود.") + """@@END@@
 </div>
 </section>
 
@@ -186,8 +190,15 @@ GOLD = """
 </div></div>
 """
 
-GOLD_JS = """
-var LOCK='<a class="lockcell" href="pricing.html">🔒 ورود / عضویت</a>';
+GOLD_JS = paywall.js_flag() + """
+/* every derived column comes from one place, so the table can never disagree
+   with itself: bubble = price/NAV - 1, implied USD = spot USD x (price/NAV) */
+var USD=189000;
+function cell(v){return PAYWALL?LOCK:v}
+function bubCell(price,nav){
+  var b=(price/nav-1)*100;
+  return PAYWALL?LOCK:'<span class="'+(b<0?'up':(b>0?'dn':''))+'">'+pct(b)+'</span>'}
+function usdCell(price,nav){return PAYWALL?LOCK:fa(grp(USD*(price/nav)))}
 var GF=[['طلا',172900,172835,-0.62,-1080],['کهربا',18420,18221,1.09,198],['گوهر',24160,24600,-1.79,-440],
  ['زر',15630,15702,-0.46,-72],['عیار',9840,9795,0.46,45],['مثقال',31250,31410,-0.51,-160],
  ['آلتون',12480,12390,0.73,90],['ناب',8720,8801,-0.92,-81],['نفیس',21340,21180,0.76,160],
@@ -201,7 +212,9 @@ function drawGold(){
     return '<tr><td>صندوق '+f[0]+'</td><td>'+fa(grp(f[1]))+'</td>'+
       '<td class="'+cls+'">'+ar+' '+fa(Math.abs(f[3]).toFixed(2)).replace('.','٫')+'٪</td>'+
       '<td class="'+cls+'">'+fa(grp(Math.abs(f[4])))+'</td>'+
-      '<td>'+LOCK+'</td><td>'+LOCK+'</td><td>'+LOCK+'</td><td>'+GT[i]+'</td></tr>'}).join('');
+      '<td>'+cell(fa(grp(f[2])))+'</td>'+
+      '<td>'+bubCell(f[1],f[2])+'</td>'+
+      '<td>'+usdCell(f[1],f[2])+'</td><td>'+GT[i]+'</td></tr>'}).join('');
   var bs=GF.map(function(f){return (f[1]/f[2]-1)*100});
   var lo=0,hi=0; bs.forEach(function(v,i){if(v<bs[lo])lo=i;if(v>bs[hi])hi=i});
   var avg=bs.reduce(function(a,c){return a+c},0)/bs.length;
@@ -212,10 +225,11 @@ function drawGold(){
   document.getElementById('gMin').textContent=pct(bs[lo]);
   document.getElementById('gMinN').textContent=GF[lo][0];
 }
-var SPOT=[['طلا گرم ۱۸ عیار',182257000,-0.14,-255000],['سکه امامی',1826000000,-1.42,-26000000],
- ['سکه بهار آزادی',1781000000,-1.07,-19000000],['نیم سکه',920000000,-0.85,-7900000],
- ['ربع سکه',540000000,-0.80,-4300000],['مظنه آبشده',789500000,-0.14,-1100000],
- ['گواهی سکه',1816000000,1.94,34500000],['گواهی شمش',23900550,-1.79,-435000]];
+/* 5th field = ارزش ذاتی (intrinsic); bubble and implied USD derive from it */
+var SPOT=[['طلا گرم ۱۸ عیار',182257000,-0.14,-255000,182257000],['سکه امامی',1826000000,-1.42,-26000000,1781382377],
+ ['سکه بهار آزادی',1781000000,-1.07,-19000000,1742000000],['نیم سکه',920000000,-0.85,-7900000,890691000],
+ ['ربع سکه',540000000,-0.80,-4300000,512346000],['مظنه آبشده',789500000,-0.14,-1100000,789500000],
+ ['گواهی سکه',1816000000,1.94,34500000,1781382377],['گواهی شمش',23900550,-1.79,-435000,24336000]];
 (function(){
   var b=document.getElementById('sBody'); if(!b) return;
   b.innerHTML=SPOT.map(function(r){
@@ -223,7 +237,9 @@ var SPOT=[['طلا گرم ۱۸ عیار',182257000,-0.14,-255000],['سکه ام�
     return '<tr><td>'+r[0]+'</td><td>'+fa(grp(r[1]))+'</td>'+
       '<td class="'+cls+'">'+ar+' '+fa(Math.abs(r[2]).toFixed(2)).replace('.','٫')+'٪</td>'+
       '<td class="'+cls+'">'+fa(grp(Math.abs(r[3])))+'</td>'+
-      '<td>'+LOCK+'</td><td>'+LOCK+'</td><td>'+LOCK+'</td></tr>'}).join('');
+      '<td>'+cell(fa(grp(r[4])))+'</td>'+
+      '<td>'+bubCell(r[1],r[4])+'</td>'+
+      '<td>'+usdCell(r[1],r[4])+'</td></tr>'}).join('');
 })();
 (function(){
   var m=document.getElementById('tmap'); if(!m) return;
@@ -307,8 +323,8 @@ CC = """
 <section class="dsec" id="watch">
 <div class="wrap">
   <div class="sh">
-    <div><h2>دیدبان قراردادهای اختیار خرید</h2><p>سه ستون محاسباتی — حاشیه ریسک، سود دوره‌ای و نرخ معادل سالانه — با عضویت باز می‌شوند</p></div>
-    <a class="lockcell" href="pricing.html" style="font-size:12.5px;padding:7px 14px">🔒 باز کردن همه ستون‌ها</a>
+    <div><h2>دیدبان قراردادهای اختیار خرید</h2><p>حاشیه ریسک، سود دوره‌ای و نرخ معادل سالانه — محاسبه‌شده و باز برای همه</p></div>
+@@IFLOCK@@    <a class="lockcell" href="pricing.html" style="font-size:12.5px;padding:7px 14px">🔒 باز کردن همه ستون‌ها</a>@@END@@
   </div>
   <div class="dwrap"><div class="tscroll">
     <table class="dt">
@@ -317,7 +333,7 @@ CC = """
       <tbody id="cBody"></tbody>
     </table>
   </div></div>
-  <p style="font-size:12px;color:var(--slate-400);margin-top:10px">۱۲ قرارداد از ۳۶۸ قرارداد فعال در حال نمایش · فیلتر سفارشی، ستون محاسباتی و هشدار با عضویت</p>
+  <p style="font-size:12px;color:var(--slate-400);margin-top:10px">۱۲ قرارداد از ۳۶۸ قرارداد فعال در حال نمایش · فیلتر سفارشی و هشدار به‌زودی</p>
 </div>
 </section>
 
@@ -329,15 +345,15 @@ CC = """
     <table class="dt">
       <thead><tr><th>نماد کال</th><th>آخرین</th><th>حجم</th><th>موقعیت باز</th><th>قیمت اعمال</th><th>حاشیه ریسک</th><th>نرخ معادل سالانه</th></tr></thead>
       <tbody>
-        <tr><td>ضستا۳۰۰۸</td><td>۶۹۵</td><td>۱,۲۴۰</td><td>۸,۴۰۰</td><td>۱,۲۰۰</td><td><a class="lockcell" href="pricing.html">🔒 ورود / عضویت</a></td><td><a class="lockcell" href="pricing.html">🔒 ورود / عضویت</a></td></tr>
-        <tr style="background:rgba(240,180,41,.06)"><td>ضستا۳۰۱۰</td><td>۵۰۳</td><td>۳,۸۱۰</td><td>۲۴,۶۰۰</td><td>۱,۴۰۰</td><td><a class="lockcell" href="pricing.html">🔒 ورود / عضویت</a></td><td><a class="lockcell" href="pricing.html">🔒 ورود / عضویت</a></td></tr>
-        <tr><td>ضستا۳۰۱۲</td><td>۳۴۸</td><td>۲,۰۵۰</td><td>۱۵,۲۰۰</td><td>۱,۶۰۰</td><td><a class="lockcell" href="pricing.html">🔒 ورود / عضویت</a></td><td><a class="lockcell" href="pricing.html">🔒 ورود / عضویت</a></td></tr>
-        <tr><td>ضستا۳۰۱۴</td><td>۲۲۱</td><td>۹۸۰</td><td>۹,۷۰۰</td><td>۱,۸۰۰</td><td><a class="lockcell" href="pricing.html">🔒 ورود / عضویت</a></td><td><a class="lockcell" href="pricing.html">🔒 ورود / عضویت</a></td></tr>
-        <tr><td>ضستا۳۰۱۶</td><td>۱۳۴</td><td>۵۶۰</td><td>۶,۱۰۰</td><td>۲,۰۰۰</td><td><a class="lockcell" href="pricing.html">🔒 ورود / عضویت</a></td><td><a class="lockcell" href="pricing.html">🔒 ورود / عضویت</a></td></tr>
+        <tr><td>ضستا۳۰۰۶</td><td>۸۸۸</td><td>۲,۱۷۰</td><td>۱۱,۳۰۰</td><td>۱,۰۰۰</td><td>@@L:۸۷٫۳٪@@</td><td>@@L:<span class="up">۴۴٫۵٪</span>@@</td></tr>
+        <tr><td>ضستا۳۰۰۸</td><td>۶۹۵</td><td>۱,۲۴۰</td><td>۸,۴۰۰</td><td>۱,۲۰۰</td><td>@@L:۵۶٫۱٪@@</td><td>@@L:<span class="up">۵۶٫۹٪</span>@@</td></tr>
+        <tr style="background:rgba(240,180,41,.06)"><td>ضستا۳۰۱۰</td><td>۵۰۳</td><td>۳,۸۱۰</td><td>۲۴,۶۰۰</td><td>۱,۴۰۰</td><td>@@L:۳۳٫۸٪@@</td><td>@@L:<span class="up">۶۹٫۴٪</span>@@</td></tr>
+        <tr><td>ضستا۳۰۱۲</td><td>۲۹۷</td><td>۲,۰۵۰</td><td>۱۵,۲۰۰</td><td>۱,۶۰۰</td><td>@@L:۱۷٫۱٪@@</td><td>@@L:<span class="up">۴۴٫۵٪</span>@@</td></tr>
+        <tr><td>ضستا۳۰۱۴</td><td>۹۳</td><td>۹۸۰</td><td>۹,۷۰۰</td><td>۱,۸۰۰</td><td>@@L:۴٫۱٪@@</td><td>@@L:<span class="up">۳۱٫۲٪</span>@@</td></tr>
       </tbody>
     </table>
   </div></div>
-  <p style="font-size:12px;color:var(--slate-400);margin-top:10px">در نسخه مهمان فقط زنجیره یک نماد نمایش داده می‌شود · ۴۲ نماد پایه با عضویت</p>
+  <p style="font-size:12px;color:var(--slate-400);margin-top:10px">زنجیره نماد شستا · ۴۲ نماد پایه دیگر به‌زودی</p>
 </div>
 </section>
 
@@ -418,20 +434,30 @@ CC = """
 </div></div>
 """
 
-CC_JS = """
-var LOCK='<a class="lockcell" href="pricing.html">🔒 ورود / عضویت</a>';
+CC_JS = paywall.js_flag() + """
+/* [نماد, سهم پایه, C = قیمت اختیار, DTM, K = قیمت اعمال, P = قیمت سهم]
+   همان فرمول ماشین‌حساب و مقاله — یک منبع، سه صفحه:
+     نرخ معادل سالانه = (K/(P−C))^(365/DTM) − 1
+     حاشیه ریسک       = P/K − 1
+     نقطه سربه‌سری     = P − C                                          */
 var ROWS=[
- ['ضستا۳۰۱۰','شستا',503,15,1400],['ضشنا۶۰۴۹','شنا',1851,20,6000],
- ['ضخود۶۰۵۵','خودرو',1262,57,3000],['ضملی۳۰۵۸','ملی',454,43,1260],
- ['ضفولا۶۰۳۲','فولاد',1338,29,4500],['ضهرم۷۰۲۲','اهرم',588,26,2100],
- ['ضفزر۱۰۱۳','فزر',2283,71,7500],['ضاهرم۴۰۲۲','اهرم',412,36,1800],
- ['ضبمل۲۰۰۷','بمل',298,22,1150],['ضشپنا۵۰۳۱','شپنا',760,34,2900],
- ['ضتپکو۹۰۱۵','تپکو',195,18,880],['ضونفت۴۰۴۰','ونفت',630,49,2400]];
+ ['ضستا۳۰۱۰','شستا',503,15,1400,1873],['ضشنا۶۰۴۹','شنا',1851,20,6000,7696],
+ ['ضخود۶۰۵۵','خودرو',1262,57,3000,4082],['ضملی۳۰۵۸','ملی',454,43,1260,1663],
+ ['ضفولا۶۰۳۲','فولاد',1338,29,4500,5677],['ضهرم۷۰۲۲','اهرم',588,26,2100,2623],
+ ['ضفزر۱۰۱۳','فزر',2283,71,7500,9180],['ضاهرم۴۰۲۲','اهرم',412,36,1800,2140],
+ ['ضبمل۲۰۰۷','بمل',298,22,1150,1420],['ضشپنا۵۰۳۱','شپنا',760,34,2900,3558],
+ ['ضتپکو۹۰۱۵','تپکو',195,18,880,1059],['ضونفت۴۰۴۰','ونفت',630,49,2400,2922]];
+function n1(v){return fa(v.toFixed(1)).replace('.','٫')}
 (function(){
   var b=document.getElementById('cBody'); if(!b) return;
   b.innerHTML=ROWS.map(function(r){
     return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+fa(grp(r[2]))+'</td><td>'+fa(r[3])+'</td>'+
-      '<td>'+fa(grp(r[4]))+'</td><td>'+LOCK+'</td><td>'+LOCK+'</td><td>'+LOCK+'</td></tr>'}).join('');
+      '<td>'+fa(grp(r[4]))+'</td>'+
+      (PAYWALL?'<td>'+LOCK+'</td><td>'+LOCK+'</td><td>'+LOCK+'</td>':(function(){
+        var C=r[2],D=r[3],K=r[4],P=r[5],net=P-C;
+        var rate=(Math.pow(K/net,365/D)-1)*100, risk=(P/K-1)*100, per=(K/net-1)*100;
+        return '<td>'+n1(risk)+'٪</td><td>'+n1(per)+'٪</td>'+
+               '<td><span class="up">'+n1(rate)+'٪</span></td>'})())+'</tr>'}).join('');
 })();
 var t0=new Date(); t0.setHours(17,31,4,0);
 if(!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)){
@@ -452,3 +478,7 @@ if(!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').ma
   },{passive:true});
 })();
 """
+
+# ── resolve the paywall markers for the current mode ──────────────────
+GOLD = paywall.apply(GOLD)
+CC = paywall.apply(CC)

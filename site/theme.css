@@ -41,8 +41,10 @@ a{color:var(--gold-700);text-decoration:none}
 header{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
 .nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:12px}
 .logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:18px;color:var(--ink-800)}
-.nav ul{display:flex;gap:24px;list-style:none;margin:0;padding:0}
-.nav ul a{color:var(--slate-600);font-size:14.5px;font-weight:600}
+.nav ul{display:flex;align-items:center;gap:24px;list-style:none;margin:0;padding:0}
+.nav ul li{display:flex;align-items:center}
+.nav ul a{display:inline-flex;align-items:center;padding:6px 0;line-height:1.5;
+  color:var(--slate-600);font-size:14.5px;font-weight:600}
 .nav ul a:hover{color:var(--gold-700)}
 .nav-cta{display:flex;gap:10px;align-items:center}
 .nav-cta .btn{padding:10px 20px;font-size:14px}
@@ -219,6 +221,21 @@ footer a:hover{color:var(--gold-300)}
 .opt .rt{text-align:left;font-weight:800;color:var(--up-text)}
 .opt .rt em{font-style:normal;font-size:11px;color:var(--slate-400);font-weight:600}
 
+/* "coming soon" tag on a feature panel that is not built yet */
+.soon{display:inline-block;padding:6px 14px;border-radius:999px;font-size:12.5px;font-weight:800;
+  background:var(--surface-3);color:var(--slate-500);border:1px dashed var(--border-strong)}
+
+/* typewriter line in the hero */
+.tw{display:inline-flex;align-items:center;min-height:32px;font-size:13px;font-weight:700;
+  color:var(--gold-700);background:rgba(240,180,41,.16);border:1px solid rgba(184,120,26,.3);
+  padding:6px 14px;border-radius:999px;margin-bottom:18px;max-width:100%}
+.tw .txt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tw .car{display:inline-block;width:2px;height:1em;background:var(--gold-600);
+  margin-inline-start:3px;flex:none;animation:blink 1s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@media(prefers-reduced-motion:reduce){.tw .car{animation:none;opacity:0}}
+@media(max-width:520px){.tw{font-size:12px}}
+
 /* hero dashboard-launch buttons */
 .dblaunch{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:26px}
 .dbtn{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--r-lg);
@@ -280,7 +297,7 @@ footer a:hover{color:var(--gold-300)}
 /* ===== MEGA MENU (tree) ===== */
 .has-menu{position:relative}
 .navbtn{background:none;border:0;font-family:inherit;color:var(--slate-600);font-size:14.5px;font-weight:600;
-  cursor:pointer;display:inline-flex;align-items:center;gap:5px;padding:6px 0}
+  cursor:pointer;display:inline-flex;align-items:center;gap:5px;padding:6px 0;line-height:1.5}
 .navbtn .cv{font-size:10px;transition:transform .2s;color:var(--slate-400)}
 .has-menu.open>.navbtn,.navbtn:hover{color:var(--gold-700)}
 .has-menu.open>.navbtn .cv{transform:rotate(180deg);color:var(--gold-600)}
@@ -514,8 +531,8 @@ footer a:hover{color:var(--gold-300)}
   .vstab,.vstab tbody,.vstab tr,.vstab td,.vstab th{display:block;width:100%}
   .vstab thead{display:none}
   .vstab td:first-child{background:var(--ink-900);color:#fff;border-radius:8px;margin-top:14px}
-  .vstab td.g::before{content:"🟡 داشبورد طلا";display:block;font-size:12px;font-weight:800;color:var(--gold-700);margin-bottom:6px}
-  .vstab td.b::before{content:"🔵 کاوردکال";display:block;font-size:12px;font-weight:800;color:var(--info);margin-bottom:6px}
+  .vstab td.g::before{content:"🪙 داشبورد طلا";display:block;font-size:12px;font-weight:800;color:var(--gold-700);margin-bottom:6px}
+  .vstab td.b::before{content:"📈 کاوردکال";display:block;font-size:12px;font-weight:800;color:var(--info);margin-bottom:6px}
 }
 
 /* dual CTA buttons */

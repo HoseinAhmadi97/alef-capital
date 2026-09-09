@@ -168,8 +168,8 @@ SERVICES = """
     <thead>
       <tr>
         <th></th>
-        <th class="g"><span class="ic">🟡</span>آربیتراژ صندوق طلا<span class="sb">جابه‌جایی بین صندوق‌های طلا</span></th>
-        <th class="b"><span class="ic">🔵</span>کاوردکال<span class="sb">فروش اختیار خرید روی سهام پایه</span></th>
+        <th class="g"><span class="ic">🪙</span>آربیتراژ صندوق طلا<span class="sb">جابه‌جایی بین صندوق‌های طلا</span></th>
+        <th class="b"><span class="ic">📈</span>کاوردکال<span class="sb">فروش اختیار خرید روی سهام پایه</span></th>
       </tr>
     </thead>
     <tbody>
@@ -291,8 +291,8 @@ SERVICES = """
       <h3 style="font-size:15px;margin-bottom:10px">اول داشبوردها را ببینید</h3>
       <p style="font-size:13.5px;color:var(--slate-600);margin:0 0 14px">همان داده‌ای که الگوریتم روی آن تصمیم می‌گیرد، در نسخه مهمان قابل مشاهده است.</p>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <a class="btn btn-gold" href="dashboard-gold.html" style="padding:10px 20px;font-size:13.5px"><ico>🟡</ico>داشبورد طلا</a>
-        <a class="btn btn-blue" href="dashboard-covered-call.html" style="padding:10px 20px;font-size:13.5px"><ico>🔵</ico>داشبورد کاوردکال</a>
+        <a class="btn btn-gold" href="dashboard-gold.html" style="padding:10px 20px;font-size:13.5px"><ico>🪙</ico>داشبورد طلا</a>
+        <a class="btn btn-blue" href="dashboard-covered-call.html" style="padding:10px 20px;font-size:13.5px"><ico>📈</ico>داشبورد کاوردکال</a>
       </div>
     </div>
   </div>
@@ -442,8 +442,8 @@ WIKI = """
   <div class="ctaband">
     <h2>مفاهیم را یاد گرفتید؟ حالا داده واقعی</h2>
     <p>نبض بازار طلا رایگان و بدون ثبت‌نام باز است.</p>
-    <a class="btn btn-gold" href="dashboard-gold.html"><ico>🟡</ico>داشبورد طلا</a>
-    <a class="btn btn-blue" href="dashboard-covered-call.html" style="margin-inline-start:8px"><ico>🔵</ico>داشبورد کاوردکال</a>
+    <a class="btn btn-gold" href="dashboard-gold.html"><ico>🪙</ico>داشبورد طلا</a>
+    <a class="btn btn-blue" href="dashboard-covered-call.html" style="margin-inline-start:8px"><ico>📈</ico>داشبورد کاوردکال</a>
   </div>
 </div>
 </section>

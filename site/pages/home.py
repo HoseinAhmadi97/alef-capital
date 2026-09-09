@@ -5,7 +5,7 @@ HTML = """<!-- HERO -->
 <section class="hero sec">
 <div class="wrap hero-grid">
   <div>
-    <span class="eyebrow"><span class="dot"></span> داشبورد آربیتراژ صندوق طلا و کاوردکال بورس تهران — داده زنده</span>
+    <div class="tw"><span class="dot"></span><span class="txt" id="tw"></span><span class="car"></span></div>
     <h1>سرمایه شما،<br><span class="grad">با دو موتور بازده کم‌ریسک</span></h1>
     <p>الف کپیتال حباب صندوق‌های طلا و فرصت‌های کاوردکال بورس تهران را لحظه‌به‌لحظه رصد می‌کند و آن‌ها را به دو داشبورد قابل استفاده تبدیل می‌کند — تا تصمیم شما بر پایه داده باشد، نه حدس.</p>
     <div class="dblaunch">
@@ -22,7 +22,7 @@ HTML = """<!-- HERO -->
         <span class="ar">←</span>
       </a>
     </div>
-    <p style="font-size:13px;color:var(--slate-500);margin:16px 0 0">هر دو داشبورد بدون ثبت‌نام قابل مشاهده‌اند — ستون‌های محاسباتی با عضویت رایگان باز می‌شوند.</p>
+    <p style="font-size:13px;color:var(--slate-500);margin:16px 0 0">هر دو داشبورد کامل و بدون ثبت‌نام باز است — همه ستون‌های محاسباتی، همین حالا.</p>
   </div>
   <div>
     <div class="livecards">
@@ -84,7 +84,6 @@ HTML = """<!-- HERO -->
 
   <div class="two">
     <div class="pcard">
-      <div class="picon g">🟡</div>
       <h3>داشبورد آربیتراژ صندوق طلا</h3>
       <p>قیمت هر صندوق طلا دقیقاً برابر ارزش واقعی‌اش (NAV) نیست؛ این اختلاف را «حباب» می‌گویند. داشبورد آربیتراژ، حباب همه صندوق‌های طلای بورس را لحظه‌ای محاسبه می‌کند و صندوق‌های ارزنده را نشان می‌دهد.</p>
       <ul class="plist">
@@ -93,11 +92,10 @@ HTML = """<!-- HERO -->
         <li>شناسایی خودکار صندوق ارزنده برای جابه‌جایی</li>
       </ul>
       <div class="target">بازده هدف: ۵ تا ۱۰ درصد سالانه طلای اضافه</div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn-gold" href="dashboard-gold.html" style="padding:12px 24px;font-size:14.5px"><ico>🟡</ico>داشبورد طلا</a><a class="btn btn-s" href="product-gold.html" style="padding:12px 22px;font-size:14.5px">معرفی محصول</a></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn-gold" href="dashboard-gold.html" style="padding:12px 24px;font-size:14.5px"><ico>🪙</ico>داشبورد طلا</a><a class="btn btn-s" href="product-gold.html" style="padding:12px 22px;font-size:14.5px">معرفی محصول</a></div>
     </div>
 
     <div class="pcard">
-      <div class="picon b">🔵</div>
       <h3>داشبورد کاوردکال (بهره ثابت)</h3>
       <p>کاوردکال یعنی خرید سهم و هم‌زمان فروش اختیار خرید همان سهم. نتیجه، یک بازده از پیش تعیین‌شده در بازه‌ای مشخص است. داشبورد ما هزاران قرارداد را می‌سنجد و بهترین نسبت بازده به ریسک را بیرون می‌کشد.</p>
       <ul class="plist">
@@ -106,7 +104,7 @@ HTML = """<!-- HERO -->
         <li>پایش سررسید و نقطه سربه‌سری هر موقعیت</li>
       </ul>
       <div class="target">بازده هدف: ۶۰ تا ۱۰۰ درصد سالانه با ریسک پایین</div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn-blue" href="dashboard-covered-call.html" style="padding:12px 24px;font-size:14.5px"><ico>🔵</ico>داشبورد کاوردکال</a><a class="btn btn-s" href="product-covered-call.html" style="padding:12px 22px;font-size:14.5px">معرفی محصول</a></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn-blue" href="dashboard-covered-call.html" style="padding:12px 24px;font-size:14.5px"><ico>📈</ico>داشبورد کاوردکال</a><a class="btn btn-s" href="product-covered-call.html" style="padding:12px 22px;font-size:14.5px">معرفی محصول</a></div>
     </div>
   </div>
 </div>
@@ -299,14 +297,17 @@ function drawFunds(){
 }
 
 /* ---------- 2. covered-call opportunities ---------- */
-/* same numbers as the dashboard and the calculator — one parameter set */
-var OPTS=[['ضستا۳۰۱۰',15,69.4],['ضشنا۶۰۴۹',20,61.2],['ضخود۶۰۵۵',57,48.7],['ضملی۳۰۵۸',43,42.3]];
+/* [نماد, C, DTM, K, P] — the same rows and the same formula as the dashboard
+   and the calculator, so the three pages can never disagree by a decimal */
+var OPTS=[['ضستا۳۰۱۰',503,15,1400,1873],['ضشنا۶۰۴۹',1851,20,6000,7696],
+          ['ضخود۶۰۵۵',1262,57,3000,4082],['ضملی۳۰۵۸',454,43,1260,1663]];
+function annual(o){return (Math.pow(o[3]/(o[4]-o[1]),365/o[2])-1)*100}
 function drawOpts(){
   var b=document.getElementById('optBody'); if(!b) return;
   b.innerHTML=OPTS.map(function(o){
     return '<tr><td class="sym">'+o[0]+'</td>'+
-           '<td class="dtm">'+fa(o[1])+' روز</td>'+
-           '<td class="rt">'+fa(o[2].toFixed(1)).replace('.','٫')+'٪ <em>سالانه</em></td></tr>'}).join('');
+           '<td class="dtm">'+fa(o[2])+' روز</td>'+
+           '<td class="rt">'+fa(annual(o).toFixed(1)).replace('.','٫')+'٪ <em>سالانه</em></td></tr>'}).join('');
   var c=document.getElementById('ccCount'); if(c) c.textContent=fa(OPTS.length+8);
   var h=document.getElementById('hbC'); if(h) h.textContent=fa(OPTS.length+8);
 }
@@ -362,7 +363,29 @@ function tickClock(){
   },100);
 })();
 
-/* ---------- 5. tabs ---------- */
+/* ---------- 5. typewriter line in the hero ---------- */
+var TW=[
+ 'حباب هر ۳۰ صندوق طلا، هر ثانیه بازمحاسبه می‌شود.',
+ '۳۶۸ قرارداد اختیار، زیر ذره‌بین یک الگوریتم.',
+ 'فاصله قیمت تا ارزش — همان چیزی که شکار می‌کنیم.',
+ 'فرصتی که با چشم پیدا نمی‌شود، با محاسبه پیدا می‌شود.',
+ 'تصمیم بر پایه داده، نه بر پایه حدس.'];
+(function(){
+  var el=document.getElementById('tw'); if(!el) return;
+  if(CALM){el.textContent=TW[0]; return}          /* no animation when asked */
+  var i=0,j=0,del=false;
+  (function step(){
+    var full=TW[i];
+    j += del ? -1 : 1;
+    el.textContent=full.slice(0,j);
+    var wait=del?26:58;
+    if(!del && j===full.length){del=true; wait=2100}
+    else if(del && j===0){del=false; i=(i+1)%TW.length; wait=320}
+    setTimeout(step,wait);
+  })();
+})();
+
+/* ---------- 6. tabs ---------- */
 document.querySelectorAll('.tab').forEach(function(t){
   t.addEventListener('click',function(){
     document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on')});

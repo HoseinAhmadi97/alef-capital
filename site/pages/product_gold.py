@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Gold-fund arbitrage dashboard — product introduction page."""
+import paywall
 
 HTML = """
 <!-- HERO -->
@@ -125,12 +126,12 @@ HTML = """
         <tr><td>طلای ۱۸ عیار</td><td>۱۸۲,۲۵۷,۰۰۰</td><td>۱۸۲,۵۱۲,۷۵۹</td><td><span class="chip up">‎−۰.۱۴٪</span></td><td>۱۸۸,۷۳۵</td><td>۱۷:۲۶</td></tr>
         <tr><td>اونس جهانی طلا</td><td>۴,۰۰۵</td><td>۴,۰۰۵</td><td><span class="chip neu">۰.۰۰٪</span></td><td>۱۸۹,۰۰۰</td><td>۱۷:۳۱</td></tr>
         <tr><td>گواهی سکه</td><td>۱,۸۱۶,۰۰۰,۰۰۰</td><td>۱,۷۸۱,۳۸۲,۳۷۷</td><td><span class="chip down">‎+۱.۹۴٪</span></td><td>۱۹۲,۶۷۲</td><td>۱۶:۵۹</td></tr>
-        <tr class="lock"><td>سکه امامی</td><td>۱,۸۲۶,۰۰۰,۰۰۰</td><td>۱,۷۸۱,۳۸۲,۳۷۷</td><td><span class="chip down">‎+۲.۵۰٪</span></td><td>۱۹۳,۷۳۳</td><td>۱۶:۴۰</td></tr>
-        <tr class="lock"><td>صندوق طلا — کهربا</td><td>۱۷۲,۹۰۰</td><td>۱۷۲,۸۳۵</td><td><span class="chip down">‎+۱.۰۹٪</span></td><td>۱۸۹,۰۱۸</td><td>۱۶:۵۹</td></tr>
+        <tr@@IFLOCK@@ class="lock"@@END@@><td>سکه امامی</td><td>۱,۸۲۶,۰۰۰,۰۰۰</td><td>۱,۷۸۱,۳۸۲,۳۷۷</td><td><span class="chip down">‎+۲.۵۰٪</span></td><td>۱۹۳,۷۳۳</td><td>۱۶:۴۰</td></tr>
+        <tr@@IFLOCK@@ class="lock"@@END@@><td>صندوق طلا — کهربا</td><td>۱۷۲,۹۰۰</td><td>۱۷۲,۸۳۵</td><td><span class="chip down">‎+۱.۰۹٪</span></td><td>۱۸۹,۰۱۸</td><td>۱۶:۵۹</td></tr>
       </tbody>
     </table>
     </div>
-    <div class="lockmsg">🔒 <b>۲۵ صندوق دیگر</b> و داده لحظه‌ای، با پلن طلا — این جدول برای مهمان با تأخیر ۱۵ دقیقه است.</div>
+@@IFLOCK@@    <div class="lockmsg">🔒 <b>۲۵ صندوق دیگر</b> و داده لحظه‌ای، با پلن طلا — این جدول برای مهمان با تأخیر ۱۵ دقیقه است.</div>@@END@@
   </div>
 </div>
 </section>
@@ -256,3 +257,5 @@ if(!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').ma
     drawDist();},4000);
 }
 """
+
+HTML = paywall.apply(HTML)

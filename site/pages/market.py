@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Market pulse — free live gold/fund table, no sign-up required."""
+import paywall
 
 HTML = """
 <section class="phero" style="padding-block:clamp(36px,4vw,56px)">
@@ -50,9 +51,9 @@ HTML = """
       <tbody id="fundBody" style="border-color:var(--border)"></tbody>
     </table>
     </div>
-    <div class="lockmsg" style="background:rgba(240,180,41,.08);color:var(--ink-700);border-color:var(--border)">
+@@IFLOCK@@    <div class="lockmsg" style="background:rgba(240,180,41,.08);color:var(--ink-700);border-color:var(--border)">
       🔒 <b style="color:var(--gold-700)">۲۵ صندوق دیگر</b> با ثبت‌نام رایگان — داده لحظه‌ای، تاریخچه و هشدار با <a href="pricing.html">پلن طلا</a>.
-    </div>
+    </div>@@END@@
   </div>
 </div>
 </section>
@@ -120,7 +121,7 @@ HTML = """
   <div class="ctaband">
     <h2>این جدول با تأخیر ۱۵ دقیقه است</h2>
     <p>نسخه لحظه‌ای، تاریخچه ۶ ماهه و هشدار عبور حباب از آستانه، در پلن طلا.</p>
-    <a class="btn btn-gold" href="dashboard-gold.html"><ico>🟡</ico>داشبورد طلا</a>
+    <a class="btn btn-gold" href="dashboard-gold.html"><ico>🪙</ico>داشبورد طلا</a>
     <a class="btn btn-s" href="pricing.html" style="color:#DBE6FE;border-color:#334155;margin-inline-start:8px">مشاهده پلن‌ها</a>
   </div>
 </div>
@@ -151,7 +152,7 @@ function drawFunds(){
   b.innerHTML=FUNDS.map(function(f,i){
     var bub=(f[1]/f[2]-1)*100;
     var cls=bub<0?'up':(bub>0?'down':'neu');
-    return '<tr'+(i>=5?' class="lock"':'')+' style="border-color:var(--border)">'+
+    return '<tr'+(PAYWALL&&i>=5?' class="lock"':'')+' style="border-color:var(--border)">'+
       '<td style="border-color:var(--border)">صندوق '+f[0]+'</td>'+
       '<td style="border-color:var(--border)">'+fa(grp(f[1]))+'</td>'+
       '<td style="border-color:var(--border)">'+fa(grp(f[2]))+'</td>'+
@@ -196,3 +197,6 @@ if(!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').ma
     drawFunds();},4000);
 }
 """
+
+HTML = paywall.apply(HTML)
+JS = paywall.js_flag() + JS
