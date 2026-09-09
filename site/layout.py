@@ -5,7 +5,7 @@ Shared shell for every page: <head>, top bar, price ticker, footer, mobile botto
 No text or link is hard-coded here — it all comes from config.py.
 To change the menu structure, edit config.NAV, not this file.
 """
-import io, os, config as C
+import io, os, re, config as C
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 THEME = io.open(os.path.join(HERE, "theme.css"), encoding="utf-8").read()
@@ -37,9 +37,35 @@ MARK = ('<svg viewBox="0 0 64 64" width="{s}" height="{s}" aria-hidden="true" fo
         '</svg>')
 
 
+def url(fname):
+    """output file name → the address a visitor sees"""
+    if not C.CLEAN_URLS:
+        return fname
+    return "/" if fname == "index.html" else "/" + fname[:-len(".html")]
+
+
 def _u(key):
-    """page key → output file name"""
-    return C.PAGES[key]
+    """page key → the address a visitor sees"""
+    return url(C.PAGES[key])
+
+
+_HREF = re.compile(r'href="([A-Za-z0-9_-]+\.html)(#[^"]*)?"')
+
+
+def _clean_links(html):
+    """Rewrite every internal href to its clean address.
+
+    Done here, once, on the finished document rather than in 95 places across
+    site/pages/ — so a page written with href="wiki.html" still ends up
+    pointing at /wiki, and turning CLEAN_URLS off puts it all back.
+    """
+    if not C.CLEAN_URLS:
+        return html
+    names = set(C.PAGES.values())
+    def sub(m):
+        f, anchor = m.group(1), m.group(2) or ""
+        return m.group(0) if f not in names else 'href="%s%s"' % (url(f), anchor)
+    return _HREF.sub(sub, html)
 
 
 def _gold(active_group, gid):
@@ -232,7 +258,7 @@ function tiHTML(t){var c=t.d>0?'u':(t.d<0?'d':'n'),a=t.d>0?'▲':(t.d<0?'▼':'�
 # ──────────────────────────── PAGE ─────────────────────────────
 def page(title, description, active, body, js=""):
     font = FONT_LOCAL if C.SELF_HOSTED_FONT else FONT_GOOGLE
-    return f"""<!DOCTYPE html>
+    return _clean_links(f"""<!DOCTYPE html>
 <html dir="rtl" lang="fa">
 <head>
 <meta charset="utf-8">
@@ -243,6 +269,8 @@ def page(title, description, active, body, js=""):
 <meta property="og:description" content="{description}">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fa_IR">
+<link rel="canonical" href="https://{C.BRAND['domain']}{_u(active)}">
+<meta property="og:url" content="https://{C.BRAND['domain']}{_u(active)}">
 <meta name="color-scheme" content="light dark">
 <script>
 /* Applied before the first paint, so a dark-theme visitor never sees a
@@ -267,4 +295,4 @@ document.documentElement.setAttribute('data-theme',t)}})();
 </script>
 </body>
 </html>
-"""
+""")

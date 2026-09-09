@@ -126,9 +126,10 @@ def build():
 
 def _write_seo():
     base = f"https://{C.BRAND['domain']}"
-    urls = "\n".join(
-        f"  <url><loc>{base}/{f if f != 'index.html' else ''}</loc></url>"
-        for f in C.PAGES.values())
+    # the sitemap must list the SAME addresses the site links to, or search
+    # engines see two URLs for every page
+    urls = "\n".join(f"  <url><loc>{base}{L.url(f)}</loc></url>"
+                     for f in C.PAGES.values())
     io.open(os.path.join(DIST, "sitemap.xml"), "w", encoding="utf-8").write(
         f'<?xml version="1.0" encoding="UTF-8"?>\n'
         f'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}\n</urlset>\n')

@@ -51,6 +51,16 @@ PAGES = {
     "privacy":  "legal-privacy.html",
 }
 
+# ─────────────────────────── URLs ──────────────────────────────────
+# True  = visitors see /wiki          (the file on disk is still wiki.html)
+# False = visitors see /wiki.html
+#
+# The server maps one to the other: nginx `try_files $uri $uri.html` and
+# Caddy `try_files {path} {path}.html`. `make serve` does the same locally.
+# Leave this on — a URL is part of the product, and .html is an
+# implementation detail of how the page happens to be stored.
+CLEAN_URLS = True
+
 # ─────────────────────────── Top navigation ────────────────────────
 # To add / remove / reorder menu items, change only this structure.
 #   ("link",  label, page key)

@@ -30,6 +30,7 @@ Always change the source file and build again.
 | Mobile bottom bar | `site/config.py` → `BOTTOM_NAV` |
 | Items in the scrolling price ticker | `site/config.py` → `TICKER` |
 | **Lock the dashboards behind sign-up again** | `site/config.py` → `PAYWALL` |
+| **`/wiki` vs `/wiki.html` in the address bar** | `site/config.py` → `CLEAN_URLS` |
 | **Colors, fonts, spacing, shadows** | `site/theme.css` → the `:root` block at the top of the file |
 | A component's look (button, card, table…) | `site/theme.css` |
 | **The text of a page** | `site/pages/<page name>.py` |
@@ -112,6 +113,23 @@ Installing the test prerequisites (optional — the build works without them):
 ```bash
 pip install -r requirements.txt && playwright install chromium
 ```
+
+---
+
+## Addresses
+
+The site links to `/wiki`, not `/wiki.html`. The file on disk is still
+`wiki.html` — the server maps one to the other (`try_files $uri $uri.html` in
+nginx, the same in the Caddyfile), and `make serve` does it locally so the
+preview behaves like production.
+
+Pages are written with plain `href="wiki.html"`; `layout._clean_links()`
+rewrites every internal link once, on the finished document, so there is no
+need to remember. The canonical tag and `sitemap.xml` use the same address,
+and the server 301-redirects `/wiki.html` to `/wiki`, so each page has exactly
+one URL. `make check` verifies all three agree.
+
+Set `CLEAN_URLS = False` to put `.html` back everywhere.
 
 ---
 

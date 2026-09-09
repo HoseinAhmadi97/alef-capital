@@ -359,12 +359,10 @@ footer a:hover{color:var(--gold-300)}
 
 /* hero dashboard-launch buttons */
 .dblaunch{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:26px}
-.dbtn{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--r-lg);
+.dbtn{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:var(--r-lg);
   background:var(--surface);border:1px solid var(--border);box-shadow:var(--sh-md);
   color:var(--ink-800);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
 .dbtn:hover{transform:translateY(-2px);box-shadow:var(--sh-lg)}
-.dbtn .ring{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center}
-.dbtn .ring svg{display:block}
 .dbtn .tx{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.45}
 .dbtn .tx b{font-size:15px;font-weight:800}
 .dbtn .tx em{font-style:normal;font-size:12.5px;color:var(--slate-500);font-variant-numeric:tabular-nums;
@@ -375,12 +373,10 @@ footer a:hover{color:var(--gold-300)}
 .dbtn:hover .ar{transform:translateX(-4px)}
 .dbtn.g{border-color:rgba(184,120,26,.32)}
 .dbtn.g:hover{border-color:var(--gold-400)}
-.dbtn.g .ring{background:rgba(240,180,41,.16);color:var(--gold-600)}
 .dbtn.g .pl{background:var(--gold-400)}
 .dbtn.g .ar{color:var(--gold-700)}
 .dbtn.b{border-color:rgba(14,116,144,.28)}
 .dbtn.b:hover{border-color:var(--info)}
-.dbtn.b .ring{background:rgba(14,116,144,.12);color:var(--info)}
 .dbtn.b .pl{background:var(--info)}
 .dbtn.b .ar{color:var(--info)}
 @media(max-width:640px){.dblaunch{grid-template-columns:1fr}}

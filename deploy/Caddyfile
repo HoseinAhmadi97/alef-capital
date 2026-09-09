@@ -9,7 +9,12 @@ alefcapital.ir, www.alefcapital.ir {
 	encode zstd gzip
 	file_server
 
-	# make extensionless URLs work:  /pricing  →  /pricing.html
+	# One address per page: /pricing.html redirects to /pricing …
+	@html path_regexp html ^/(.+)\.html$
+	redir @html /{re.html.1} permanent
+	redir /index.html / permanent
+
+	# … and /pricing resolves to the file on disk
 	try_files {path} {path}.html {path}/index.html
 
 	# ── caching ──

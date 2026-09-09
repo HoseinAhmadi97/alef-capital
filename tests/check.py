@@ -7,6 +7,8 @@ Automated checks against the built site.
 
 What it checks:
   1) internal links and anchors (#id) — nothing broken
+  1b) one address per page: the clean URL, the canonical tag and the sitemap
+      all agree, and nothing still links to the .html form
   2) JavaScript errors on every page
   3) horizontal overflow at 4 widths (1440 / 1280 / 768 / 390)
   4) top-bar menus: hidden when closed, genuinely visible when open,
@@ -25,6 +27,24 @@ DIST = os.path.join(ROOT, "dist")
 WIDTHS = (1440, 1280, 768, 390)
 
 
+def _resolve(href, files):
+    """A link as written → the file that must exist, the way the server sees it.
+
+    The site links to clean addresses (/wiki, and / for the home page) while
+    the files on disk are still wiki.html and index.html. Without this the
+    checker would call every single link broken — or, worse, be loosened
+    until it stopped catching real ones.
+    """
+    if href in ("/", ""):
+        return "index.html"
+    t = href[1:] if href.startswith("/") else href
+    if t in files:
+        return t
+    if t + ".html" in files:
+        return t + ".html"
+    return None
+
+
 def check_links():
     files = {os.path.basename(f) for f in glob.glob(os.path.join(DIST, "*.html"))}
     bad = []
@@ -38,13 +58,45 @@ def check_links():
                     bad.append(f"{name} → {h} (anchor missing on this page)")
                 continue
             target, _, anchor = h.partition("#")
-            if target and target not in files:
-                bad.append(f"{name} → {h} (file does not exist)")
+            resolved = _resolve(target, files)
+            if resolved is None:
+                bad.append(f"{name} → {h} (no page at this address)")
                 continue
             if anchor:
-                t = open(os.path.join(DIST, target), encoding="utf-8").read()
+                t = open(os.path.join(DIST, resolved), encoding="utf-8").read()
                 if f'id="{anchor}"' not in t:
                     bad.append(f"{name} → {h} (anchor missing on target page)")
+    return bad
+
+
+def check_urls():
+    """Every page must link to, and declare, exactly one address for itself."""
+    import sys as _s
+    _s.path.insert(0, os.path.join(ROOT, "site"))
+    _s.dont_write_bytecode = True
+    import config as C
+    bad = []
+    for key, fname in C.PAGES.items():
+        page = os.path.join(DIST, fname)
+        if not os.path.exists(page):
+            bad.append("%s is in config.PAGES but was not built" % fname)
+            continue
+        html = open(page, encoding="utf-8").read()
+        want = "/" if fname == "index.html" else "/" + fname[:-5]
+        if not C.CLEAN_URLS:
+            want = fname
+        if 'rel="canonical" href="https://%s%s"' % (C.BRAND["domain"], want) not in html:
+            bad.append("%s — canonical does not point at %s" % (fname, want))
+        if C.CLEAN_URLS and 'href="%s"' % fname in html:
+            bad.append("%s — still links to %s instead of the clean address"
+                       % (fname, fname))
+    sm = os.path.join(DIST, "sitemap.xml")
+    if os.path.exists(sm):
+        x = open(sm, encoding="utf-8").read()
+        for fname in C.PAGES.values():
+            want = "/" if fname == "index.html" else "/" + fname[:-5]
+            if C.CLEAN_URLS and ("<loc>https://%s%s</loc>" % (C.BRAND["domain"], want)) not in x:
+                bad.append("sitemap.xml is missing %s" % want)
     return bad
 
 
@@ -141,7 +193,7 @@ def _check_menus(pg, f):
 def main():
     if not os.path.isdir(DIST):
         print("✗ dist/ does not exist. Run `make build` first."); sys.exit(1)
-    problems = check_links() + check_render()
+    problems = check_links() + check_urls() + check_render()
     n = len(glob.glob(os.path.join(DIST, "*.html")))
     if problems:
         print(f"\n✗ found {len(problems)} problem(s):\n")

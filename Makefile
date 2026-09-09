@@ -11,8 +11,7 @@ check: build     ## build + check links, render, overflow and menus
 	@python3 tests/check.py
 
 serve: build     ## local preview at http://localhost:8000
-	@echo "→ http://localhost:8000"
-	@cd dist && python3 -m http.server 8000
+	@python3 tools/serve.py
 
 fonts:           ## download the Vazirmatn font for self-hosting
 	@mkdir -p site/static/assets/fonts
