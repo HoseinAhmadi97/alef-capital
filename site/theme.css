@@ -725,7 +725,7 @@ footer a:hover{color:var(--gold-300)}
 
 /* treemap */
 /* dashboard overview: market map + compact number tiles */
-.ovgrid{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);gap:16px;align-items:start}
+.ovgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.75fr);gap:16px;align-items:start}
 @media(max-width:980px){.ovgrid{grid-template-columns:1fr}}
 .mtiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .mtile{padding:10px 12px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border);min-width:0}

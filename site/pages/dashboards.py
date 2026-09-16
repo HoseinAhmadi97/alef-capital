@@ -37,7 +37,7 @@ GOLD = """
 
 <div class="subnav">
 <div class="wrap">
-  <a class="on" href="#overview">نقشه بازار</a>
+  <a class="on" href="#overview">بازار امروز</a>
   <a href="#funds">صندوق‌های طلا</a>
   <a href="#spot">طلا و سکه</a>
   <a href="#nav">روند NAV</a>
@@ -46,10 +46,10 @@ GOLD = """
 </div>
 </div>
 
-<!-- OVERVIEW — the market map first, the key numbers as compact tiles beside it -->
+<!-- OVERVIEW — today's market: compact number tiles, the market map beside them -->
 <section class="dsec" id="overview">
 <div class="wrap">
-  <div class="sh"><div><h2>نقشه بازار صندوق‌های طلا</h2><p>اندازه هر بلوک: ارزش معاملات امروز · رنگ: بازدهی روزانه</p></div>
+  <div class="sh"><div><h2>بازار امروز</h2><p>اندازه هر بلوک: ارزش معاملات امروز · رنگ: بازدهی روزانه</p></div>
     <div style="font-size:12px;color:var(--slate-500);display:flex;align-items:center;gap:7px">
       <span>بازدهی −</span>
       <i style="width:16px;height:12px;background:#B91C1C;border-radius:2px;display:inline-block"></i>
@@ -61,7 +61,6 @@ GOLD = """
     </div>
   </div>
   <div class="ovgrid">
-    <div class="tmap" id="tmap"></div>
     <div class="mtiles" id="gTiles">
       <div class="mtile hl"><small>میانگین حباب</small><b class="num" id="gAvg">—</b><div class="sub"><span class="gcount">—</span> صندوق</div></div>
       <div class="mtile"><small>ارزش معاملات</small><b class="num" id="gVal">—</b><div class="sub">مجموع امروز</div></div>
@@ -72,6 +71,7 @@ GOLD = """
       <div class="mtile" data-sym="geram18"><small>طلای ۱۸ عیار (ریال)</small><b class="num">—</b><div class="sub">—</div></div>
       <div class="mtile" data-sym="dollar"><small>دلار (تومان)</small><b class="num">—</b><div class="sub">—</div></div>
     </div>
+    <div class="tmap" id="tmap"></div>
   </div>
 </div>
 </section>
