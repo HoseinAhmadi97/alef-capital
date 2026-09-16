@@ -337,36 +337,166 @@ setInterval(gRenderSessions, 1000);
   });
 })();
 
-/* bubble vs coin-weight scatter (product page and market page).
-   x = the fund's coin weight this month, y = its bubble now; the dashed
-   line is the least-squares fit of the funds shown. */
-function goldScatter(g, ids) {
-  var box = document.getElementById(ids.g); if (!box) return;
+/* ── bubble vs coin weight (product and market pages) ──
+   Drop <div class="bmix" data-bmix></div> anywhere; it renders itself.
+   x = the fund's coin weight this month (zoomed to the funds' actual range,
+   not 0–100%), y = its bubble now. Circle area = market cap, colour = sign of
+   the bubble. The dashed gold line is the least-squares trend: a fund below it
+   trades cheaper than funds with a similar coin share — the tooltip says by
+   how much. The largest funds and both extremes are labelled. */
+function goldBubbleMix(g, box) {
   var pts = g.withBubble.filter(function (f) { return f.weights && f.weights.sekke_weight != null; })
-    .map(function (f) { return { s: f.symbol, x: f.weights.sekke_weight, y: f.nominal_bubble * 100 }; });
-  if (!pts.length) { box.innerHTML = ''; return; }
-  var X0 = ids.x0, X1 = ids.x1, Y0 = ids.y0, H = ids.h;       /* plot geometry of that SVG */
-  var M = Math.max(1, Math.ceil(Math.max.apply(null, pts.map(function (p) { return Math.abs(p.y); }))));
-  function px(x) { return X0 + x * (X1 - X0); }
-  function py(y) { return Y0 - Math.max(-M, Math.min(M, y)) / M * H; }
-  var lo = pts.reduce(function (a, p) { return p.y < a.y ? p : a; });
-  box.innerHTML = pts.map(function (p) {
-    var big = p === lo;
-    return '<circle cx="' + px(p.x).toFixed(1) + '" cy="' + py(p.y).toFixed(1) + '" r="' + (big ? 7 : 4) +
-      '" fill="' + (big ? '#0891B2' : 'currentColor') + '" opacity="' + (big ? '.95' : '.55') + '">' +
-      '<title>' + p.s + ' — ' + gPct(p.y / 100) + '</title></circle>';
-  }).join('');
+    .map(function (f) { return { f: f, x: f.weights.sekke_weight * 100, y: f.nominal_bubble * 100, cap: f.market_cap || 0 }; });
+  if (pts.length < 2) { box.innerHTML = '<div class="bmix-empty">داده کافی نیست</div>'; return; }
+
+  var W = 640, H = 360, L = 56, R = 624, T = 22, B = 318;
+  function nice(v, step, up) { return (up ? Math.ceil(v / step) : Math.floor(v / step)) * step; }
+  var xs = pts.map(function (p) { return p.x; }), ys = pts.map(function (p) { return p.y; });
+  var xStep = Math.max.apply(null, xs) > 25 ? 10 : (Math.max.apply(null, xs) > 10 ? 5 : 2);
+  var x0 = 0, x1 = nice(Math.max.apply(null, xs) * 1.08 + 0.5, xStep, true);
+  var yLo = Math.min(0, Math.min.apply(null, ys)), yHi = Math.max(0, Math.max.apply(null, ys));
+  var ySpan = yHi - yLo || 1, yStep = ySpan > 6 ? 2 : (ySpan > 2.5 ? 1 : 0.5);
+  var y0 = nice(yLo - ySpan * 0.08, yStep, false), y1 = nice(yHi + ySpan * 0.08, yStep, true);
+  function X(v) { return L + (v - x0) / (x1 - x0) * (R - L); }
+  function Y(v) { return T + (y1 - v) / (y1 - y0) * (B - T); }
+  var maxCap = Math.max.apply(null, pts.map(function (p) { return p.cap; })) || 1;
+  function rad(p) { return 5 + 15 * Math.sqrt(p.cap / maxCap); }
+
+  /* least-squares trend */
   var n = pts.length, sx = 0, sy = 0, sxx = 0, sxy = 0;
   pts.forEach(function (p) { sx += p.x; sy += p.y; sxx += p.x * p.x; sxy += p.x * p.y; });
-  var den = n * sxx - sx * sx, line = document.getElementById(ids.line);
-  if (line) {
-    if (n > 1 && Math.abs(den) > 1e-9) {
-      var b = (n * sxy - sx * sy) / den, a = (sy - b * sx) / n;
-      line.setAttribute('x1', px(0)); line.setAttribute('y1', py(a).toFixed(1));
-      line.setAttribute('x2', px(1)); line.setAttribute('y2', py(a + b).toFixed(1));
-      line.style.display = '';
-    } else line.style.display = 'none';
+  var den = n * sxx - sx * sx, b = Math.abs(den) > 1e-9 ? (n * sxy - sx * sy) / den : 0, a = (sy - b * sx) / n;
+  pts.forEach(function (p) { p.res = p.y - (a + b * p.x); });
+
+  function pc(v, d) { return fa(v.toFixed(d == null ? 0 : d)).replace('.', '٫') + '٪'; }
+  var o = [];
+  o.push('<rect x="' + L + '" y="' + T + '" width="' + (R - L) + '" height="' + (B - T) + '" rx="10" class="bm-bg"/>');
+  for (var gx = x0; gx <= x1 + 1e-9; gx += xStep) {
+    o.push('<line class="bm-grid" x1="' + X(gx) + '" x2="' + X(gx) + '" y1="' + T + '" y2="' + B + '"/>');
+    o.push('<text class="bm-tick" x="' + X(gx) + '" y="' + (B + 18) + '" text-anchor="middle">' + pc(gx) + '</text>');
   }
-  gText(ids.top, '‎+' + fa(M) + '٪');
-  gText(ids.bottom, '‎−' + fa(M) + '٪');
+  for (var gy = y0; gy <= y1 + 1e-9; gy += yStep) {
+    var zero = Math.abs(gy) < 1e-9;
+    o.push('<line class="' + (zero ? 'bm-zero' : 'bm-grid') + '" x1="' + L + '" x2="' + R + '" y1="' + Y(gy) + '" y2="' + Y(gy) + '"/>');
+    o.push('<text class="bm-tick' + (zero ? ' z' : '') + '" x="' + (L - 8) + '" y="' + (Y(gy) + 4) + '" text-anchor="end">' +
+      (zero ? 'NAV' : (gy > 0 ? '+' : '−') + pc(Math.abs(gy), yStep < 1 ? 1 : 0)) + '</text>');
+  }
+  /* trend line, clipped to the plot */
+  var tx0 = x0, tx1 = x1;
+  o.push('<line class="bm-trend" x1="' + X(tx0) + '" y1="' + Math.max(T, Math.min(B, Y(a + b * tx0))) + '" x2="' + X(tx1) + '" y2="' + Math.max(T, Math.min(B, Y(a + b * tx1))) + '"/>');
+  o.push('<text class="bm-trend-l" x="' + (R - 6) + '" y="' + (Math.max(T + 12, Math.min(B - 6, Y(a + b * tx1) - 8))) + '" text-anchor="end">روند</text>');
+
+  /* biggest circles first, so small funds stay clickable on top */
+  pts.slice().sort(function (p, q) { return q.cap - p.cap; }).forEach(function (p) {
+    var tone = gSign(p.f.nominal_bubble) > 0 ? 'pos' : (gSign(p.f.nominal_bubble) < 0 ? 'neg' : 'zero');
+    o.push('<circle class="bm-pt ' + tone + '" data-isin="' + p.f.isin + '" cx="' + X(p.x).toFixed(1) + '" cy="' + Y(p.y).toFixed(1) + '" r="' + rad(p).toFixed(1) + '"/>');
+  });
+  /* label the five largest funds and the two extremes */
+  var label = {};
+  pts.slice().sort(function (p, q) { return q.cap - p.cap; }).slice(0, 5).forEach(function (p) { label[p.f.isin] = p; });
+  var lo = pts.reduce(function (m, p) { return p.y < m.y ? p : m; }), hi = pts.reduce(function (m, p) { return p.y > m.y ? p : m; });
+  label[lo.f.isin] = lo; label[hi.f.isin] = hi;
+  Object.keys(label).forEach(function (k) {
+    var p = label[k], r = rad(p), right = X(p.x) + r + 60 < R;
+    o.push('<text class="bm-label" x="' + (X(p.x) + (right ? r + 4 : -r - 4)) + '" y="' + (Y(p.y) + 4) + '" text-anchor="' + (right ? 'start' : 'end') + '">' + p.f.symbol + '</text>');
+  });
+
+  box.innerHTML =
+    '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="حباب هر صندوق در برابر سهم سکه در ترکیب دارایی">' + o.join('') + '</svg>' +
+    '<div class="bm-axis-x">سهم گواهی سکه در دارایی صندوق</div>' +
+    '<div class="bm-legend"><span><i class="lg-pos"></i>حباب مثبت</span><span><i class="lg-neg"></i>حباب منفی</span>' +
+    '<span><i class="lg-size"></i>اندازه: ارزش بازار</span><span><i class="lg-trend"></i>روند</span></div>' +
+    '<div class="btip bm-tip" hidden></div>';
+
+  var svg = box.querySelector('svg'), tip = box.querySelector('.bm-tip');
+  var byIsin = {}; pts.forEach(function (p) { byIsin[p.f.isin] = p; });
+  function show(ev) {
+    var c = ev.target.closest && ev.target.closest('.bm-pt');
+    if (!c) { tip.hidden = true; return; }
+    var p = byIsin[c.getAttribute('data-isin')], r = svg.getBoundingClientRect();
+    var verdict = Math.abs(p.res) < 0.05 ? 'هم‌تراز با روند'
+      : (p.res < 0 ? pc(Math.abs(p.res), 2) + ' ارزنده‌تر از روند' : pc(p.res, 2) + ' گران‌تر از روند');
+    tip.innerHTML = '<b>' + p.f.symbol + '</b> · حباب <b style="color:' + (gColor(p.f.nominal_bubble) || 'inherit') + '">' + gPct(p.f.nominal_bubble) + '</b>' +
+      '<br>سهم سکه ' + pc(p.x, 1) + ' · ' + verdict;
+    tip.style.left = (Number(c.getAttribute('cx')) / W * r.width) + 'px';
+    tip.style.top = (Number(c.getAttribute('cy')) / H * r.height - rad(p) * r.height / H) + 'px';
+    tip.hidden = false;
+  }
+  svg.addEventListener('mousemove', show);
+  svg.addEventListener('click', show);
+  svg.addEventListener('mouseleave', function () { tip.hidden = true; });
 }
+onGold(function (g) {
+  document.querySelectorAll('[data-bmix]').forEach(function (box) { goldBubbleMix(g, box); });
+});
+
+/* ── bubble spectrum (home and product pages) — every fund as a dot on one axis ──
+   x = bubble (price vs farabi NAV), stacked beeswarm-style so funds with
+   nearly the same bubble sit above/below each other instead of on top.
+   The track shades red → green; the dashed tick is NAV (0%), the gold
+   marker the average. Colours follow the site rule: negative red, positive green. */
+(function(){
+  var svg=document.getElementById('bSpec'); if(!svg) return;
+  var X0=8, X1=292, MID=46, R=4.6, GAP=10.4;
+  var tip=document.getElementById('bTip'), box=svg.parentNode;
+  onGold(function(g){
+    var fs=g.withBubble.slice().sort(function(a,b){return a.nominal_bubble-b.nominal_bubble});
+    if(!fs.length) return;
+    var vals=fs.map(function(f){return f.nominal_bubble*100});
+    /* a symmetric-enough domain that always includes 0 and has 10% headroom */
+    var lo=Math.min(0,vals[0]), hi=Math.max(0,vals[vals.length-1]), pad=Math.max(0.15,(hi-lo)*0.1);
+    lo-=pad; hi+=pad;
+    function X(v){return X0+(v-lo)/(hi-lo)*(X1-X0)}
+
+    /* beeswarm: place each dot on the lowest free lane (0, +1, −1, +2, …) */
+    var lanes=[], placed=fs.map(function(f,i){
+      var x=X(vals[i]), lane=0;
+      for(var k=0;k<12;k++){
+        var l=k===0?0:(k%2?(k+1)/2:-k/2);
+        if(!(lanes[l]||[]).some(function(px){return Math.abs(px-x)<R*2+0.6})){lane=l;break}
+      }
+      (lanes[lane]=lanes[lane]||[]).push(x);
+      return {f:f,x:x,lane:lane,v:vals[i]};
+    });
+    /* keep the swarm inside the card: squeeze lanes if a cluster runs deep */
+    var deepest=Math.max.apply(null,placed.map(function(p){return Math.abs(p.lane)}));
+    var gap=deepest>3?GAP*3/deepest:GAP;
+    placed.forEach(function(p){p.y=MID+p.lane*gap});
+
+    document.getElementById('bDots').innerHTML=placed.map(function(p,i){
+      return '<circle data-i="'+i+'" cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="'+R+'" fill="'+
+        gBarColor(p.f.nominal_bubble,true).replace('.75','.9')+'" stroke="var(--surface)" stroke-width="1.2"/>'}).join('');
+
+    var zx=X(0).toFixed(1);
+    document.getElementById('bZero').innerHTML=
+      '<line x1="'+zx+'" x2="'+zx+'" y1="8" y2="84" stroke="var(--slate-400)" stroke-dasharray="2 3"/>';
+    var s=g.summary, ax=X(s.avg_bubble*100).toFixed(1);
+    document.getElementById('bAvgMark').innerHTML=
+      '<path d="M'+ax+' 91 l-5 -7 h10 z" fill="var(--gold-600)"/>';
+    document.getElementById('bAxis').innerHTML=
+      '<text x="'+X0+'" y="8">'+gPct(lo/100,1)+'</text>'+
+      '<text x="'+zx+'" y="8" text-anchor="middle" font-weight="700">NAV</text>'+
+      '<text x="'+X1+'" y="8" text-anchor="end">'+gPct(hi/100,1)+'</text>';
+
+    var below=fs.filter(function(f){return f.nominal_bubble<0}).length, above=fs.length-below;
+    gText('bBelow',fa(below)); gText('bAbove',fa(above));
+    document.getElementById('bBelowBar').style.width=(below/fs.length*100)+'%';
+    document.getElementById('bAboveBar').style.width=(above/fs.length*100)+'%';
+
+    svg._placed=placed;
+  });
+
+  /* hover / tap a dot to name it */
+  function show(ev){
+    var c=ev.target.closest&&ev.target.closest('circle[data-i]');
+    if(!c||!svg._placed){tip.hidden=true; return}
+    var p=svg._placed[+c.getAttribute('data-i')], r=svg.getBoundingClientRect();
+    tip.innerHTML='صندوق '+p.f.symbol+' <b style="color:'+gColor(p.f.nominal_bubble)+'">'+gPct(p.f.nominal_bubble)+'</b>';
+    tip.style.left=(p.x/300*r.width)+'px'; tip.style.top=(p.y/92*r.height)+'px';
+    tip.hidden=false;
+  }
+  svg.addEventListener('mousemove',show);
+  svg.addEventListener('click',show);
+  svg.addEventListener('mouseleave',function(){tip.hidden=true});
+})();
+

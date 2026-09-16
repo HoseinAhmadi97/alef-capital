@@ -53,7 +53,7 @@ HTML = """
       <ul class="feat">
         <li>همه صندوق‌های طلا، لحظه‌ای</li>
         <li>تحلیل ترکیب دارایی صندوق‌ها</li>
-        <li>مانیتورینگ NAV (Latent / Pure)</li>
+        <li>روند درون‌روزی NAV همه صندوق‌ها</li>
         <li>۲۰ هشدار حباب + تاریخچه ۶ ماه</li>
         <li>خروجی اکسل · پشتیبانی تیکت</li>
         <li class="no">داشبورد کاوردکال</li>
@@ -102,7 +102,7 @@ HTML = """
       <tr><td>به‌روزرسانی داده</td><td>لحظه‌ای</td><td class="hi">لحظه‌ای</td><td>لحظه‌ای</td></tr>
       <tr><td>محاسبه حباب نسبت به NAV</td><td class="y">✓</td><td class="hi y">✓</td><td class="y">✓</td></tr>
       <tr><td>تحلیل ترکیب دارایی صندوق‌ها</td><td class="n">—</td><td class="hi y">✓</td><td class="y">✓</td></tr>
-      <tr><td>مانیتورینگ Latent / Pure NAV</td><td class="n">—</td><td class="hi y">✓</td><td class="y">✓</td></tr>
+      <tr><td>روند درون‌روزی NAV همه صندوق‌ها</td><td class="n">—</td><td class="hi y">✓</td><td class="y">✓</td></tr>
       <tr><td>شناسایی خودکار صندوق ارزنده</td><td class="n">—</td><td class="hi y">✓</td><td class="y">✓</td></tr>
 
       <tr class="grp"><td colspan="4">داشبورد کاوردکال</td></tr>

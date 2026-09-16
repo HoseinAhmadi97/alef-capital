@@ -279,6 +279,30 @@ footer a:hover{color:var(--gold-300)}
 .live.is-soon{color:var(--gold-700);background:rgba(240,180,41,.14);font-variant-numeric:tabular-nums}
 .live.is-soon i{background:var(--gold-500)}
 
+/* bubble vs coin weight chart (product + market) */
+.bmix{position:relative}
+.bmix svg{width:100%;height:auto;display:block;direction:ltr;overflow:visible}
+.bm-bg{fill:var(--surface-2)}
+.bm-grid{stroke:var(--border);stroke-width:1}
+.bm-zero{stroke:var(--slate-400);stroke-width:1;stroke-dasharray:3 4}
+.bm-tick{font-size:11px;fill:var(--slate-400);font-variant-numeric:tabular-nums}
+.bm-tick.z{fill:var(--slate-500);font-weight:700}
+.bm-trend{stroke:var(--gold-600);stroke-width:2;stroke-dasharray:7 5;opacity:.9}
+.bm-trend-l{font-size:11px;font-weight:700;fill:var(--gold-700)}
+.bm-pt{stroke:var(--surface);stroke-width:1.5;cursor:pointer;transition:opacity .15s}
+.bm-pt.pos{fill:rgba(22,163,74,.62)} .bm-pt.neg{fill:rgba(220,38,38,.58)} .bm-pt.zero{fill:rgba(148,163,184,.7)}
+.bm-pt:hover{stroke:var(--ink-800);stroke-width:2}
+.bm-label{font-size:11.5px;font-weight:700;fill:var(--ink-800);paint-order:stroke;stroke:var(--surface-2);stroke-width:3;pointer-events:none}
+.bm-axis-x{text-align:center;font-size:11.5px;color:var(--slate-500);margin-top:2px}
+.bm-legend{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:11.5px;color:var(--slate-500)}
+.bm-legend span{display:inline-flex;align-items:center;gap:6px}
+.bm-legend i{display:inline-block;width:10px;height:10px;border-radius:50%}
+.bm-legend .lg-pos{background:rgba(22,163,74,.62)} .bm-legend .lg-neg{background:rgba(220,38,38,.58)}
+.bm-legend .lg-size{width:14px;height:14px;border:1.5px solid var(--slate-400);background:none}
+.bm-legend .lg-trend{width:18px;height:0;border-radius:0;border-top:2px dashed var(--gold-600)}
+.bm-tip{white-space:normal;min-width:170px;text-align:center;line-height:1.7}
+.bmix-empty{padding:40px;text-align:center;color:var(--slate-400);font-size:13px}
+
 /* home: bubble spectrum card */
 .bspec{position:relative;margin:10px 0 6px}
 /* direction:ltr — in an RTL page SVG text-anchor start/end swap sides */

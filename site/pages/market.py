@@ -82,18 +82,8 @@ HTML = """
 <div class="wrap split" style="align-items:start">
   <div class="card">
     <h3 style="font-size:16px;margin-bottom:4px">حباب اسمی در برابر وزن سکه در صندوق</h3>
-    <p style="font-size:12.5px;color:var(--slate-500);margin:0 0 16px">هر نقطه یک صندوق. نقاط زیر خط روند، نسبت به ترکیب دارایی‌شان ارزنده‌ترند.</p>
-    <svg viewBox="0 0 420 260" style="width:100%;height:auto;display:block">
-      <rect x="46" y="14" width="358" height="196" fill="var(--surface-2)" rx="8"/>
-      <line x1="46" y1="112" x2="404" y2="112" stroke="var(--border-strong)"/>
-      <line x1="46" y1="14" x2="46" y2="210" stroke="var(--border-strong)"/>
-      <line id="scatterFit" x1="60" y1="112" x2="392" y2="112" stroke="#DC2626" stroke-width="2" stroke-dasharray="6 5" opacity=".75" style="display:none"/>
-      <g id="scatter" style="color:var(--ink-900)"></g>
-      <text x="404" y="232" font-size="11" fill="#64748B" text-anchor="end">وزن سکه در صندوق ←</text>
-      <text x="40" y="20" font-size="10" fill="#94A3B8" text-anchor="end" id="scatterTop"></text>
-      <text x="40" y="116" font-size="10" fill="#94A3B8" text-anchor="end">۰٪</text>
-      <text x="40" y="208" font-size="10" fill="#94A3B8" text-anchor="end" id="scatterBottom"></text>
-    </svg>
+    <p style="font-size:12.5px;color:var(--slate-500);margin:0 0 12px">هر دایره یک صندوق. صندوق‌های زیر خط روند، نسبت به ترکیب دارایی‌شان ارزنده‌ترند.</p>
+    <div class="bmix" data-bmix></div>
   </div>
   <div class="card">
     <h3 style="font-size:16px;margin-bottom:4px">روند حباب در طول روز</h3>
@@ -173,10 +163,7 @@ onGold(function(g){
   });
 });
 
-/* bubble vs coin weight */
-onGold(function(g){
-  goldScatter(g,{g:'scatter',line:'scatterFit',top:'scatterTop',bottom:'scatterBottom',x0:60,x1:392,y0:112,h:90});
-});
+/* bubble vs coin weight: <div data-bmix> renders itself (site/gold-data.js) */
 """
 
 HTML = paywall.apply(HTML)

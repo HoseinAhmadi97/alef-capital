@@ -14,13 +14,34 @@ HTML = """
       <p class="lead">قیمت هر صندوق طلا با ارزش واقعی‌اش فاصله دارد. این فاصله لحظه‌به‌لحظه عوض می‌شود و با چشم قابل ردیابی نیست. داشبورد آربیتراژ، حباب همه صندوق‌های طلای بورس تهران را هم‌زمان محاسبه می‌کند و نشان می‌دهد کدام‌ها ارزنده‌ترند.</p>
       <div class="pcta">
         <a class="btn btn-gold" href="dashboard-gold.html"><ico>🟡</ico>ورود به داشبورد طلا</a>
-        <a class="btn btn-s" href="#sample">پیش‌نمایش داشبورد</a>
       </div>
     </div>
     <div class="card">
       <div class="lch"><span class="lbl">پراکندگی حباب امروز</span><span class="live" data-session="funds"><i></i><span>زنده</span></span></div>
       <div class="lcv"><span class="big num" id="pAvg">—</span><span class="lcu">میانگین <span class="gcount">—</span> صندوق</span></div>
-      <div class="dist" id="pDist"></div>
+      <!-- bubble spectrum: every fund is a dot on one price-vs-NAV axis -->
+      <div class="bspec">
+        <svg id="bSpec" viewBox="0 0 300 92" role="img" aria-label="پراکندگی حباب صندوق‌های طلا نسبت به NAV">
+          <defs>
+            <linearGradient id="bTrack" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0%" stop-color="rgba(220,38,38,.55)"/>
+              <stop offset="50%" stop-color="rgba(148,163,184,.35)"/>
+              <stop offset="100%" stop-color="rgba(22,163,74,.55)"/>
+            </linearGradient>
+          </defs>
+          <rect id="bTrackRect" x="8" y="44" width="284" height="4" rx="2" fill="url(#bTrack)"/>
+          <g id="bZero"></g>
+          <g id="bDots"></g>
+          <g id="bAvgMark"></g>
+          <g id="bAxis" font-size="9" fill="var(--slate-400)"></g>
+        </svg>
+        <div class="btip" id="bTip" hidden></div>
+      </div>
+      <div class="bsplit">
+        <span class="neg"><b id="bBelow">—</b> زیر NAV</span>
+        <div class="bsplit-bar" aria-hidden="true"><i id="bBelowBar"></i><i id="bAboveBar"></i></div>
+        <span class="pos"><b id="bAbove">—</b> بالای NAV</span>
+      </div>
       <div class="lcf">
         <span>کم‌حباب‌ترین <b id="pMin">—</b></span>
         <span>پرحباب‌ترین <b id="pMax">—</b></span>
@@ -41,19 +62,9 @@ HTML = """
     <p class="lead" style="margin-top:16px">چون دارایی پایه همه این صندوق‌ها یکسان است (گواهی سپرده سکه و شمش طلا)، این اختلاف قیمت یک <b>فرصت آربیتراژ</b> می‌سازد: خروج از صندوق حباب‌دار و ورود به صندوق کم‌حباب، بدون خروج از بازار طلا و بدون افزودن ریسک به پرتفو.</p>
   </div>
   <div class="card">
-    <h3 style="font-size:15px;margin-bottom:4px">حباب اسمی در برابر وزن سکه در صندوق</h3>
-    <p style="font-size:12.5px;color:var(--slate-500);margin:0 0 14px">هر نقطه یک صندوق. صندوق‌های زیر خط روند، نسبت به ترکیب دارایی‌شان ارزنده‌ترند.</p>
-    <svg viewBox="0 0 420 260" style="width:100%;height:auto;display:block">
-      <rect x="46" y="14" width="358" height="196" fill="var(--surface-2)" rx="8"/>
-      <line x1="46" y1="112" x2="404" y2="112" stroke="var(--border-strong)" stroke-width="1"/>
-      <line x1="46" y1="14" x2="46" y2="210" stroke="var(--border-strong)" stroke-width="1"/>
-      <line id="scatterFit" x1="60" y1="112" x2="392" y2="112" stroke="#DC2626" stroke-width="2" stroke-dasharray="6 5" opacity=".75" style="display:none"/>
-      <g id="scatter" style="color:var(--ink-900)"></g>
-      <text x="404" y="230" font-size="11" fill="#64748B" text-anchor="end">وزن سکه در صندوق ←</text>
-      <text x="40" y="20" font-size="10" fill="#94A3B8" text-anchor="end" id="scatterTop"></text>
-      <text x="40" y="116" font-size="10" fill="#94A3B8" text-anchor="end">۰٪</text>
-      <text x="40" y="208" font-size="10" fill="#94A3B8" text-anchor="end" id="scatterBottom"></text>
-    </svg>
+    <h3 style="font-size:16px;margin-bottom:4px">حباب اسمی در برابر وزن سکه در صندوق</h3>
+    <p style="font-size:12.5px;color:var(--slate-500);margin:0 0 12px">هر دایره یک صندوق. صندوق‌های زیر خط روند، نسبت به ترکیب دارایی‌شان ارزنده‌ترند.</p>
+    <div class="bmix" data-bmix></div>
   </div>
 </div>
 </section>
@@ -70,9 +81,9 @@ HTML = """
       <h3>پایش قیمت و شاخص‌های کلیدی</h3>
       <p>قیمت لحظه‌ای همه دارایی‌های پایه، در یک تابلو.</p>
       <ul>
-        <li>طلای ۱۸ عیار، مثقال، گواهی شمش و گواهی سکه</li>
-        <li>اونس جهانی طلا و نرخ دلار</li>
-        <li>شاخص لحظه‌ای صندوق‌های طلا و روند درون‌روزی آن</li>
+        <li>طلای ۱۸ عیار، مظنه آبشده، گواهی شمش و گواهی سکه</li>
+        <li>انس جهانی طلا و نرخ دلار، همه به تومان</li>
+        <li>نقشه بازار صندوق‌ها بر اساس ارزش معاملات و بازدهی روز</li>
       </ul>
     </div>
     <div class="fx">
@@ -81,18 +92,18 @@ HTML = """
       <p>فاصله قیمت هر صندوق تا ارزش خالص دارایی‌اش، لحظه‌ای.</p>
       <ul>
         <li>حباب هر صندوق نسبت به NAV، به‌صورت لحظه‌ای</li>
-        <li>روند حباب در طول روز، قابل مقایسه بین صندوق‌ها</li>
-        <li>هشدار وقتی حباب از آستانه دلخواه شما عبور کند</li>
+        <li>کم‌حباب‌ترین و پرحباب‌ترین صندوق در یک نگاه</li>
+        <li>مرتب‌سازی همه صندوق‌ها بر اساس حباب، قیمت یا ارزش معاملات</li>
       </ul>
     </div>
     <div class="fx">
       <b>لایه ۰۳</b>
       <h3>مانیتورینگ روند NAV</h3>
-      <p>سه نمای مکمل از ارزش واقعی، به تفکیک هر صندوق.</p>
+      <p>حرکت ارزش خالص دارایی همه صندوق‌ها در طول روز.</p>
       <ul>
-        <li><span dir="ltr">Latent NAV</span> — ارزش نهفته بر پایه آخرین معاملات</li>
-        <li><span dir="ltr">Pure NAV</span> — ارزش خالص بدون اثر نقدشوندگی</li>
-        <li>نسبت <span dir="ltr">Latent/Pure</span> برای مقایسه دقیق‌تر صندوق‌ها</li>
+        <li>روند درون‌روزی NAV هر صندوق نسبت به دیروز</li>
+        <li>مقایسه هر صندوق با میانه همه صندوق‌ها</li>
+        <li>رتبه‌بندی صندوق‌ها بر اساس تغییر NAV</li>
       </ul>
     </div>
     <div class="fx">
@@ -100,32 +111,11 @@ HTML = """
       <h3>تحلیل ترکیب دارایی</h3>
       <p>معلوم می‌کند حباب هر صندوق چقدر توجیه‌پذیر است.</p>
       <ul>
-        <li>سهم سکه، شمش و سایر ابزارها در هر صندوق</li>
-        <li>میزان همبستگی صندوق با قیمت سکه و دلار</li>
-        <li>شناسایی صندوق ارزنده نسبت به کیفیت دارایی‌اش</li>
+        <li>سهم سکه، شمش و نقد در هر صندوق</li>
+        <li>ترکیب کل بازار صندوق‌های طلا، وزنی با ارزش بازار</li>
+        <li>حباب هر صندوق در برابر سهم سکه‌اش — کدام ارزنده‌تر است</li>
       </ul>
     </div>
-  </div>
-</div>
-</section>
-
-<!-- SAMPLE DATA -->
-<section class="dark sec" id="sample">
-<div class="wrap">
-  <span class="eyebrow" style="background:rgba(240,180,41,.14)">پیش‌نمایش داشبورد</span>
-  <h2 class="h2">این چیزی است که هر روز می‌بینید</h2>
-  <p class="lead">هفت صندوق پرمعامله امروز، زنده. جدول کامل <span class="gcount">—</span> صندوق، تاریخچه و هشدار در داشبورد طلا.</p>
-  <div class="panel" style="margin-top:26px">
-    <div class="pbar"><i></i><i></i><i></i></div>
-    <div class="tscroll">
-    <table>
-      <thead><tr><th>نماد</th><th>آخرین قیمت</th><th>ارزش ذاتی (NAV)</th><th>حباب</th><th>دلار محاسباتی</th><th>زمان</th></tr></thead>
-      <tbody id="pSample">
-        <tr><td colspan="6">در حال دریافت داده…</td></tr>
-      </tbody>
-    </table>
-    </div>
-@@IFLOCK@@    <div class="lockmsg">🔒 جدول کامل همه صندوق‌ها، تاریخچه و هشدار، با پلن طلا.</div>@@END@@
   </div>
 </div>
 </section>
@@ -178,8 +168,8 @@ HTML = """
 <div class="wrap">
   <h2 class="h2" style="text-align:center">سوالات متداول این محصول</h2>
   <div class="faq">
-    <details open><summary>حباب صندوق دقیقاً چطور محاسبه می‌شود؟</summary><p>حباب، نسبت اختلاف قیمت معاملاتی هر واحد صندوق به ارزش خالص دارایی (NAV) همان واحد است. ما NAV را از ترکیب دارایی اعلامی صندوق و قیمت لحظه‌ای دارایی‌های پایه (گواهی سپرده سکه و شمش) بازسازی می‌کنیم، نه از NAV تأخیری منتشرشده.</p></details>
-    <details><summary>تفاوت <span dir="ltr">Latent NAV</span> و <span dir="ltr">Pure NAV</span> چیست؟</summary><p><span dir="ltr">Pure NAV</span> ارزش خالص دارایی بر پایه قیمت دارایی‌های پایه است. <span dir="ltr">Latent NAV</span> اثر نقدشوندگی و آخرین معاملات واقعی را هم لحاظ می‌کند. نسبت این دو نشان می‌دهد قیمت‌گذاری بازار روی یک صندوق چقدر با ارزش بنیادی‌اش فاصله دارد.</p></details>
+    <details open><summary>حباب صندوق دقیقاً چطور محاسبه می‌شود؟</summary><p>حباب، فاصله قیمت آخرین معامله هر واحد صندوق از ارزش خالص دارایی (NAV) همان واحد است: قیمت ÷ NAV − ۱. NAV از فرابی گرفته می‌شود و هم‌زمان با قیمت‌ها به‌روز می‌شود. حباب منفی یعنی صندوق زیر ارزش دارایی‌اش معامله می‌شود.</p></details>
+    <details><summary>چرا حباب را کنار سهم سکه صندوق می‌سنجید؟</summary><p>سکه معمولاً با حباب بیشتری از شمش معامله می‌شود، پس صندوقی که سکه بیشتری دارد طبیعتاً حباب بالاتری هم دارد. نمودار «حباب در برابر وزن سکه» این اثر را جدا می‌کند: صندوقی که زیر خط روند است، نسبت به صندوق‌های هم‌ترکیبش ارزان‌تر معامله می‌شود.</p></details>
     <details><summary>داده با چه تأخیری به‌روز می‌شود؟</summary><p>داده برای همه کاربران لحظه‌ای است: قیمت‌ها و حباب صندوق‌ها هر چند ثانیه به‌روز می‌شوند و مهر زمان آخرین به‌روزرسانی روی صفحه نمایش داده می‌شود.</p></details>
     <details><summary>آیا داشبورد به‌جای من معامله می‌کند؟</summary><p>خیر. این محصول یک ابزار داده و تحلیل است؛ تصمیم و اجرای معامله با شماست. اجرای خودکار روی حساب کارگزاری، خدمت جداگانه‌ای است که در صفحه مدیریت پرتفوی توضیح داده شده.</p></details>
     <details><summary>برای استفاده باید حساب کارگزاری خاصی داشته باشم؟</summary><p>خیر. داشبورد مستقل از کارگزاری شما کار می‌کند و فقط داده بازار را نمایش می‌دهد.</p></details>
@@ -192,7 +182,7 @@ HTML = """
 <div class="wrap">
   <div class="ctaband">
     <h2>همین حالا داشبورد را ببینید</h2>
-    <p>نسخه مهمان بدون ثبت‌نام باز است؛ ستون‌های ارزش ذاتی و حباب با عضویت رایگان باز می‌شوند.</p>
+    <p>داشبورد کامل بدون ثبت‌نام باز است — بازار امروز، جدول همه صندوق‌ها، روند NAV و ترکیب دارایی.</p>
     <a class="btn btn-gold" href="dashboard-gold.html"><ico>🟡</ico>ورود به داشبورد طلا</a>
     <a class="btn btn-s" href="pricing.html" style="color:#DBE6FE;border-color:#334155;margin-inline-start:8px">مقایسه پلن‌ها</a>
   </div>
@@ -205,40 +195,16 @@ HTML = """
 """
 
 JS = """
-/* hero card — bubble of every fund, from the gold snapshot (site/gold-data.js) */
+/* hero card — the bubble spectrum renders itself (site/gold-data.js); this fills the numbers */
 onGold(function(g){
-  var fs=g.withBubble, el=document.getElementById('pDist');
-  if(el){
-    var b=fs.map(function(f){return f.nominal_bubble*100});
-    var mx=Math.max(0.5,Math.max.apply(null,b)), mn=Math.min(-0.5,Math.min.apply(null,b));
-    el.innerHTML=fs.map(function(f,i){
-      var v=b[i], h=Math.max(8,Math.round((v-mn)/(mx-mn)*100));
-      var c=gBarColor(f.nominal_bubble,Math.abs(v)>1);
-      return '<span title="'+f.symbol+' '+gPct(f.nominal_bubble)+'" style="height:'+h+'%;background:'+c+'"></span>'}).join('');
-  }
   var s=g.summary, a=gText('pAvg',gPct(s.avg_bubble));
   if(a) a.style.color=gColor(s.avg_bubble);
   if(s.min_bubble) gText('pMin',s.min_bubble.symbol+' '+gPct(s.min_bubble.bubble));
   if(s.max_bubble) gText('pMax',s.max_bubble.symbol+' '+gPct(s.max_bubble.bubble));
 });
 
-/* bubble vs coin weight */
-onGold(function(g){
-  goldScatter(g,{g:'scatter',line:'scatterFit',top:'scatterTop',bottom:'scatterBottom',x0:60,x1:392,y0:112,h:90});
-});
+/* bubble vs coin weight: <div data-bmix> renders itself (site/gold-data.js) */
 
-/* preview table — the seven most traded funds today */
-onGold(function(g){
-  var b=document.getElementById('pSample'); if(!b) return;
-  var usd=g.m.dollar?g.m.dollar.price:null;
-  var rows=g.funds.filter(function(f){return f.nominal_bubble!=null})
-    .sort(function(x,y){return (y.value||0)-(x.value||0)}).slice(0,7);
-  b.innerHTML=rows.map(function(f){
-    var cls=gTone(f.nominal_bubble,'up','down','neu');
-    return '<tr><td><b>'+f.symbol+'</b></td><td>'+gNum(gToman(f.last_trade))+'</td><td>'+gNum(gToman(f.nav))+'</td>'+
-      '<td><span class="chip '+cls+'">'+gPct(f.nominal_bubble)+'</span></td>'+
-      '<td>'+(usd?gNum(usd*f.last_trade/f.nav):'—')+'</td><td>'+gTime(f.trade_time)+'</td></tr>'}).join('');
-});
 """
 
 HTML = paywall.apply(HTML)
