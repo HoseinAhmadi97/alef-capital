@@ -102,13 +102,14 @@ GOLD = """
         <th data-sort="num">تغییر<small>تومان</small></th>
         <th data-sort="num" class="gs">NAV<small>تومان</small></th>
         <th data-sort="num">حباب<small>نسبت به NAV</small></th>
+        <th data-sort="num">حباب ذاتی<small>ترکیب دارایی</small></th>
         <th data-sort="num">دلار محاسباتی<small>تومان</small></th>
         <th data-sort="num" class="gs">ارزش معاملات<small>میلیارد تومان</small></th>
         <th data-sort="text">زمان<small>آخرین معامله</small></th></tr></thead>
       <tbody id="gBody"></tbody>
     </table>
   </div></div>
-  <p style="font-size:12px;color:var(--slate-400);margin-top:10px"><span class="gcount">—</span> صندوق · برای مرتب‌سازی روی عنوان هر ستون بزنید · همه قیمت‌ها به تومان · دلار محاسباتی = دلار × قیمت ÷ NAV</p>
+  <p style="font-size:12px;color:var(--slate-400);margin-top:10px"><span class="gcount">—</span> صندوق · برای مرتب‌سازی روی عنوان هر ستون بزنید · همه قیمت‌ها به تومان · حباب ذاتی = وزن سکه × حباب گواهی سکه + وزن شمش × حباب گواهی شمش · دلار محاسباتی = دلار × (۱ + حباب ذاتی)</p>
 </div>
 </section>
 
@@ -122,11 +123,11 @@ GOLD = """
         <th data-sort="num">آخرین قیمت<small>تومان</small></th>
         <th data-sort="num">تغییر<small>درصد</small></th>
         <th data-sort="num">تغییر<small>تومان</small></th>
-        <th class="gs">ارزش ذاتی<small>تومان</small></th><th>حباب</th><th>دلار محاسباتی<small>تومان</small></th></tr></thead>
+        <th data-sort="num" class="gs">ارزش ذاتی<small>تومان</small></th><th data-sort="num">حباب ذاتی</th><th data-sort="num">دلار محاسباتی<small>تومان</small></th></tr></thead>
       <tbody id="sBody"></tbody>
     </table>
   </div></div>
-  <p style="font-size:12px;color:var(--slate-400);margin-top:10px">ارزش ذاتی، حباب و دلار محاسباتی سکه‌ها به‌زودی</p>
+  <p style="font-size:12px;color:var(--slate-400);margin-top:10px">ارزش ذاتی از انس جهانی و دلار محاسبه می‌شود · برای گواهی سکه و گواهی شمش</p>
 </div>
 </section>
 
@@ -301,15 +302,15 @@ onGold(function(g){
 /* funds table */
 onGold(function(g){
   var b=document.getElementById('gBody'); if(!b) return;
-  var usd=g.m.dollar?g.m.dollar.price:null;
   var rows=g.funds.slice().sort(function(x,y){return (y.value||0)-(x.value||0)});
+  /* intrinsic bubble and implied dollar are computed in Nexus (gold_intrinsic.py) */
   b.innerHTML=rows.map(function(f){
-    var implied=f.last_trade&&f.nav&&usd?usd*f.last_trade/f.nav:null;
     return '<tr>'+gTd(f.symbol,f.symbol)+
       gTd(gNumT(gToman(f.last_trade)),f.last_trade,'k')+chgCells(f.change_pct,gToman(f.change))+
       gTd(cell(gNumT(gToman(f.nav))),f.nav,'s gs')+
       gTd(bubCell(f.nominal_bubble),f.nominal_bubble)+
-      gTd(cell(gNumT(implied)),implied,'s')+
+      gTd(bubCell(f.intrinsic_bubble),f.intrinsic_bubble)+
+      gTd(cell(gNumT(f.implied_dollar)),f.implied_dollar,'s')+
       gTd(f.value==null?'—':gNumT(f.value/1e10),f.value,'s gs')+
       gTd(gTime(f.trade_time),f.trade_time,'m')+'</tr>'}).join('');
   gResort(document.getElementById('gTable'));
@@ -324,9 +325,13 @@ onGold(function(g){
   var b=document.getElementById('sBody'); if(!b) return;
   b.innerHTML=SPOT.map(function(s){
     var r=g.m[s[1]], k=r&&r.unit==='IRR'?0.1:1, px=goldToman(r);   /* toman */
+    /* intrinsic value (row unit) → toman; only the certificates have one (Nexus) */
+    var intr=r&&r.intrinsic!=null?r.intrinsic*k:null;
     return '<tr>'+gTd(s[0],s[0])+gTd(gNumT(px),px,'k')+
       chgCells(r?r.change_pct:null,r&&r.change!=null?r.change*k:null)+
-      '<td class="gs">—</td><td>—</td><td>—</td></tr>'}).join('');
+      gTd(gNumT(intr),intr,'s gs')+
+      gTd(r&&r.bubble!=null?bubCell(r.bubble):'—',r?r.bubble:null)+
+      gTd(gNumT(r?r.implied_dollar:null),r?r.implied_dollar:null,'s')+'</tr>'}).join('');
   gResort(document.getElementById('sTable'));
 });
 
