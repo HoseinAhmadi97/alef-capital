@@ -85,6 +85,13 @@ function goldRial(r) {
   if (!r || r.price == null) return null;
   return r.unit === 'IRT' ? r.price * 10 : r.price;
 }
+/* rial → toman (every price in a table is shown in toman) */
+function gToman(rial) { return rial == null ? null : rial / 10; }
+/* a market row's price in toman, whatever unit its source reports */
+function goldToman(r) {
+  if (!r || r.price == null) return null;
+  return r.unit === 'IRR' ? r.price / 10 : r.price;
+}
 /* the value a price cell shows: dollar in toman, ounce in USD, the rest in rial */
 function goldShown(r) {
   if (!r || r.price == null) return null;

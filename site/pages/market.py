@@ -37,7 +37,7 @@ HTML = """
 <section class="sec">
 <div class="wrap">
   <h2 class="h2">جدول حباب صندوق‌های طلا</h2>
-  <p class="lead">همه <span class="gcount">—</span> صندوق طلای بورس، به ترتیب ارزش معاملات امروز. قیمت و NAV به ریال.</p>
+  <p class="lead">همه <span class="gcount">—</span> صندوق طلای بورس، به ترتیب ارزش معاملات امروز. قیمت و NAV به تومان.</p>
   <div class="panel" style="margin-top:24px;background:var(--surface);border-color:var(--border)">
     <div class="tscroll">
     <table style="color:var(--ink-800)">
@@ -153,8 +153,8 @@ onGold(function(g){
     var cls=gTone(f.nominal_bubble,'up','down','neu');
     return '<tr'+(PAYWALL&&i>=5?' class="lock"':'')+TD+'>'+
       '<td'+TD+'><b>'+f.symbol+'</b></td>'+
-      '<td'+TD+'>'+gNum(f.last_trade)+'</td>'+
-      '<td'+TD+'>'+gNum(f.nav)+'</td>'+
+      '<td'+TD+'>'+gNum(gToman(f.last_trade))+'</td>'+
+      '<td'+TD+'>'+gNum(gToman(f.nav))+'</td>'+
       '<td'+TD+'><span class="chip '+cls+'">'+gPct(f.nominal_bubble)+'</span></td>'+
       '<td'+TD+'>'+gBillion(f.value)+'</td>'+
       '<td'+TD+'>'+gTime(f.trade_time)+'</td></tr>'}).join('');

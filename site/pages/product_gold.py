@@ -235,7 +235,7 @@ onGold(function(g){
     .sort(function(x,y){return (y.value||0)-(x.value||0)}).slice(0,7);
   b.innerHTML=rows.map(function(f){
     var cls=gTone(f.nominal_bubble,'up','down','neu');
-    return '<tr><td><b>'+f.symbol+'</b></td><td>'+gNum(f.last_trade)+'</td><td>'+gNum(f.nav)+'</td>'+
+    return '<tr><td><b>'+f.symbol+'</b></td><td>'+gNum(gToman(f.last_trade))+'</td><td>'+gNum(gToman(f.nav))+'</td>'+
       '<td><span class="chip '+cls+'">'+gPct(f.nominal_bubble)+'</span></td>'+
       '<td>'+(usd?gNum(usd*f.last_trade/f.nav):'—')+'</td><td>'+gTime(f.trade_time)+'</td></tr>'}).join('');
 });

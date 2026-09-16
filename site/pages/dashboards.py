@@ -95,7 +95,7 @@ GOLD = """
       <tbody id="gBody"></tbody>
     </table>
   </div></div>
-  <p style="font-size:12px;color:var(--slate-400);margin-top:10px"><span class="gcount">—</span> صندوق · برای مرتب‌سازی روی عنوان هر ستون بزنید · قیمت و NAV به ریال · ارزش معاملات به تومان · دلار محاسباتی = دلار × قیمت ÷ NAV</p>
+  <p style="font-size:12px;color:var(--slate-400);margin-top:10px"><span class="gcount">—</span> صندوق · برای مرتب‌سازی روی عنوان هر ستون بزنید · همه قیمت‌ها به تومان · دلار محاسباتی = دلار × قیمت ÷ NAV</p>
 </div>
 </section>
 
@@ -110,7 +110,7 @@ GOLD = """
       <tbody id="sBody"></tbody>
     </table>
   </div></div>
-  <p style="font-size:12px;color:var(--slate-400);margin-top:10px">قیمت‌ها به ریال · ارزش ذاتی، حباب و دلار محاسباتی سکه‌ها به‌زودی</p>
+  <p style="font-size:12px;color:var(--slate-400);margin-top:10px">قیمت‌ها به تومان · ارزش ذاتی، حباب و دلار محاسباتی سکه‌ها به‌زودی</p>
 </div>
 </section>
 
@@ -268,8 +268,8 @@ onGold(function(g){
   b.innerHTML=rows.map(function(f){
     var implied=f.last_trade&&f.nav&&usd?usd*f.last_trade/f.nav:null;
     return '<tr>'+gTd(f.symbol,f.symbol)+
-      gTd(gNum(f.last_trade),f.last_trade,'k')+chgCells(f.change_pct,f.change)+
-      gTd(cell(gNum(f.nav)),f.nav,'s')+
+      gTd(gNum(gToman(f.last_trade)),f.last_trade,'k')+chgCells(f.change_pct,gToman(f.change))+
+      gTd(cell(gNum(gToman(f.nav))),f.nav,'s')+
       gTd(bubCell(f.nominal_bubble),f.nominal_bubble)+
       gTd(cell(gNum(implied)),implied,'s')+
       gTd(withUnit(gBillion(f.value)),f.value,'s')+
@@ -285,7 +285,7 @@ var SPOT=[['طلا گرم ۱۸ عیار','geram18'],['سکه امامی','sekee'
 onGold(function(g){
   var b=document.getElementById('sBody'); if(!b) return;
   b.innerHTML=SPOT.map(function(s){
-    var r=g.m[s[1]], k=r&&r.unit==='IRT'?10:1, px=goldRial(r);
+    var r=g.m[s[1]], k=r&&r.unit==='IRR'?0.1:1, px=goldToman(r);   /* toman */
     return '<tr>'+gTd(s[0],s[0])+gTd(gNum(px),px,'k')+
       chgCells(r?r.change_pct:null,r&&r.change!=null?r.change*k:null)+
       '<td>—</td><td>—</td><td>—</td></tr>'}).join('');
@@ -355,7 +355,7 @@ onGold(function(g){
     gText('navSel','صندوق '+sel.symbol);
     var chip=gText('navSelV',gPct(sel.change_pct));
     chip.className='d '+gTone(sel.change_pct,'d-up','d-dn');
-    gText('navSelNav','NAV '+gNum(sel.last)+' ریال · '+gTime(D.times[last]));
+    gText('navSelNav','NAV '+gNum(gToman(sel.last))+' تومان · '+gTime(D.times[last]));
     [].forEach.call(list.children,function(b){
       b.setAttribute('aria-selected',b.getAttribute('data-isin')===sel.isin?'true':'false')});
     hideTip();
