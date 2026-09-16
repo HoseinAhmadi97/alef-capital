@@ -724,6 +724,19 @@ footer a:hover{color:var(--gold-300)}
 @media(max-width:800px){.lockgrid{grid-template-columns:1fr}}
 
 /* treemap */
+/* dashboard overview: market map + compact number tiles */
+.ovgrid{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);gap:16px;align-items:start}
+@media(max-width:980px){.ovgrid{grid-template-columns:1fr}}
+.mtiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mtile{padding:10px 12px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border);min-width:0}
+.mtile.hl{background:var(--gold-50);border-color:rgba(240,180,41,.45)}
+.mtile small{display:block;font-size:11px;font-weight:600;color:var(--slate-500);margin-bottom:2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mtile b{display:block;font-size:17px;font-weight:800;line-height:1.4;color:var(--ink-900);font-variant-numeric:tabular-nums;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mtile .sub{font-size:10.5px;color:var(--slate-400);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mtile .up{color:var(--up-text);font-weight:700}
+.mtile .dn{color:var(--down);font-weight:700}
 .tmap{display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:52px;gap:3px}
 /* the ink is set per cell in JS: half the treemap colours are light,
    and white on #4ADE80 is 1.7:1 */

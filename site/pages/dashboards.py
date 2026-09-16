@@ -37,31 +37,41 @@ GOLD = """
 
 <div class="subnav">
 <div class="wrap">
-  <a class="on" href="#overview">نمای کلی</a>
+  <a class="on" href="#overview">نقشه بازار</a>
   <a href="#funds">صندوق‌های طلا</a>
   <a href="#spot">طلا و سکه</a>
-  <a href="#map">نقشه بازار</a>
   <a href="#nav">روند NAV</a>
   <a href="#mix">ترکیب دارایی</a>
   <a href="#tools">ابزارها</a>
 </div>
 </div>
 
-<!-- OVERVIEW -->
+<!-- OVERVIEW — the market map first, the key numbers as compact tiles beside it -->
 <section class="dsec" id="overview">
 <div class="wrap">
-  <div class="sh"><div><h2>نمای کلی بازار</h2><p>قیمت دارایی‌های پایه که ارزش ذاتی صندوق‌ها از روی آن‌ها محاسبه می‌شود</p></div></div>
-  <div class="tiles" id="gTiles">
-    <div class="tile" data-sym="ons"><small>انس جهانی طلا (دلار)</small><b class="num">—</b><div class="sub">—</div></div>
-    <div class="tile" data-sym="geram18"><small>طلای گرمی ۱۸ عیار (ریال)</small><b class="num">—</b><div class="sub">—</div></div>
-    <div class="tile" data-sym="funds"><small>میانگین تغییر صندوق‌های طلا</small><b class="num">—</b><div class="sub">—</div></div>
-    <div class="tile" data-sym="dollar"><small>دلار (تومان)</small><b class="num">—</b><div class="sub">—</div></div>
+  <div class="sh"><div><h2>نقشه بازار صندوق‌های طلا</h2><p>اندازه هر بلوک: ارزش معاملات امروز · رنگ: بازدهی روزانه</p></div>
+    <div style="font-size:12px;color:var(--slate-500);display:flex;align-items:center;gap:7px">
+      <span>بازدهی −</span>
+      <i style="width:16px;height:12px;background:#B91C1C;border-radius:2px;display:inline-block"></i>
+      <i style="width:16px;height:12px;background:#EF4444;border-radius:2px;display:inline-block"></i>
+      <i style="width:16px;height:12px;background:#94A3B8;border-radius:2px;display:inline-block"></i>
+      <i style="width:16px;height:12px;background:#4ADE80;border-radius:2px;display:inline-block"></i>
+      <i style="width:16px;height:12px;background:#15803D;border-radius:2px;display:inline-block"></i>
+      <span>+</span>
+    </div>
   </div>
-  <div class="tiles" style="margin-top:14px">
-    <div class="tile" style="border-color:var(--gold-400);background:rgba(240,180,41,.05)"><small>میانگین حباب صندوق‌ها</small><b class="num" id="gAvg">—</b><div class="sub"><span class="gcount">—</span> صندوق تحت پایش</div></div>
-    <div class="tile"><small>پرحباب‌ترین صندوق</small><b class="num" id="gMax">—</b><div class="sub" id="gMaxN">—</div></div>
-    <div class="tile"><small>کم‌حباب‌ترین صندوق</small><b class="num" id="gMin">—</b><div class="sub" id="gMinN">—</div></div>
-    <div class="tile"><small>ارزش معاملات صندوق‌ها</small><b class="num" id="gVal">—</b><div class="sub">مجموع امروز</div></div>
+  <div class="ovgrid">
+    <div class="tmap" id="tmap"></div>
+    <div class="mtiles" id="gTiles">
+      <div class="mtile hl"><small>میانگین حباب</small><b class="num" id="gAvg">—</b><div class="sub"><span class="gcount">—</span> صندوق</div></div>
+      <div class="mtile"><small>ارزش معاملات</small><b class="num" id="gVal">—</b><div class="sub">مجموع امروز</div></div>
+      <div class="mtile"><small>پرحباب‌ترین</small><b class="num" id="gMax">—</b><div class="sub" id="gMaxN">—</div></div>
+      <div class="mtile"><small>کم‌حباب‌ترین</small><b class="num" id="gMin">—</b><div class="sub" id="gMinN">—</div></div>
+      <div class="mtile" data-sym="funds"><small>میانگین تغییر صندوق‌ها</small><b class="num">—</b><div class="sub">—</div></div>
+      <div class="mtile" data-sym="ons"><small>انس جهانی (دلار)</small><b class="num">—</b><div class="sub">—</div></div>
+      <div class="mtile" data-sym="geram18"><small>طلای ۱۸ عیار (ریال)</small><b class="num">—</b><div class="sub">—</div></div>
+      <div class="mtile" data-sym="dollar"><small>دلار (تومان)</small><b class="num">—</b><div class="sub">—</div></div>
+    </div>
   </div>
 </div>
 </section>
@@ -96,24 +106,6 @@ GOLD = """
     </table>
   </div></div>
   <p style="font-size:12px;color:var(--slate-400);margin-top:10px">قیمت‌ها به ریال · ارزش ذاتی، حباب و دلار محاسباتی سکه‌ها به‌زودی</p>
-</div>
-</section>
-
-<!-- MAP -->
-<section class="dsec" id="map">
-<div class="wrap">
-  <div class="sh"><div><h2>نقشه بازار صندوق‌های طلا</h2><p>اندازه هر بلوک: ارزش معاملات · رنگ: بازدهی روزانه</p></div>
-    <div style="font-size:12px;color:var(--slate-500);display:flex;align-items:center;gap:7px">
-      <span>بازدهی −</span>
-      <i style="width:16px;height:12px;background:#B91C1C;border-radius:2px;display:inline-block"></i>
-      <i style="width:16px;height:12px;background:#EF4444;border-radius:2px;display:inline-block"></i>
-      <i style="width:16px;height:12px;background:#94A3B8;border-radius:2px;display:inline-block"></i>
-      <i style="width:16px;height:12px;background:#4ADE80;border-radius:2px;display:inline-block"></i>
-      <i style="width:16px;height:12px;background:#15803D;border-radius:2px;display:inline-block"></i>
-      <span>+</span>
-    </div>
-  </div>
-  <div class="tmap" id="tmap"></div>
 </div>
 </section>
 
