@@ -182,9 +182,19 @@ or never arrive at all.
 
 ---
 
-## 6. When the API is added
+## 6. Live data (gold pages)
 
-The site is static for now, but the dashboards need live data. Proposed architecture:
+**Done for the gold section** — the implemented version of the plan below is in
+`docs/gold-data-map.md`: Nexus rebuilds one gold snapshot every 10 s in the
+background, nginx serves it at `/api/gold/snapshot` with a 5 s micro-cache, and
+`site/gold-data.js` polls it only while a tab is visible.
+
+To enable it on an nginx server, add the `proxy_cache_path` line and the
+`location = /api/gold/snapshot` block from `deploy/nginx.conf` to the live site
+config, then `sudo nginx -t && sudo systemctl reload nginx`. Nexus must be running
+on `127.0.0.1:8100`. **Do this before building the site**, or the gold pages show `—`.
+
+The original proposal, kept for the parts not built yet (covered call):
 
 ```
                     ┌─────────────┐
@@ -236,7 +246,8 @@ The `dist/` folder needs no backup; a single `make build` recreates it.
 ## 8. Checklist before going public
 
 - [ ] `make fonts` has run on the server (the build then self-hosts the font automatically — do not edit `site/config.py` there)
-- [ ] The data layer is connected to a real API (the `LIVE DATA LAYER` comment on each page)
+- [x] Gold pages read live data from Nexus (`docs/gold-data-map.md`)
+- [ ] Covered-call pages and the performance report still show sample data
 - [ ] The `{{ }}` placeholders are filled in: team name, registration number, address, minimum capital
 - [ ] `make check` is green
 - [ ] DNS records have propagated and the HTTPS certificate has been issued

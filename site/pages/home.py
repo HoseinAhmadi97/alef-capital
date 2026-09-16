@@ -11,7 +11,7 @@ HTML = """<!-- HERO -->
     <div class="dblaunch">
       <a class="dbtn g" href="dashboard-gold.html">
         <span class="tx"><b>داشبورد طلا</b>
-          <em><span class="pl"></span>۳۰ صندوق · میانگین حباب <span id="hbG">‎−۰٫۲٪</span></em></span>
+          <em><span class="pl"></span><span class="gcount">—</span> صندوق · میانگین حباب <span id="hbG">—</span></em></span>
         <span class="ar">←</span>
       </a>
       <a class="dbtn b" href="dashboard-covered-call.html">
@@ -27,11 +27,11 @@ HTML = """<!-- HERO -->
 
       <div class="lcard">
         <div class="lch"><span class="lbl">حباب صندوق‌های طلا</span><span class="live"><i></i>زنده</span></div>
-        <div class="lcv"><span class="big num" id="bubAvg">‎−۰٫۳۴٪</span><span class="lcu">میانگین ۳۰ صندوق</span></div>
+        <div class="lcv"><span class="big num" id="bubAvg">—</span><span class="lcu">میانگین <span class="gcount">—</span> صندوق</span></div>
         <div class="dist" id="dist"></div>
         <div class="lcf">
-          <span>کم‌حباب‌ترین <b id="bubMin">گوهر ‎−۱٫۷۹٪</b></span>
-          <span>پرحباب‌ترین <b id="bubMax">کهربا ‎+۲٫۵۰٪</b></span>
+          <span>کم‌حباب‌ترین <b id="bubMin">—</b></span>
+          <span>پرحباب‌ترین <b id="bubMax">—</b></span>
         </div>
       </div>
 
@@ -42,8 +42,8 @@ HTML = """<!-- HERO -->
       </div>
 
       <div class="lcard">
-        <div class="lch"><span class="lbl">طلای ۱۸ عیار</span><span class="live"><i></i>زنده</span></div>
-        <div class="lcv"><span class="big num" id="goldPx">۱۸۲,۲۵۷,۰۰۰</span><span class="chip down" id="goldD">▼ ۰٫۱۴٪</span></div>
+        <div class="lch"><span class="lbl">طلای ۱۸ عیار <small style="font-weight:500">(ریال)</small></span><span class="live"><i></i>زنده</span></div>
+        <div class="lcv"><span class="big num" id="goldPx">—</span><span class="chip neu" id="goldD">—</span></div>
         <svg class="spark" id="spark" viewBox="0 0 240 44" preserveAspectRatio="none">
           <defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="rgba(240,180,41,.35)"/><stop offset="100%" stop-color="rgba(240,180,41,0)"/>
@@ -56,7 +56,7 @@ HTML = """<!-- HERO -->
 
     </div>
     <div class="lcbar">
-      <span>آخرین به‌روزرسانی <b id="clock">۱۷:۳۱:۰۴</b></span>
+      <span>آخرین به‌روزرسانی <b class="gupdated">—</b></span>
       <span class="prog"><i id="prog"></i></span>
     </div>
   </div>
@@ -250,45 +250,35 @@ function setP(k){
   document.getElementById('u-pro').textContent=p.u;
   ['m','q','y'].forEach(function(x){document.getElementById('b'+x).className=(x===k?'on':'')});
 }
-/* ===================== LIVE DATA LAYER =====================
-   TODO(اتصال): این مقادیر را به API بازار وصل کنید و مهر زمان
-   واقعی سرور را نمایش دهید. ساختار خروجی مورد انتظار همین است.
-   =========================================================== */
-function pct(v,dec){return (v<0?'‎−':'‎+')+fa(Math.abs(v).toFixed(dec||2)).replace('.','٫')+'٪'}
+/* Gold numbers come from the gold snapshot (site/gold-data.js); the
+   covered-call card below is still sample data — no options source yet. */
 function flash(el,up){el.classList.remove('fu','fd');void el.offsetWidth;el.classList.add(up?'fu':'fd');
   setTimeout(function(){el.classList.remove('fu','fd')},700)}
 var CALM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
 
-/* ---------- 1. bubble across the 30 funds ---------- */
-var FUNDS=[['گوهر',-1.79],['کهربا',2.50],['عیار',0.42],['طلا',-0.11],['زر',0.88],['مثقال',-0.63],
- ['آلتون',1.16],['نفیس',-0.27],['قیراط',0.35],['تابش',-0.94],['زرفام',1.42],['گنج',-0.05],
- ['آتون',0.71],['وحید',-1.22],['کیان',0.19],['ناب',0.96],['زروان',-0.48],['سیام',1.73],
- ['درسا',-0.31],['بحیره',0.58],['ثمین',-0.86],['رادین',1.05],['شمش',0.24],['اکسیر',-0.69],
- ['هرمز',0.81],['آبان',-0.15],['فراز',1.31],['نهال',-1.04],['سپهر',0.47],['یاقوت',0.62]];
-
-function drawFunds(){
-  var d=document.getElementById('dist'); if(!d) return;
-  var mx=0; FUNDS.forEach(function(f){mx=Math.max(mx,Math.abs(f[1]))});
-  if(!d.children.length){
-    d.innerHTML=FUNDS.map(function(f){
-      return '<span title="'+f[0]+'"></span>'}).join('');
+/* ---------- 1. bubble across the gold funds ---------- */
+onGold(function(g){
+  var d=document.getElementById('dist'), fs=g.withBubble;
+  if(d){
+    var mx=0; fs.forEach(function(f){mx=Math.max(mx,Math.abs(f.nominal_bubble))});
+    if(d.children.length!==fs.length)
+      d.innerHTML=fs.map(function(){return '<span></span>'}).join('');
+    fs.forEach(function(f,i){
+      /* a negative bubble (trading below NAV) is the cheap side: green */
+      var b=d.children[i], v=f.nominal_bubble, cheap=v<0;
+      b.title=f.symbol+' '+gPct(v);
+      b.style.height=(18+(mx?Math.abs(v)/mx:0)*82)+'%';
+      b.style.alignSelf=cheap?'flex-start':'flex-end';
+      b.style.background=cheap?'rgba(22,163,74,.55)':'rgba(220,38,38,.5)';
+    });
   }
-  var sum=0,lo=FUNDS[0],hi=FUNDS[0];
-  FUNDS.forEach(function(f,i){
-    sum+=f[1]; if(f[1]<lo[1])lo=f; if(f[1]>hi[1])hi=f;
-    var b=d.children[i], up=f[1]>=0;
-    b.style.height=(18+Math.abs(f[1])/mx*82)+'%';
-    b.style.alignSelf=up?'flex-end':'flex-start';
-    b.style.background=up?'rgba(22,163,74,.55)':'rgba(220,38,38,.5)';
-  });
-  var avg=sum/FUNDS.length, el=document.getElementById('bubAvg');
-  if(el){var prev=el.textContent; el.textContent=pct(avg);
-    if(prev!==el.textContent) flash(el,avg>=0)}
-  var mn=document.getElementById('bubMin'), mxEl=document.getElementById('bubMax');
-  if(mn) mn.textContent=lo[0]+' '+pct(lo[1]);
-  if(mxEl) mxEl.textContent=hi[0]+' '+pct(hi[1]);
-  var hb=document.getElementById('hbG'); if(hb) hb.textContent=pct(avg,1);
-}
+  var s=g.summary, el=document.getElementById('bubAvg');
+  if(el){var prev=el.textContent; el.textContent=gPct(s.avg_bubble);
+    if(prev!=='—'&&prev!==el.textContent) flash(el,s.avg_bubble<0)}
+  if(s.min_bubble) gText('bubMin',s.min_bubble.symbol+' '+gPct(s.min_bubble.bubble));
+  if(s.max_bubble) gText('bubMax',s.max_bubble.symbol+' '+gPct(s.max_bubble.bubble));
+  gText('hbG',gPct(s.avg_bubble,1));
+});
 
 /* ---------- 2. covered-call opportunities ---------- */
 /* [نماد, C, DTM, K, P] — the same rows and the same formula as the dashboard
@@ -306,55 +296,37 @@ function drawOpts(){
   var h=document.getElementById('hbC'); if(h) h.textContent=fa(OPTS.length+8);
 }
 
-/* ---------- 3. gold price and sparkline ---------- */
-var GPX=182257000, GOPEN=182512000, GHIST=[];   /* GOPEN = the day's opening price */
-(function(){var v=GPX*0.994; for(var i=0;i<40;i++){v*=1+(Math.sin(i/3.1)*0.0016+(i/40)*0.0004);GHIST.push(v)}})();
-function drawSpark(){
+/* ---------- 3. 18k gold price and its intraday sparkline ---------- */
+onGold(function(g){
+  var r=g.m.geram18, el=document.getElementById('goldPx');
+  if(el&&r){var prev=el.textContent; el.textContent=gNum(goldRial(r));
+    if(prev!=='—'&&prev!==el.textContent) flash(el,gSign(r.change_pct)>=0)}
+  var ch=document.getElementById('goldD');
+  if(ch&&r){var s=gSign(r.change_pct);
+    ch.className='chip '+(s>0?'up':(s<0?'down':'neu')); ch.textContent=gArrow(r.change_pct)}
+
   var line=document.getElementById('sparkLine'), fill=document.getElementById('sparkFill'),
-      dot=document.getElementById('sparkDot');
-  if(!line) return;
-  var W=240,H=44,lo=Math.min.apply(null,GHIST),hi=Math.max.apply(null,GHIST),rng=(hi-lo)||1;
-  var pts=GHIST.map(function(v,i){
-    return [i/(GHIST.length-1)*W, H-4-((v-lo)/rng)*(H-10)]});
+      dot=document.getElementById('sparkDot'), ser=g.series.geram18;
+  if(!line||!ser||ser.points.length<2) return;
+  var vs=ser.points.map(function(p){return p.value});
+  var W=240,H=44,lo=Math.min.apply(null,vs),hi=Math.max.apply(null,vs),rng=(hi-lo)||1;
+  var pts=vs.map(function(v,i){return [i/(vs.length-1)*W, H-4-((v-lo)/rng)*(H-10)]});
   var d=pts.map(function(p,i){return (i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)}).join(' ');
   line.setAttribute('d',d);
   fill.setAttribute('d',d+' L'+W+' '+H+' L0 '+H+' Z');
   var last=pts[pts.length-1];
   dot.setAttribute('cx',last[0]); dot.setAttribute('cy',last[1]);
-}
-function tickGold(){
-  var prev=GPX;
-  GPX=Math.round(GPX*(1+(Math.random()-0.5)*0.0009)/1000)*1000;   /* real prices are round to the nearest thousand */
-  GHIST.push(GPX); if(GHIST.length>40) GHIST.shift();
-  drawSpark();
-  var el=document.getElementById('goldPx');
-  if(el){el.textContent=fa(grp(GPX)); flash(el,GPX>=prev)}
-  var ch=document.getElementById('goldD');
-  if(ch){var d=(GPX/GOPEN-1)*100;
-    ch.className='chip '+(d>0?'up':(d<0?'down':'neu'));
-    ch.textContent=(d>0?'▲':(d<0?'▼':'—'))+' '+fa(Math.abs(d).toFixed(2)).replace('.','٫')+'٪'}
-}
+});
 
-/* ---------- 4. clock and progress bar ---------- */
-function tickClock(){
-  var c=document.getElementById('clock'); if(!c) return;
-  var n=new Date(), p=function(x){return (x<10?'۰':'')+fa(x)};
-  c.textContent=p(n.getHours())+':'+p(n.getMinutes())+':'+p(n.getSeconds());
-}
+/* ---------- 4. progress bar: time until the next data poll ---------- */
 (function(){
-  drawFunds(); drawOpts(); drawSpark(); tickGold(); tickClock();
-  if(CALM) return;                       /* respect prefers-reduced-motion */
-  var prog=document.getElementById('prog'), t=0;
+  drawOpts();
+  var prog=document.getElementById('prog'); if(!prog||CALM) return;
+  var t0=Date.now();
+  onGold(function(){t0=Date.now()});
   setInterval(function(){
-    t+=100;
-    if(prog) prog.style.width=(t%5000)/50+'%';
-    if(t%1000===0) tickClock();
-    if(t%5000===0){
-      tickGold();
-      FUNDS.forEach(function(f){f[1]=Math.max(-3,Math.min(3,f[1]+(Math.random()-0.5)*0.12))});
-      drawFunds();
-    }
-  },100);
+    prog.style.width=Math.min(100,(Date.now()-t0)/GOLD_POLL_MS*100)+'%';
+  },250);
 })();
 
 /* ---------- 5. typewriter line in the hero ---------- */

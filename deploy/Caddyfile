@@ -17,6 +17,14 @@ alefcapital.ir, www.alefcapital.ir {
 	# … and /pricing resolves to the file on disk
 	try_files {path} {path}.html {path}/index.html
 
+	# ── live gold data ── (site/config.py GOLD_API → Nexus). The nginx path
+	# (deploy/nginx.conf) is the one in production; it also micro-caches.
+	# From inside Docker, Nexus on the host is host.docker.internal.
+	handle /api/gold/snapshot {
+		rewrite * /v1/gold/snapshot
+		reverse_proxy host.docker.internal:8100
+	}
+
 	# ── caching ──
 	# HTML is not cached, so your changes show up immediately
 	@html path *.html /

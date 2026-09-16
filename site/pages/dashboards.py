@@ -26,7 +26,7 @@ GOLD = """
 <div class="wrap">
   <div>
     <h1><span class="guest">نسخه مهمان</span>داشبورد آربیتراژ صندوق طلا</h1>
-    <p>آخرین روز معاملاتی: <b class="num">۱۴۰۵/۰۶/۱۶</b> · آخرین به‌روزرسانی: <b class="num" id="gClock">۱۷:۳۱:۰۴</b> · داده با تأخیر ۱۵ دقیقه</p>
+    <p>آخرین روز معاملاتی: <b class="num gdate">—</b> · آخرین به‌روزرسانی: <b class="num gupdated">—</b> · <span id="gState">در حال دریافت داده</span></p>
   </div>
   <div style="display:flex;gap:10px;flex-wrap:wrap">
     <a class="btn btn-s" href="product-gold.html" style="padding:11px 20px;font-size:14px">معرفی محصول</a>
@@ -51,17 +51,17 @@ GOLD = """
 <section class="dsec" id="overview">
 <div class="wrap">
   <div class="sh"><div><h2>نمای کلی بازار</h2><p>قیمت دارایی‌های پایه که ارزش ذاتی صندوق‌ها از روی آن‌ها محاسبه می‌شود</p></div></div>
-  <div class="tiles">
-    <div class="tile"><small>انس جهانی طلا (دلار)</small><b class="num">۴,۰۰۵</b><div class="sub"><span class="dn">▼ ۰٫۶۳٪</span> · ۱۷:۳۱</div></div>
-    <div class="tile"><small>طلای گرمی ۱۸ عیار</small><b class="num">۱۸۲,۲۵۷,۰۰۰</b><div class="sub"><span class="dn">▼ ۰٫۱۴٪</span> · ۱۷:۲۶</div></div>
-    <div class="tile"><small>شاخص صندوق‌های طلا</small><b class="num">۲۳,۴۱۸</b><div class="sub"><span class="up">▲ ۰٫۶۲٪</span> · ۱۷:۳۱</div></div>
-    <div class="tile"><small>دلار محاسباتی</small><b class="num">۱۸۹,۰۰۰</b><div class="sub">— ۰٫۰۰٪ · ۱۷:۳۱</div></div>
+  <div class="tiles" id="gTiles">
+    <div class="tile" data-sym="ons"><small>انس جهانی طلا (دلار)</small><b class="num">—</b><div class="sub">—</div></div>
+    <div class="tile" data-sym="geram18"><small>طلای گرمی ۱۸ عیار (ریال)</small><b class="num">—</b><div class="sub">—</div></div>
+    <div class="tile" data-sym="funds"><small>میانگین تغییر صندوق‌های طلا</small><b class="num">—</b><div class="sub">—</div></div>
+    <div class="tile" data-sym="dollar"><small>دلار (تومان)</small><b class="num">—</b><div class="sub">—</div></div>
   </div>
   <div class="tiles" style="margin-top:14px">
-    <div class="tile" style="border-color:var(--gold-400);background:rgba(240,180,41,.05)"><small>میانگین حباب صندوق‌ها</small><b class="num" id="gAvg" style="color:var(--up-text)">‎−۰٫۳۴٪</b><div class="sub">۳۰ صندوق تحت پایش</div></div>
-    <div class="tile"><small>پرحباب‌ترین صندوق</small><b class="num" id="gMax" style="color:var(--down)">‎+۲٫۵۰٪</b><div class="sub" id="gMaxN">کهربا</div></div>
-    <div class="tile"><small>کم‌حباب‌ترین صندوق</small><b class="num" id="gMin" style="color:var(--up-text)">‎−۱٫۷۹٪</b><div class="sub" id="gMinN">گوهر</div></div>
-    <div class="tile"><small>ارزش معاملات صندوق‌ها</small><b class="num">۴٫۲ همت</b><div class="sub"><span class="up">▲ ۸٫۳٪</span> نسبت به میانگین هفته</div></div>
+    <div class="tile" style="border-color:var(--gold-400);background:rgba(240,180,41,.05)"><small>میانگین حباب صندوق‌ها</small><b class="num" id="gAvg">—</b><div class="sub"><span class="gcount">—</span> صندوق تحت پایش</div></div>
+    <div class="tile"><small>پرحباب‌ترین صندوق</small><b class="num" id="gMax" style="color:var(--down)">—</b><div class="sub" id="gMaxN">—</div></div>
+    <div class="tile"><small>کم‌حباب‌ترین صندوق</small><b class="num" id="gMin" style="color:var(--up-text)">—</b><div class="sub" id="gMinN">—</div></div>
+    <div class="tile"><small>ارزش معاملات صندوق‌ها</small><b class="num" id="gVal">—</b><div class="sub">مجموع امروز</div></div>
   </div>
 </div>
 </section>
@@ -80,7 +80,7 @@ GOLD = """
       <tbody id="gBody"></tbody>
     </table>
   </div></div>
-  <p style="font-size:12px;color:var(--slate-400);margin-top:10px">۳۰ صندوق در حال نمایش · مرتب‌سازی و فیلتر سفارشی به‌زودی</p>
+  <p style="font-size:12px;color:var(--slate-400);margin-top:10px"><span class="gcount">—</span> صندوق به ترتیب ارزش معاملات · قیمت و NAV به ریال · دلار محاسباتی = دلار × قیمت ÷ NAV</p>
 </div>
 </section>
 
@@ -95,6 +95,7 @@ GOLD = """
       <tbody id="sBody"></tbody>
     </table>
   </div></div>
+  <p style="font-size:12px;color:var(--slate-400);margin-top:10px">قیمت‌ها به ریال · ارزش ذاتی، حباب و دلار محاسباتی سکه‌ها به‌زودی</p>
 </div>
 </section>
 
@@ -122,20 +123,22 @@ GOLD = """
   <div class="sh"><div><h2>روند ارزش خالص دارایی (NAV)</h2><p>در نسخه مهمان فقط یک صندوق نمایش داده می‌شود</p></div></div>
   <div class="lockgrid">
     <div class="card">
-      <h3 style="font-size:15px;margin-bottom:4px">صندوق طلا — روند حباب درون‌روزی</h3>
-      <p style="font-size:12.5px;color:var(--slate-500);margin:0 0 14px">نمونه رایگان</p>
+      <h3 style="font-size:15px;margin-bottom:4px">صندوق <span id="navFund">—</span> — روند NAV درون‌روزی</h3>
+      <p style="font-size:12.5px;color:var(--slate-500);margin:0 0 14px">بزرگ‌ترین صندوق طلا · تغییر NAV نسبت به ابتدای روز · <span id="navLast">—</span></p>
       <svg viewBox="0 0 420 220" style="width:100%;height:auto;display:block">
         <rect x="34" y="10" width="372" height="160" fill="var(--surface-2)" rx="8"/>
         <line x1="34" y1="90" x2="406" y2="90" stroke="var(--border-strong)" stroke-dasharray="3 3"/>
         <path id="navLine" fill="none" stroke="#C9861A" stroke-width="2.5" stroke-linejoin="round"/>
-        <text x="34" y="192" font-size="11" fill="#64748B" font-family="Vazirmatn">۰۹:۰۰</text>
-        <text x="406" y="192" font-size="11" fill="#64748B" text-anchor="end" font-family="Vazirmatn">۱۲:۳۰</text>
+        <text x="34" y="192" font-size="11" fill="#64748B" font-family="Vazirmatn" id="navT0"></text>
+        <text x="406" y="192" font-size="11" fill="#64748B" text-anchor="end" font-family="Vazirmatn" id="navT1"></text>
+        <text x="28" y="22" font-size="10" fill="#94A3B8" text-anchor="end" font-family="Vazirmatn" id="navTop"></text>
         <text x="28" y="94" font-size="10" fill="#94A3B8" text-anchor="end" font-family="Vazirmatn">۰٪</text>
+        <text x="28" y="166" font-size="10" fill="#94A3B8" text-anchor="end" font-family="Vazirmatn" id="navBottom"></text>
       </svg>
     </div>
     <div class="lockpanel">
       <div class="ic">🔒</div>
-      <h3>مقایسه هم‌زمان ۳۰ صندوق</h3>
+      <h3>مقایسه هم‌زمان <span class="gcount">—</span> صندوق</h3>
       <p>روند <span dir="ltr">Latent NAV</span>، <span dir="ltr">Pure NAV</span> و نسبت این دو، به تفکیک هر صندوق و قابل مقایسه روی یک نمودار.</p>
       <a class="btn btn-p" href="pricing.html" style="padding:11px 24px;font-size:14px">ورود / عضویت</a>
     </div>
@@ -150,15 +153,10 @@ GOLD = """
   <div class="dwrap"><div class="tscroll">
     <table class="dt">
       <thead><tr><th>صندوق</th><th>سهم گواهی سکه</th><th>سهم گواهی شمش</th><th>سایر / نقد</th><th>همبستگی با سکه</th><th>حباب تعدیل‌شده</th></tr></thead>
-      <tbody>
-        <tr><td>طلا</td><td>۶۲٪</td><td>۳۴٪</td><td>۴٪</td><td>@@L:۰٫۹۴@@</td><td>@@L:‎−۰٫۳۱٪@@</td></tr>
-        <tr><td>کهربا</td><td>۷۱٪</td><td>۲۵٪</td><td>۴٪</td><td>@@L:۰٫۹۶@@</td><td>@@L:‎+۱٫۸۲٪@@</td></tr>
-        <tr><td>گوهر</td><td>۴۸٪</td><td>۴۹٪</td><td>۳٪</td><td>@@L:۰٫۸۹@@</td><td>@@L:‎−۱٫۴۴٪@@</td></tr>
-        <tr><td>زر</td><td>۵۵٪</td><td>۴۱٪</td><td>۴٪</td><td>@@L:۰٫۹۲@@</td><td>@@L:‎−۰٫۱۸٪@@</td></tr>
-        <tr><td>عیار</td><td>۶۸٪</td><td>۲۹٪</td><td>۳٪</td><td>@@L:۰٫۹۵@@</td><td>@@L:‎+۰٫۲۷٪@@</td></tr>
-      </tbody>
+      <tbody id="mixBody"></tbody>
     </table>
   </div></div>
+  <p style="font-size:12px;color:var(--slate-400);margin-top:10px">ترکیب دارایی از آخرین گزارش ماهانه هر صندوق · همبستگی با سکه و حباب تعدیل‌شده به‌زودی</p>
 </div>
 </section>
 
@@ -191,85 +189,121 @@ GOLD = """
 """
 
 GOLD_JS = paywall.js_flag() + """
-/* every derived column comes from one place, so the table can never disagree
-   with itself: bubble = price/NAV - 1, implied USD = spot USD x (price/NAV) */
-var USD=189000;
+/* every number comes from the gold snapshot (site/gold-data.js).
+   Derived columns are computed in one place so a row can never disagree
+   with itself: bubble = price/NAV − 1 (from Nexus), implied dollar =
+   dollar × price/NAV. */
 function cell(v){return PAYWALL?LOCK:v}
-function bubCell(price,nav){
-  var b=(price/nav-1)*100;
-  return PAYWALL?LOCK:'<span class="'+(b<0?'up':(b>0?'dn':''))+'">'+pct(b)+'</span>'}
-function usdCell(price,nav){return PAYWALL?LOCK:fa(grp(USD*(price/nav)))}
-var GF=[['طلا',172900,172835,-0.62,-1080],['کهربا',18420,18221,1.09,198],['گوهر',24160,24600,-1.79,-440],
- ['زر',15630,15702,-0.46,-72],['عیار',9840,9795,0.46,45],['مثقال',31250,31410,-0.51,-160],
- ['آلتون',12480,12390,0.73,90],['ناب',8720,8801,-0.92,-81],['نفیس',21340,21180,0.76,160],
- ['تابش',7650,7712,-0.80,-62],['زرفام',14210,14118,0.65,92],['قیراط',6390,6441,-0.79,-51]];
-var GT=['۱۷:۳۱','۱۷:۲۹','۱۷:۳۰','۱۷:۲۶','۱۷:۳۱','۱۷:۲۸','۱۷:۲۵','۱۷:۳۰','۱۷:۲۷','۱۷:۳۱','۱۷:۲۹','۱۷:۲۶'];
-function pct(v){return (v<0?'‎−':'‎+')+fa(Math.abs(v).toFixed(2)).replace('.','٫')+'٪'}
-function drawGold(){
+function chgCells(f,abs){
+  var s=gSign(f), cls=s<0?'dn':(s>0?'up':'');
+  return '<td class="'+cls+'">'+gArrow(f)+'</td><td class="'+cls+'">'+(abs==null?'—':gNum(Math.abs(abs)))+'</td>'}
+function bubCell(b){
+  if(PAYWALL) return LOCK;
+  var s=gSign(b); return '<span class="'+(s<0?'up':(s>0?'dn':''))+'">'+gPct(b)+'</span>'}
+
+/* header state */
+onGold(function(g){
+  gText('gState',g.summary.market_open?'بازار در حال معامله است':'بازار بسته است · آخرین معامله '+gTime(g.summary.last_trade_time));
+});
+
+/* overview tiles */
+onGold(function(g){
+  document.querySelectorAll('#gTiles [data-sym]').forEach(function(t){
+    var k=t.getAttribute('data-sym'), v=t.querySelector('b'), sub=t.querySelector('.sub'), f, when;
+    if(k==='funds'){
+      f=g.summary.avg_change_pct; v.textContent=gPct(f); when=g.summary.last_trade_time;
+    }else{
+      var r=g.m[k]; if(!r) return;
+      f=r.change_pct; when=r.updated_at;
+      v.textContent=r.unit==='USD'?fa(r.price.toLocaleString('en-US',{maximumFractionDigits:2}))
+                                  :gNum(goldShown(r));
+    }
+    var s=gSign(f);
+    if(k==='funds'){
+      v.style.color=s<0?'var(--down)':(s>0?'var(--up-text)':'');
+      sub.textContent='آخرین معامله · '+gTime(when);
+    }else sub.innerHTML='<span class="'+(s<0?'dn':(s>0?'up':''))+'">'+gArrow(f)+'</span> · '+gTime(when);
+  });
+  var s=g.summary, e=gText('gAvg',gPct(s.avg_bubble));
+  if(e) e.style.color=s.avg_bubble<0?'var(--up-text)':'var(--down)';
+  if(s.max_bubble){gText('gMax',gPct(s.max_bubble.bubble)); gText('gMaxN',s.max_bubble.symbol)}
+  if(s.min_bubble){gText('gMin',gPct(s.min_bubble.bubble)); gText('gMinN',s.min_bubble.symbol)}
+  gText('gVal',gHemat(s.total_value));
+});
+
+/* funds table */
+onGold(function(g){
   var b=document.getElementById('gBody'); if(!b) return;
-  b.innerHTML=GF.map(function(f,i){
-    var cls=f[3]<0?'dn':'up', ar=f[3]<0?'▼':'▲';
-    return '<tr><td>صندوق '+f[0]+'</td><td>'+fa(grp(f[1]))+'</td>'+
-      '<td class="'+cls+'">'+ar+' '+fa(Math.abs(f[3]).toFixed(2)).replace('.','٫')+'٪</td>'+
-      '<td class="'+cls+'">'+fa(grp(Math.abs(f[4])))+'</td>'+
-      '<td>'+cell(fa(grp(f[2])))+'</td>'+
-      '<td>'+bubCell(f[1],f[2])+'</td>'+
-      '<td>'+usdCell(f[1],f[2])+'</td><td>'+GT[i]+'</td></tr>'}).join('');
-  var bs=GF.map(function(f){return (f[1]/f[2]-1)*100});
-  var lo=0,hi=0; bs.forEach(function(v,i){if(v<bs[lo])lo=i;if(v>bs[hi])hi=i});
-  var avg=bs.reduce(function(a,c){return a+c},0)/bs.length;
-  var e=document.getElementById('gAvg'); e.textContent=pct(avg);
-  e.style.color=avg<0?'var(--up-text)':'var(--down)';
-  document.getElementById('gMax').textContent=pct(bs[hi]);
-  document.getElementById('gMaxN').textContent=GF[hi][0];
-  document.getElementById('gMin').textContent=pct(bs[lo]);
-  document.getElementById('gMinN').textContent=GF[lo][0];
-}
-/* 5th field = ارزش ذاتی (intrinsic); bubble and implied USD derive from it */
-var SPOT=[['طلا گرم ۱۸ عیار',182257000,-0.14,-255000,182257000],['سکه امامی',1826000000,-1.42,-26000000,1781382377],
- ['سکه بهار آزادی',1781000000,-1.07,-19000000,1742000000],['نیم سکه',920000000,-0.85,-7900000,890691000],
- ['ربع سکه',540000000,-0.80,-4300000,512346000],['مظنه آبشده',789500000,-0.14,-1100000,789500000],
- ['گواهی سکه',1816000000,1.94,34500000,1781382377],['گواهی شمش',23900550,-1.79,-435000,24336000]];
-(function(){
+  var usd=g.m.dollar?g.m.dollar.price:null;
+  var rows=g.funds.slice().sort(function(x,y){return (y.value||0)-(x.value||0)});
+  b.innerHTML=rows.map(function(f){
+    var ok=f.last_trade&&f.nav_live;
+    return '<tr><td>صندوق '+f.symbol+'</td><td>'+gNum(f.last_trade)+'</td>'+chgCells(f.change_pct,f.change)+
+      '<td>'+cell(gNum(f.nav_live))+'</td>'+
+      '<td>'+bubCell(f.nominal_bubble)+'</td>'+
+      '<td>'+cell(ok&&usd?gNum(usd*f.last_trade/f.nav_live):'—')+'</td><td>'+gTime(f.trade_time)+'</td></tr>'}).join('');
+});
+
+/* spot gold and coins — prices in rial. Intrinsic value, bubble and
+   implied dollar need validated gold-content constants (docs/gold-data-map.md) */
+var SPOT=[['طلا گرم ۱۸ عیار','geram18'],['سکه امامی','sekee'],['سکه بهار آزادی','sekee_bahar'],
+ ['نیم سکه','nim'],['ربع سکه','rob'],['مظنه آبشده (مثقال)','mesghal'],
+ ['گواهی سکه','govahi_sekke'],['گواهی شمش','govahi_shemsh']];
+onGold(function(g){
   var b=document.getElementById('sBody'); if(!b) return;
-  b.innerHTML=SPOT.map(function(r){
-    var cls=r[2]<0?'dn':'up', ar=r[2]<0?'▼':'▲';
-    return '<tr><td>'+r[0]+'</td><td>'+fa(grp(r[1]))+'</td>'+
-      '<td class="'+cls+'">'+ar+' '+fa(Math.abs(r[2]).toFixed(2)).replace('.','٫')+'٪</td>'+
-      '<td class="'+cls+'">'+fa(grp(Math.abs(r[3])))+'</td>'+
-      '<td>'+cell(fa(grp(r[4])))+'</td>'+
-      '<td>'+bubCell(r[1],r[4])+'</td>'+
-      '<td>'+usdCell(r[1],r[4])+'</td></tr>'}).join('');
-})();
-(function(){
+  b.innerHTML=SPOT.map(function(s){
+    var r=g.m[s[1]], k=r&&r.unit==='IRT'?10:1;
+    return '<tr><td>'+s[0]+'</td><td>'+gNum(goldRial(r))+'</td>'+
+      chgCells(r?r.change_pct:null,r&&r.change!=null?r.change*k:null)+
+      '<td>—</td><td>—</td><td>—</td></tr>'}).join('');
+});
+
+/* treemap — block size by today's traded value, colour by day change */
+onGold(function(g){
   var m=document.getElementById('tmap'); if(!m) return;
-  var F=[['طلا',5,3],['کهربا',3,2],['گوهر',2,2],['زر',2,2],['عیار',2,1],['مثقال',2,1],
-   ['آلتون',1,1],['ناب',1,1],['نفیس',1,1],['تابش',1,1],['زرفام',1,1],['قیراط',1,1],
-   ['لطفی',1,1],['آبان',1,1],['کیان',1,1],['گنج',1,1]];
+  var SIZE=[[5,3],[3,2],[2,2],[2,2],[2,1],[2,1]];
   var C=['#B91C1C','#EF4444','#94A3B8','#4ADE80','#15803D'];
   var TXT=['#FFFFFF','#FFFFFF','#0B1220','#0B1220','#FFFFFF'];  /* ink per cell */
-  m.innerHTML=F.map(function(f){
-    var r=(Math.random()*6-3), k=r<-1.5?0:(r<-0.4?1:(r<0.4?2:(r<1.5?3:4)));
-    return '<div style="grid-column:span '+f[1]+';grid-row:span '+f[2]+';background:'+C[k]+';color:'+TXT[k]+'">'+
-      f[0]+'<br><span style="font-size:10px;opacity:.9">'+pct(r)+'</span></div>'}).join('');
-})();
-(function(){
-  var p=document.getElementById('navLine'); if(!p) return;
-  var d='',y=90;
-  for(var i=0;i<=30;i++){var x=34+i*12.4; y+=(Math.random()-0.5)*13; y=Math.max(22,Math.min(158,y));
-    d+=(i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1)+' '}
-  p.setAttribute('d',d);
-})();
-var t0=new Date(); t0.setHours(17,31,4,0);
-drawGold();
-if(!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)){
-  setInterval(function(){t0=new Date(t0.getTime()+1000);
-    var c=document.getElementById('gClock'); if(c) c.textContent=
-      fa(('0'+t0.getHours()).slice(-2)+':'+('0'+t0.getMinutes()).slice(-2)+':'+('0'+t0.getSeconds()).slice(-2))},1000);
-  setInterval(function(){
-    GF=GF.map(function(f){return [f[0],Math.round(f[1]*(1+(Math.random()-0.5)*0.003)),f[2],f[3],f[4]]});
-    drawGold();},4500);
-}
+  var rows=g.funds.filter(function(f){return f.value}).sort(function(x,y){return y.value-x.value});
+  m.innerHTML=rows.map(function(f,i){
+    var sz=SIZE[i]||[1,1], r=f.change_pct==null?0:f.change_pct*100;
+    var k=r<-1.5?0:(r<-0.4?1:(r<0.4?2:(r<1.5?3:4)));
+    return '<div title="'+f.symbol+' · '+gBillion(f.value)+' تومان" style="grid-column:span '+sz[0]+';grid-row:span '+sz[1]+
+      ';background:'+C[k]+';color:'+TXT[k]+'">'+f.symbol+'<br><span style="font-size:10px;opacity:.9">'+
+      gPct(f.change_pct)+'</span></div>'}).join('');
+});
+
+/* NAV trend — the largest fund, change against its first NAV of the day */
+onGold(function(g){
+  var p=document.getElementById('navLine'), ser=g.series.nav;
+  if(!p||!ser||ser.points.length<2) return;
+  var base=ser.points[0].value;
+  var ch=ser.points.map(function(q){return (q.value/base-1)*100});
+  var M=Math.max(0.1,Math.max.apply(null,ch.map(Math.abs)));
+  M=Math.ceil(M*10)/10;
+  p.setAttribute('d',ch.map(function(v,i){
+    var x=34+i/(ch.length-1)*372, y=90-v/M*68;
+    return (i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1)}).join(' '));
+  gText('navFund',ser.label);
+  gText('navT0',gTime(ser.points[0].time));
+  gText('navT1',gTime(ser.points[ser.points.length-1].time));
+  gText('navTop','‎+'+fa(M.toFixed(1)).replace('.','٫')+'٪');
+  gText('navBottom','‎−'+fa(M.toFixed(1)).replace('.','٫')+'٪');
+  gText('navLast','آخرین NAV '+gNum(ser.points[ser.points.length-1].value)+' ریال');
+});
+
+/* asset mix — this month's reported weights, largest funds first */
+onGold(function(g){
+  var b=document.getElementById('mixBody'); if(!b) return;
+  function w(v){return v==null?'—':fa(Math.round(v*100))+'٪'}
+  var rows=g.funds.filter(function(f){return f.weights})
+    .sort(function(x,y){return (y.market_cap||0)-(x.market_cap||0)});
+  b.innerHTML=rows.map(function(f){
+    var sk=f.weights.sekke_weight||0, sh=f.weights.shemsh_weight||0;
+    return '<tr><td>'+f.symbol+'</td><td>'+w(sk)+'</td><td>'+w(sh)+'</td><td>'+w(Math.max(0,1-sk-sh))+'</td>'+
+      '<td>'+cell('—')+'</td><td>'+cell('—')+'</td></tr>'}).join('');
+});
+
 (function(){
   var links=[].slice.call(document.querySelectorAll('.subnav a'));
   var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'))});

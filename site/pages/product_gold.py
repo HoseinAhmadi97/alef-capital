@@ -19,13 +19,13 @@ HTML = """
     </div>
     <div class="card">
       <div class="lch"><span class="lbl">پراکندگی حباب امروز</span><span class="live"><i></i>زنده</span></div>
-      <div class="lcv"><span class="big num" id="pAvg">‎−۰٫۳۴٪</span><span class="lcu">میانگین ۳۰ صندوق</span></div>
+      <div class="lcv"><span class="big num" id="pAvg">—</span><span class="lcu">میانگین <span class="gcount">—</span> صندوق</span></div>
       <div class="dist" id="pDist"></div>
       <div class="lcf">
-        <span>کم‌حباب‌ترین <b id="pMin">گوهر ‎−۱٫۷۹٪</b></span>
-        <span>پرحباب‌ترین <b id="pMax">کهربا ‎+۲٫۵۰٪</b></span>
+        <span>کم‌حباب‌ترین <b id="pMin">—</b></span>
+        <span>پرحباب‌ترین <b id="pMax">—</b></span>
       </div>
-      <div class="lcbar"><span>آخرین به‌روزرسانی <b id="pClock">۱۷:۳۱:۰۴</b></span></div>
+      <div class="lcbar"><span>آخرین به‌روزرسانی <b class="gupdated">—</b></span></div>
     </div>
   </div>
 </div>
@@ -47,12 +47,12 @@ HTML = """
       <rect x="46" y="14" width="358" height="196" fill="var(--surface-2)" rx="8"/>
       <line x1="46" y1="112" x2="404" y2="112" stroke="var(--border-strong)" stroke-width="1"/>
       <line x1="46" y1="14" x2="46" y2="210" stroke="var(--border-strong)" stroke-width="1"/>
-      <line x1="60" y1="150" x2="392" y2="70" stroke="#DC2626" stroke-width="2" stroke-dasharray="6 5" opacity=".75"/>
-      <g id="scatter"></g>
+      <line id="scatterFit" x1="60" y1="112" x2="392" y2="112" stroke="#DC2626" stroke-width="2" stroke-dasharray="6 5" opacity=".75" style="display:none"/>
+      <g id="scatter" style="color:var(--ink-900)"></g>
       <text x="404" y="230" font-size="11" fill="#64748B" text-anchor="end">وزن سکه در صندوق ←</text>
-      <text x="40" y="20" font-size="11" fill="#64748B" text-anchor="end">حباب</text>
+      <text x="40" y="20" font-size="10" fill="#94A3B8" text-anchor="end" id="scatterTop"></text>
       <text x="40" y="116" font-size="10" fill="#94A3B8" text-anchor="end">۰٪</text>
-      <text x="40" y="208" font-size="10" fill="#94A3B8" text-anchor="end">‎−۲٪</text>
+      <text x="40" y="208" font-size="10" fill="#94A3B8" text-anchor="end" id="scatterBottom"></text>
     </svg>
   </div>
 </div>
@@ -114,20 +114,14 @@ HTML = """
 <div class="wrap">
   <span class="eyebrow" style="background:rgba(240,180,41,.14)">پیش‌نمایش داشبورد</span>
   <h2 class="h2">این چیزی است که هر روز می‌بینید</h2>
-  <p class="lead">پنج ردیف اول برای همه باز است. جدول کامل ۳۰ صندوق، داده لحظه‌ای، تاریخچه و هشدار با پلن طلا.</p>
+  <p class="lead">هفت صندوق پرمعامله امروز، زنده. جدول کامل <span class="gcount">—</span> صندوق، تاریخچه و هشدار در داشبورد طلا.</p>
   <div class="panel" style="margin-top:26px">
     <div class="pbar"><i></i><i></i><i></i></div>
     <div class="tscroll">
     <table>
-      <thead><tr><th>نماد</th><th>آخرین قیمت</th><th>ارزش ذاتی (NAV)</th><th>حباب</th><th>دلار تعدیل‌شده</th><th>زمان</th></tr></thead>
-      <tbody>
-        <tr><td>گواهی شمش</td><td>۲۳,۹۰۰,۵۵۰</td><td>۲۴,۳۳۵,۰۳۴</td><td><span class="chip up">‎−۱.۷۹٪</span></td><td>۱۸۵,۶۲۵</td><td>۱۷:۰۰</td></tr>
-        <tr><td>مثقال طلا</td><td>۷۸۹,۵۰۰,۰۰۰</td><td>۷۹۰,۶۰۹,۱۳۷</td><td><span class="chip up">‎−۰.۱۴٪</span></td><td>۱۸۸,۷۳۴</td><td>۱۷:۲۶</td></tr>
-        <tr><td>طلای ۱۸ عیار</td><td>۱۸۲,۲۵۷,۰۰۰</td><td>۱۸۲,۵۱۲,۷۵۹</td><td><span class="chip up">‎−۰.۱۴٪</span></td><td>۱۸۸,۷۳۵</td><td>۱۷:۲۶</td></tr>
-        <tr><td>اونس جهانی طلا</td><td>۴,۰۰۵</td><td>۴,۰۰۵</td><td><span class="chip neu">۰.۰۰٪</span></td><td>۱۸۹,۰۰۰</td><td>۱۷:۳۱</td></tr>
-        <tr><td>گواهی سکه</td><td>۱,۸۱۶,۰۰۰,۰۰۰</td><td>۱,۷۸۱,۳۸۲,۳۷۷</td><td><span class="chip down">‎+۱.۹۴٪</span></td><td>۱۹۲,۶۷۲</td><td>۱۶:۵۹</td></tr>
-        <tr@@IFLOCK@@ class="lock"@@END@@><td>سکه امامی</td><td>۱,۸۲۶,۰۰۰,۰۰۰</td><td>۱,۷۸۱,۳۸۲,۳۷۷</td><td><span class="chip down">‎+۲.۵۰٪</span></td><td>۱۹۳,۷۳۳</td><td>۱۶:۴۰</td></tr>
-        <tr@@IFLOCK@@ class="lock"@@END@@><td>صندوق طلا — کهربا</td><td>۱۷۲,۹۰۰</td><td>۱۷۲,۸۳۵</td><td><span class="chip down">‎+۱.۰۹٪</span></td><td>۱۸۹,۰۱۸</td><td>۱۶:۵۹</td></tr>
+      <thead><tr><th>نماد</th><th>آخرین قیمت</th><th>ارزش ذاتی (NAV)</th><th>حباب</th><th>دلار محاسباتی</th><th>زمان</th></tr></thead>
+      <tbody id="pSample">
+        <tr><td colspan="6">در حال دریافت داده…</td></tr>
       </tbody>
     </table>
     </div>
@@ -211,51 +205,40 @@ HTML = """
 """
 
 JS = """
-/* bubble distribution — hero card */
-var FUNDS=['طلا','کهربا','گوهر','زر','عیار','مثقال','آلتون','ناب','نفیس','تابش',
- 'زرفام','قیراط','لطفی','آبان','کیان','سحرخیز','گنج','درسا','آرام','نهال',
- 'ماهور','سیمرغ','پارس','آوا','رستا','بهار','نیکو','ثمین','هستی','ایده'];
-var bub=FUNDS.map(function(){return Math.random()*4.2-1.9});
-function pct(v){return (v<0?'‎−':'‎+')+fa(Math.abs(v).toFixed(2)).replace('.','٫')+'٪'}
-function drawDist(){
-  var el=document.getElementById('pDist'); if(!el) return;
-  var mx=2.6,mn=-2.0;
-  el.innerHTML=bub.map(function(v){
-    var h=Math.max(8,Math.round((v-mn)/(mx-mn)*100));
-    var c=v>=0?'rgba(220,38,38,.'+(v>1.2?'75':'40')+')':'rgba(22,163,74,.'+(v<-1?'75':'40')+')';
-    return '<span style="height:'+h+'%;background:'+c+'"></span>'}).join('');
-  var lo=0,hi=0; bub.forEach(function(v,i){if(v<bub[lo])lo=i;if(v>bub[hi])hi=i});
-  var avg=bub.reduce(function(a,b){return a+b},0)/bub.length;
-  var a=document.getElementById('pAvg');
-  a.textContent=pct(avg); a.style.color=avg<0?'var(--up-text)':'var(--down)';
-  document.getElementById('pMin').textContent=FUNDS[lo]+' '+pct(bub[lo]);
-  document.getElementById('pMax').textContent=FUNDS[hi]+' '+pct(bub[hi]);
-}
-/* scatter chart */
-(function(){
-  var g=document.getElementById('scatter'); if(!g) return;
-  var pts='';
-  for(var i=0;i<28;i++){
-    var w=Math.random(), x=60+w*332, base=150-w*80;
-    var y=base+(Math.random()-0.5)*46;
-    var big=i===3;
-    pts+='<circle cx="'+x.toFixed(1)+'" cy="'+Math.max(24,Math.min(202,y)).toFixed(1)+'" r="'+(big?7:4)+
-         '" fill="'+(big?'#0891B2':'#0F172A')+'" opacity="'+(big?'.95':'.55')+'"/>';
+/* hero card — bubble of every fund, from the gold snapshot (site/gold-data.js) */
+onGold(function(g){
+  var fs=g.withBubble, el=document.getElementById('pDist');
+  if(el){
+    var b=fs.map(function(f){return f.nominal_bubble*100});
+    var mx=Math.max(0.5,Math.max.apply(null,b)), mn=Math.min(-0.5,Math.min.apply(null,b));
+    el.innerHTML=fs.map(function(f,i){
+      var v=b[i], h=Math.max(8,Math.round((v-mn)/(mx-mn)*100));
+      var c=v>=0?'rgba(220,38,38,.'+(v>1.2?'75':'40')+')':'rgba(22,163,74,.'+(v<-1?'75':'40')+')';
+      return '<span title="'+f.symbol+' '+gPct(f.nominal_bubble)+'" style="height:'+h+'%;background:'+c+'"></span>'}).join('');
   }
-  g.innerHTML=pts;
-})();
-/* clock */
-var t0=new Date(); t0.setHours(17,31,4,0);
-function clk(){t0=new Date(t0.getTime()+1000);
-  var c=document.getElementById('pClock'); if(!c) return;
-  c.textContent=fa(('0'+t0.getHours()).slice(-2)+':'+('0'+t0.getMinutes()).slice(-2)+':'+('0'+t0.getSeconds()).slice(-2))}
-drawDist();
-if(!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)){
-  setInterval(clk,1000);
-  setInterval(function(){
-    bub=bub.map(function(v){return Math.max(-1.95,Math.min(2.55,v+(Math.random()-0.5)*0.22))});
-    drawDist();},4000);
-}
+  var s=g.summary, a=gText('pAvg',gPct(s.avg_bubble));
+  if(a) a.style.color=s.avg_bubble<0?'var(--up-text)':'var(--down)';
+  if(s.min_bubble) gText('pMin',s.min_bubble.symbol+' '+gPct(s.min_bubble.bubble));
+  if(s.max_bubble) gText('pMax',s.max_bubble.symbol+' '+gPct(s.max_bubble.bubble));
+});
+
+/* bubble vs coin weight */
+onGold(function(g){
+  goldScatter(g,{g:'scatter',line:'scatterFit',top:'scatterTop',bottom:'scatterBottom',x0:60,x1:392,y0:112,h:90});
+});
+
+/* preview table — the seven most traded funds today */
+onGold(function(g){
+  var b=document.getElementById('pSample'); if(!b) return;
+  var usd=g.m.dollar?g.m.dollar.price:null;
+  var rows=g.funds.filter(function(f){return f.nominal_bubble!=null})
+    .sort(function(x,y){return (y.value||0)-(x.value||0)}).slice(0,7);
+  b.innerHTML=rows.map(function(f){
+    var s=gSign(f.nominal_bubble), cls=s<0?'up':(s>0?'down':'neu');
+    return '<tr><td>صندوق '+f.symbol+'</td><td>'+gNum(f.last_trade)+'</td><td>'+gNum(f.nav_live)+'</td>'+
+      '<td><span class="chip '+cls+'">'+gPct(f.nominal_bubble)+'</span></td>'+
+      '<td>'+(usd?gNum(usd*f.last_trade/f.nav_live):'—')+'</td><td>'+gTime(f.trade_time)+'</td></tr>'}).join('');
+});
 """
 
 HTML = paywall.apply(HTML)

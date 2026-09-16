@@ -178,11 +178,21 @@ ALEF_SELF_HOSTED_FONT=0 make build     # force Google Fonts
 
 ## Data status
 
-The numbers on the pages currently come from a JavaScript layer inside each page
-(look for the `LIVE DATA LAYER` comment). These are **not real data**.
+**Gold pages are live.** The price ticker (every page), home, market pulse,
+the gold product page and the gold dashboard read real data from Nexus:
 
-Before showing the site to a real visitor, connect this layer to a market API.
-Details and the proposed architecture: `docs/DEPLOY.md`
+- `site/gold-data.js` — the one consumer. It fetches `config.GOLD_API` once per
+  page, re-polls every `config.GOLD_POLL_SECONDS` only while the tab is visible,
+  and hands the document to each page's `onGold(function (g) { … })` renderers.
+- In production nginx proxies `/api/gold/snapshot` to Nexus with a 5-second
+  cache (`deploy/nginx.conf`). `make serve` proxies it too (`NEXUS_URL`, default
+  `http://127.0.0.1:8100`).
+- Until data arrives — or if the API is down — numbers show `—`, never sample values.
+
+What every number is, where it comes from, and what data does not exist yet:
+**`docs/gold-data-map.md`**.
+
+**Still sample data:** the covered-call pages and cards, and the performance report.
 
 ---
 

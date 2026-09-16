@@ -146,7 +146,7 @@ def nav(active=""):
 </header>
 
 <div class="ticker">
-  <div class="tstate"><span class="dot"></span>بازار باز است</div>
+  <div class="tstate"><span class="dot"></span><span id="tstate">بازار طلا</span></div>
   <div class="ttrack" id="ttrack"></div>
 </div>
 </div>"""
@@ -183,23 +183,28 @@ def footer():
 
 # ─────────────────────── JS shared by every page ───────────────
 def _ticker_rows():
-    return ",\n ".join("{n:'%s',p:%d,d:%s}" % (n, p, d) for n, p, d in C.TICKER)
+    return ",\n ".join("{n:'%s',k:'%s'}" % (n, k) for n, k in C.TICKER)
+
+
+# The live-data consumer lives in its own file so it is plain JavaScript,
+# not JavaScript escaped inside a Python string.
+GOLD_JS = (io.open(os.path.join(HERE, "gold-data.js"), encoding="utf-8").read()
+           .replace("__GOLD_API__", C.GOLD_API)
+           .replace("__POLL__", str(int(C.GOLD_POLL_SECONDS))))
 
 
 COMMON_JS = lambda: """
-/* ═══════════════ LIVE DATA LAYER ═══════════════
-   TODO(wire-up): point the values below at the market API.
-   The expected output shape is exactly what you see here.
-   ═══════════════════════════════════════════════ */
 var FA='۰۱۲۳۴۵۶۷۸۹';
 function fa(x){return String(x).replace(/\\d/g,function(d){return FA[+d]})}
 function grp(n){return String(Math.round(n)).replace(/\\B(?=(\\d{3})+(?!\\d))/g,',')}
+/* price ticker: labels are static, numbers arrive from the gold snapshot */
 var TICK=[
  """ + _ticker_rows() + """];
-function tiHTML(t){var c=t.d>0?'u':(t.d<0?'d':'n'),a=t.d>0?'▲':(t.d<0?'▼':'—');
- return '<div class="ti"><span class="tn">'+t.n+'</span><span class="tp">'+fa(grp(t.p))+
- '</span><span class="tc '+c+'">'+a+' '+fa(Math.abs(t.d).toFixed(2)).replace('.','٫')+'٪</span></div>'}
+function tiHTML(t){
+ return '<div class="ti"><span class="tn">'+t.n+'</span><span class="tp"></span>'+
+ '<span class="tc n">—</span></div>'}
 (function(){var e=document.getElementById('ttrack');if(e){var h=TICK.map(tiHTML).join('');e.innerHTML=h+h}})();
+""" + GOLD_JS + """
 
 /* Publish the real height of the sticky top bar, so anything that sticks
    below it (the in-page sub-nav) lines up instead of guessing a pixel

@@ -133,17 +133,27 @@ PRICING = {
 }
 
 # ─────────────────────────── Price ticker ──────────────────────────
-# Until the API is wired up, these are the numbers that get displayed.
+# (label, key) — the numbers come live from Nexus's gold snapshot.
+# key = a `symbol` in the snapshot's `market` list, or "funds" for the
+# average day change of the gold funds (there is no gold fund index in
+# any datasource yet — see docs/gold-data-map.md).
 TICKER = [
-    ("طلای ۱۸ عیار",    182257000, -0.14),
-    ("مثقال طلا",       789500000, -0.14),
-    ("گواهی شمش",       23900550,  -1.79),
-    ("گواهی سکه",       1816000000, 1.94),
-    ("سکه امامی",       1826000000, 2.50),
-    ("اونس جهانی",      4005,       0.00),
-    ("دلار",            189000,     0.00),
-    ("شاخص صندوق طلا",  23418,      0.62),
+    ("طلای ۱۸ عیار",            "geram18"),
+    ("مظنه آبشده",              "mesghal"),
+    ("گواهی شمش",               "govahi_shemsh"),
+    ("گواهی سکه",               "govahi_sekke"),
+    ("سکه امامی",               "sekee"),
+    ("انس جهانی",               "ons"),
+    ("دلار",                    "dollar"),
+    ("میانگین تغییر صندوق‌ها",   "funds"),
 ]
+
+# ─────────────────────────── Live data ─────────────────────────────
+# Where the browser reads the gold snapshot, and how often it re-polls
+# while the tab is visible. The same origin as the site: nginx proxies
+# this path to Nexus (deploy/nginx.conf), `make serve` does the same.
+GOLD_API = "/api/gold/snapshot"
+GOLD_POLL_SECONDS = 20
 
 # ─────────────────────────── Repeated copy ─────────────────────────
 RISK_SHORT = ("اطلاعات ارائه‌شده در این وب‌سایت صرفاً جنبه تحلیلی و اطلاع‌رسانی دارد و توصیه به خرید "
