@@ -26,7 +26,7 @@ GOLD = """
 <div class="wrap">
   <div>
     <h1><span class="guest">نسخه مهمان</span>داشبورد آربیتراژ صندوق طلا</h1>
-    <p>آخرین روز معاملاتی: <b class="num gdate">—</b> · آخرین به‌روزرسانی: <b class="num gupdated">—</b> · <span id="gState">در حال دریافت داده</span></p>
+    <p>آخرین روز معاملاتی: <b class="num gdate">—</b> · آخرین به‌روزرسانی: <b class="num gupdated">—</b> · <span data-session="funds">—</span></p>
   </div>
   <div style="display:flex;gap:10px;flex-wrap:wrap">
     <a class="btn btn-s" href="product-gold.html" style="padding:11px 20px;font-size:14px">معرفی محصول</a>
@@ -233,10 +233,7 @@ function bubCell(b){
 gSortable(document.getElementById('gTable'));
 gSortable(document.getElementById('sTable'));
 
-/* header state */
-onGold(function(g){
-  gText('gState',g.summary.market_open?'بازار در حال معامله است':'بازار بسته است · آخرین معامله '+gTime(g.summary.last_trade_time));
-});
+/* the header's market status is a data-session element (gold-data.js) */
 
 /* overview tiles */
 onGold(function(g){
@@ -268,9 +265,9 @@ onGold(function(g){
   var usd=g.m.dollar?g.m.dollar.price:null;
   var rows=g.funds.slice().sort(function(x,y){return (y.value||0)-(x.value||0)});
   b.innerHTML=rows.map(function(f){
-    var implied=f.last_trade&&f.nav_live&&usd?usd*f.last_trade/f.nav_live:null;
+    var implied=f.last_trade&&f.nav&&usd?usd*f.last_trade/f.nav:null;
     return '<tr>'+gTd('صندوق '+f.symbol,f.symbol)+gTd(gNum(f.last_trade),f.last_trade)+chgCells(f.change_pct,f.change)+
-      gTd(cell(gNum(f.nav_live)),f.nav_live)+
+      gTd(cell(gNum(f.nav)),f.nav)+
       gTd(bubCell(f.nominal_bubble),f.nominal_bubble)+
       gTd(cell(gNum(implied)),implied)+
       gTd(gBillion(f.value),f.value)+

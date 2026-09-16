@@ -5,7 +5,7 @@ Shared shell for every page: <head>, top bar, price ticker, footer, mobile botto
 No text or link is hard-coded here — it all comes from config.py.
 To change the menu structure, edit config.NAV, not this file.
 """
-import io, os, re, config as C
+import io, json, os, re, config as C
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 THEME = io.open(os.path.join(HERE, "theme.css"), encoding="utf-8").read()
@@ -146,7 +146,7 @@ def nav(active=""):
 </header>
 
 <div class="ticker">
-  <div class="tstate"><span class="dot"></span><span id="tstate">بازار طلا</span></div>
+  <div class="tstate"><span class="dot"></span><span id="tstate" data-session="physical">بازار طلا</span></div>
   <div class="ttrack" id="ttrack"></div>
 </div>
 </div>"""
@@ -189,6 +189,7 @@ def _ticker_rows():
 # The live-data consumer lives in its own file so it is plain JavaScript,
 # not JavaScript escaped inside a Python string.
 GOLD_JS = (io.open(os.path.join(HERE, "gold-data.js"), encoding="utf-8").read()
+           .replace("__MARKET_HOURS__", json.dumps(C.MARKET_HOURS))
            .replace("__GOLD_NAV_API__", C.GOLD_NAV_API)
            .replace("__GOLD_API__", C.GOLD_API)
            .replace("__POLL__", str(int(C.GOLD_POLL_SECONDS))))

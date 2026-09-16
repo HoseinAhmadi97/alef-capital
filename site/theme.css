@@ -267,6 +267,28 @@ footer a:hover{color:var(--gold-300)}
 .lch .lbl{font-size:13px;color:var(--slate-500);font-weight:700}
 .live{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;color:var(--up-text);background:rgba(22,163,74,.10);padding:3px 9px;border-radius:99px}
 .live i{width:6px;height:6px;border-radius:50%;background:var(--up);animation:pulse 1.6s infinite}
+/* market status on a live badge: closed = grey and still, soon = amber countdown */
+.live.is-closed{color:var(--slate-500);background:var(--surface-3)}
+.live.is-closed i{background:var(--slate-400);animation:none}
+.live.is-soon{color:var(--gold-700);background:rgba(240,180,41,.14);font-variant-numeric:tabular-nums}
+.live.is-soon i{background:var(--gold-500)}
+
+/* home: bubble spectrum card */
+.bspec{position:relative;margin:10px 0 6px}
+/* direction:ltr — in an RTL page SVG text-anchor start/end swap sides */
+.bspec svg{width:100%;height:auto;display:block;overflow:visible;direction:ltr}
+.bspec circle{cursor:pointer;transition:cx .6s ease,cy .6s ease}
+.bspec circle:hover{stroke:var(--ink-800);stroke-width:1.6}
+.btip{position:absolute;transform:translate(-50%,calc(-100% - 10px));background:var(--ink-900);color:var(--surface);
+  font-size:11.5px;padding:4px 9px;border-radius:7px;white-space:nowrap;pointer-events:none;font-variant-numeric:tabular-nums}
+:root[data-theme="dark"] .btip{background:var(--surface-3);color:var(--ink-800)}
+.bsplit{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--slate-500);margin:2px 0 10px}
+.bsplit b{font-weight:800;font-variant-numeric:tabular-nums}
+.bsplit .neg b{color:var(--down)}.bsplit .pos b{color:var(--up-text)}
+.bsplit-bar{flex:1;display:flex;height:6px;border-radius:99px;overflow:hidden;background:var(--surface-3)}
+.bsplit-bar i{display:block;height:100%;transition:width .6s ease}
+.bsplit-bar i:first-child{background:rgba(220,38,38,.7)}
+.bsplit-bar i:last-child{background:rgba(22,163,74,.7)}
 .lcv{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .big{font-size:27px;font-weight:800;letter-spacing:-.5px;transition:background-color .5s;border-radius:6px;padding:0 4px;margin-inline-start:-4px}
 .big.fu{background:rgba(22,163,74,.18)}.big.fd{background:rgba(220,38,38,.15)}

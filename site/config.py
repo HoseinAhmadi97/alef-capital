@@ -157,6 +157,18 @@ GOLD_POLL_SECONDS = 20
 # Intraday NAV of every fund — read only by the gold dashboard, every 60 s
 GOLD_NAV_API = "/api/gold/nav-trend"
 
+# ─────────────────────────── Market hours (Tehran) ─────────────────
+# days: 0 = Sunday … 6 = Saturday (JavaScript's getDay numbering).
+# "countdown" = minutes before opening during which a live timer shows.
+# Official holidays are not modelled.
+MARKET_HOURS = {
+    # gold funds on the exchange — Saturday to Wednesday, 12:00–18:00
+    "funds":    {"days": [6, 0, 1, 2, 3], "open": "12:00", "close": "18:00", "countdown": 120},
+    # the physical gold market shown in the ticker — 11:00–20:00.
+    # Friday is assumed closed; add 5 to "days" if it trades.
+    "physical": {"days": [6, 0, 1, 2, 3, 4], "open": "11:00", "close": "20:00", "countdown": 0},
+}
+
 # ─────────────────────────── Repeated copy ─────────────────────────
 RISK_SHORT = ("اطلاعات ارائه‌شده در این وب‌سایت صرفاً جنبه تحلیلی و اطلاع‌رسانی دارد و توصیه به خرید "
               "یا فروش هیچ اوراق بهاداری محسوب نمی‌شود. سرمایه‌گذاری در بازار سرمایه با ریسک همراه است "

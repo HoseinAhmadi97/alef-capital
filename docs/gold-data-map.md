@@ -42,7 +42,7 @@ Why this shape:
 | Endpoint | What it has |
 |---|---|
 | `GET /v1/gold/market` | ons, geram18, geram24, sekee, govahi_sekke, govahi_shemsh, dollar — price, source, time |
-| `GET /v1/gold/funds` | 31 funds — last trade, bid/ask, value, volume, NAV (TSE live, tadbir, farabi), nominal bubble, monthly weights |
+| `GET /v1/gold/funds` | 31 funds — last trade, bid/ask, value, volume, `nav` (farabi — the NAV the site shows and the bubble uses; TSE live and tadbir kept for comparison), nominal bubble, monthly weights |
 
 This change **extends those two** (more fields and instruments) and adds
 `GET /v1/gold/snapshot`, which composes them plus summary stats and two
@@ -145,6 +145,8 @@ In priority order — each unblocks visible parts of the site:
 4. **Correlation with coin and adjusted bubble.** Depends on (1) and on the
    decomposition that was intentionally left out.
 5. **Strategy performance series** for the performance page.
-6. **Official market status.** "Market open" is currently inferred from the
-   freshness of the latest fund trade.
+6. **Market holidays.** Open/closed follows the schedules in
+   `config.MARKET_HOURS` (gold funds Sat–Wed 12:00–18:00 with a 2-hour
+   countdown; physical market 11:00–20:00). Official holidays are not known,
+   so a holiday shows as open.
 7. **Fund count wording.** Pages say 30 funds; the data has 31.

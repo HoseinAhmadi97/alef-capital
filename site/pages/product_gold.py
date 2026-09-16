@@ -18,7 +18,7 @@ HTML = """
       </div>
     </div>
     <div class="card">
-      <div class="lch"><span class="lbl">پراکندگی حباب امروز</span><span class="live"><i></i>زنده</span></div>
+      <div class="lch"><span class="lbl">پراکندگی حباب امروز</span><span class="live" data-session="funds"><i></i><span>زنده</span></span></div>
       <div class="lcv"><span class="big num" id="pAvg">—</span><span class="lcu">میانگین <span class="gcount">—</span> صندوق</span></div>
       <div class="dist" id="pDist"></div>
       <div class="lcf">
@@ -235,9 +235,9 @@ onGold(function(g){
     .sort(function(x,y){return (y.value||0)-(x.value||0)}).slice(0,7);
   b.innerHTML=rows.map(function(f){
     var cls=gTone(f.nominal_bubble,'up','down','neu');
-    return '<tr><td>صندوق '+f.symbol+'</td><td>'+gNum(f.last_trade)+'</td><td>'+gNum(f.nav_live)+'</td>'+
+    return '<tr><td>صندوق '+f.symbol+'</td><td>'+gNum(f.last_trade)+'</td><td>'+gNum(f.nav)+'</td>'+
       '<td><span class="chip '+cls+'">'+gPct(f.nominal_bubble)+'</span></td>'+
-      '<td>'+(usd?gNum(usd*f.last_trade/f.nav_live):'—')+'</td><td>'+gTime(f.trade_time)+'</td></tr>'}).join('');
+      '<td>'+(usd?gNum(usd*f.last_trade/f.nav):'—')+'</td><td>'+gTime(f.trade_time)+'</td></tr>'}).join('');
 });
 """
 

@@ -26,9 +26,31 @@ HTML = """<!-- HERO -->
     <div class="livecards">
 
       <div class="lcard">
-        <div class="lch"><span class="lbl">حباب صندوق‌های طلا</span><span class="live"><i></i>زنده</span></div>
+        <div class="lch"><span class="lbl">حباب صندوق‌های طلا</span><span class="live" data-session="funds"><i></i><span>زنده</span></span></div>
         <div class="lcv"><span class="big num" id="bubAvg">—</span><span class="lcu">میانگین <span class="gcount">—</span> صندوق</span></div>
-        <div class="dist" id="dist"></div>
+        <!-- bubble spectrum: every fund is a dot on one price-vs-NAV axis -->
+        <div class="bspec">
+          <svg id="bSpec" viewBox="0 0 300 92" role="img" aria-label="پراکندگی حباب صندوق‌های طلا نسبت به NAV">
+            <defs>
+              <linearGradient id="bTrack" x1="0" x2="1" y1="0" y2="0">
+                <stop offset="0%" stop-color="rgba(220,38,38,.55)"/>
+                <stop offset="50%" stop-color="rgba(148,163,184,.35)"/>
+                <stop offset="100%" stop-color="rgba(22,163,74,.55)"/>
+              </linearGradient>
+            </defs>
+            <rect id="bTrackRect" x="8" y="44" width="284" height="4" rx="2" fill="url(#bTrack)"/>
+            <g id="bZero"></g>
+            <g id="bDots"></g>
+            <g id="bAvgMark"></g>
+            <g id="bAxis" font-size="9" fill="var(--slate-400)"></g>
+          </svg>
+          <div class="btip" id="bTip" hidden></div>
+        </div>
+        <div class="bsplit">
+          <span class="neg"><b id="bBelow">—</b> زیر NAV</span>
+          <div class="bsplit-bar" aria-hidden="true"><i id="bBelowBar"></i><i id="bAboveBar"></i></div>
+          <span class="pos"><b id="bAbove">—</b> بالای NAV</span>
+        </div>
         <div class="lcf">
           <span>کم‌حباب‌ترین <b id="bubMin">—</b></span>
           <span>پرحباب‌ترین <b id="bubMax">—</b></span>
@@ -42,7 +64,7 @@ HTML = """<!-- HERO -->
       </div>
 
       <div class="lcard">
-        <div class="lch"><span class="lbl">طلای ۱۸ عیار <small style="font-weight:500">(ریال)</small></span><span class="live"><i></i>زنده</span></div>
+        <div class="lch"><span class="lbl">طلای ۱۸ عیار <small style="font-weight:500">(ریال)</small></span><span class="live" data-session="physical"><i></i><span>زنده</span></span></div>
         <div class="lcv"><span class="big num" id="goldPx">—</span><span class="chip neu" id="goldD">—</span></div>
         <svg class="spark" id="spark" viewBox="0 0 240 44" preserveAspectRatio="none">
           <defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
@@ -256,25 +278,80 @@ function flash(el,up){el.classList.remove('fu','fd');void el.offsetWidth;el.clas
   setTimeout(function(){el.classList.remove('fu','fd')},700)}
 var CALM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
 
-/* ---------- 1. bubble across the gold funds ---------- */
-onGold(function(g){
-  var d=document.getElementById('dist'), fs=g.withBubble;
-  if(d){
-    var mx=0; fs.forEach(function(f){mx=Math.max(mx,Math.abs(f.nominal_bubble))});
-    if(d.children.length!==fs.length)
-      d.innerHTML=fs.map(function(){return '<span></span>'}).join('');
-    fs.forEach(function(f,i){
-      /* the site-wide sign colours: positive green, negative red */
-      var b=d.children[i], v=f.nominal_bubble;
-      b.title=f.symbol+' '+gPct(v);
-      b.style.height=(18+(mx?Math.abs(v)/mx:0)*82)+'%';
-      b.style.alignSelf=v<0?'flex-start':'flex-end';
-      b.style.background=gBarColor(v,true);
+/* ---------- 1. bubble spectrum — every fund as a dot on one axis ----------
+   x = bubble (price vs farabi NAV), stacked beeswarm-style so funds with
+   nearly the same bubble sit above/below each other instead of on top.
+   The track shades red → green; the dashed tick is NAV (0%), the gold
+   marker the average. Colours follow the site rule: negative red, positive green. */
+(function(){
+  var svg=document.getElementById('bSpec'); if(!svg) return;
+  var X0=8, X1=292, MID=46, R=4.6, GAP=10.4;
+  var tip=document.getElementById('bTip'), box=svg.parentNode;
+  onGold(function(g){
+    var fs=g.withBubble.slice().sort(function(a,b){return a.nominal_bubble-b.nominal_bubble});
+    if(!fs.length) return;
+    var vals=fs.map(function(f){return f.nominal_bubble*100});
+    /* a symmetric-enough domain that always includes 0 and has 10% headroom */
+    var lo=Math.min(0,vals[0]), hi=Math.max(0,vals[vals.length-1]), pad=Math.max(0.15,(hi-lo)*0.1);
+    lo-=pad; hi+=pad;
+    function X(v){return X0+(v-lo)/(hi-lo)*(X1-X0)}
+
+    /* beeswarm: place each dot on the lowest free lane (0, +1, −1, +2, …) */
+    var lanes=[], placed=fs.map(function(f,i){
+      var x=X(vals[i]), lane=0;
+      for(var k=0;k<12;k++){
+        var l=k===0?0:(k%2?(k+1)/2:-k/2);
+        if(!(lanes[l]||[]).some(function(px){return Math.abs(px-x)<R*2+0.6})){lane=l;break}
+      }
+      (lanes[lane]=lanes[lane]||[]).push(x);
+      return {f:f,x:x,lane:lane,v:vals[i]};
     });
+    /* keep the swarm inside the card: squeeze lanes if a cluster runs deep */
+    var deepest=Math.max.apply(null,placed.map(function(p){return Math.abs(p.lane)}));
+    var gap=deepest>3?GAP*3/deepest:GAP;
+    placed.forEach(function(p){p.y=MID+p.lane*gap});
+
+    document.getElementById('bDots').innerHTML=placed.map(function(p,i){
+      return '<circle data-i="'+i+'" cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="'+R+'" fill="'+
+        gBarColor(p.f.nominal_bubble,true).replace('.75','.9')+'" stroke="var(--surface)" stroke-width="1.2"/>'}).join('');
+
+    var zx=X(0).toFixed(1);
+    document.getElementById('bZero').innerHTML=
+      '<line x1="'+zx+'" x2="'+zx+'" y1="8" y2="84" stroke="var(--slate-400)" stroke-dasharray="2 3"/>';
+    var s=g.summary, ax=X(s.avg_bubble*100).toFixed(1);
+    document.getElementById('bAvgMark').innerHTML=
+      '<path d="M'+ax+' 91 l-5 -7 h10 z" fill="var(--gold-600)"/>';
+    document.getElementById('bAxis').innerHTML=
+      '<text x="'+X0+'" y="8">'+gPct(lo/100,1)+'</text>'+
+      '<text x="'+zx+'" y="8" text-anchor="middle" font-weight="700">NAV</text>'+
+      '<text x="'+X1+'" y="8" text-anchor="end">'+gPct(hi/100,1)+'</text>';
+
+    var below=fs.filter(function(f){return f.nominal_bubble<0}).length, above=fs.length-below;
+    gText('bBelow',fa(below)); gText('bAbove',fa(above));
+    document.getElementById('bBelowBar').style.width=(below/fs.length*100)+'%';
+    document.getElementById('bAboveBar').style.width=(above/fs.length*100)+'%';
+
+    svg._placed=placed;
+  });
+
+  /* hover / tap a dot to name it */
+  function show(ev){
+    var c=ev.target.closest&&ev.target.closest('circle[data-i]');
+    if(!c||!svg._placed){tip.hidden=true; return}
+    var p=svg._placed[+c.getAttribute('data-i')], r=svg.getBoundingClientRect();
+    tip.innerHTML='صندوق '+p.f.symbol+' <b style="color:'+gColor(p.f.nominal_bubble)+'">'+gPct(p.f.nominal_bubble)+'</b>';
+    tip.style.left=(p.x/300*r.width)+'px'; tip.style.top=(p.y/92*r.height)+'px';
+    tip.hidden=false;
   }
+  svg.addEventListener('mousemove',show);
+  svg.addEventListener('click',show);
+  svg.addEventListener('mouseleave',function(){tip.hidden=true});
+})();
+
+onGold(function(g){
   var s=g.summary, el=document.getElementById('bubAvg');
-  if(el){var prev=el.textContent; el.textContent=gPct(s.avg_bubble);
-    if(prev!=='—'&&prev!==el.textContent) flash(el,s.avg_bubble<0)}
+  if(el){var prev=el.textContent; el.textContent=gPct(s.avg_bubble); el.style.color=gColor(s.avg_bubble);
+    if(prev!=='—'&&prev!==el.textContent) flash(el,s.avg_bubble>=0)}
   if(s.min_bubble) gText('bubMin',s.min_bubble.symbol+' '+gPct(s.min_bubble.bubble));
   if(s.max_bubble) gText('bubMax',s.max_bubble.symbol+' '+gPct(s.max_bubble.bubble));
   gText('hbG',gPct(s.avg_bubble,1));

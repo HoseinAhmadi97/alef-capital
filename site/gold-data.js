@@ -35,7 +35,14 @@ function goldFeed(url, seconds, fn) {
   function load() {
     if (!window.fetch) return;
     fetch(url, { cache: 'no-cache', headers: { Accept: 'application/json' } })
-      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        /* the server's clock, so market hours and countdowns don't depend
+           on a visitor's clock being right */
+        var server = Date.parse(r.headers.get('Date') || '');
+        if (!isNaN(server)) GOLD_CLOCK_OFFSET = server - Date.now();
+        return r.json();
+      })
       .then(function (d) {
         document.documentElement.classList.remove('gold-offline');
         if (d.generated_at === last) return;
@@ -62,6 +69,9 @@ goldFeed(GOLD_API, GOLD_POLL_MS / 1000, function (d) {
 
 /* lookups the pages need, built once per document */
 function goldIndex(d) {
+  /* farabi is the NAV of record; `nav` carries it. Older Nexus builds only
+     had nav_farabi, so fall back to that rather than show nothing. */
+  d.funds.forEach(function (f) { if (f.nav == null) f.nav = f.nav_farabi; });
   d.m = {};
   d.market.forEach(function (r) { d.m[r.symbol] = r; });
   d.withBubble = d.funds.filter(function (f) { return f.nominal_bubble != null; });
@@ -210,10 +220,71 @@ onGold(function (g) {
     c.className = 'tc ' + (s > 0 ? 'u' : (s < 0 ? 'd' : 'n'));
     c.textContent = gArrow(t.d);
   }
-  var st = gText('tstate', g.summary.market_open ? 'بازار باز است' : 'بازار بسته است');
-  if (st && st.previousElementSibling) st.previousElementSibling.style.background =
-    g.summary.market_open ? '' : 'var(--slate-400)';
 });
+
+/* ── market hours ──
+   Schedules come from config.MARKET_HOURS. Tehran is a fixed UTC+3:30
+   (no DST since 2022), so local time is computed from UTC plus the
+   server-clock offset, not from the visitor's timezone setting.
+
+   Mark an element with data-session="funds" or "physical":
+   - a .live badge gets its dot/colour state and a short label
+   - #tstate (ticker) and .gsession (long text) get a sentence
+   Everything re-renders every second, which is what drives the countdown. */
+var MARKET_HOURS = __MARKET_HOURS__, GOLD_CLOCK_OFFSET = 0;
+
+function gMinutes(hhmm) { var p = hhmm.split(':'); return +p[0] * 60 + +p[1]; }
+function gClockText(secs) {
+  var h = Math.floor(secs / 3600), m = Math.floor(secs % 3600 / 60), s = Math.floor(secs % 60);
+  return fa(h + ':' + ('0' + m).slice(-2) + ':' + ('0' + s).slice(-2));
+}
+/* {state: 'open' | 'soon' | 'closed', secsToOpen} for one schedule, now */
+function gSession(key) {
+  var cfg = MARKET_HOURS[key];
+  var t = new Date(Date.now() + GOLD_CLOCK_OFFSET + 3.5 * 3600e3);
+  var secs = t.getUTCHours() * 3600 + t.getUTCMinutes() * 60 + t.getUTCSeconds();
+  var open = gMinutes(cfg.open) * 60, close = gMinutes(cfg.close) * 60;
+  if (cfg.days.indexOf(t.getUTCDay()) < 0) return { state: 'closed' };
+  if (secs >= open && secs < close) return { state: 'open' };
+  if (secs < open && open - secs <= (cfg.countdown || 0) * 60) return { state: 'soon', secsToOpen: open - secs };
+  return { state: 'closed' };
+}
+
+var GOLD_SESSION_TEXT = {
+  funds: {
+    badge: { open: 'بازار باز', closed: 'بازار بسته' },
+    long: { open: 'بازار صندوق‌های طلا باز است', closed: 'بازار صندوق‌های طلا بسته است' },
+    soon: function (t) { return t + ' تا بازگشایی'; },
+    soonLong: function (t) { return 'بازگشایی بازار صندوق‌های طلا تا ' + t; }
+  },
+  physical: {
+    badge: { open: 'بازار باز', closed: 'بازار بسته' },
+    long: { open: 'بازار طلا باز است', closed: 'بازار طلا بسته است' },
+    soon: function (t) { return t + ' تا بازگشایی'; },
+    soonLong: function (t) { return 'بازگشایی بازار طلا تا ' + t; }
+  }
+};
+
+function gRenderSessions() {
+  document.querySelectorAll('[data-session]').forEach(function (el) {
+    var key = el.getAttribute('data-session'), s = gSession(key), T = GOLD_SESSION_TEXT[key];
+    var clock = s.state === 'soon' ? gClockText(s.secsToOpen) : '';
+    if (el.classList.contains('live')) {
+      el.classList.toggle('is-closed', s.state === 'closed');
+      el.classList.toggle('is-soon', s.state === 'soon');
+      var label = s.state === 'soon' ? T.soon(clock) : T.badge[s.state];
+      var span = el.querySelector('span') || el.appendChild(document.createElement('span'));
+      if (span.textContent !== label) span.textContent = label;
+      return;
+    }
+    var text = s.state === 'soon' ? T.soonLong(clock) : T.long[s.state];
+    if (el.textContent !== text) el.textContent = text;
+    if (el.id === 'tstate' && el.previousElementSibling)
+      el.previousElementSibling.style.background = s.state === 'open' ? '' : 'var(--slate-400)';
+  });
+}
+gRenderSessions();
+setInterval(gRenderSessions, 1000);
 
 /* bubble vs coin-weight scatter (product page and market page).
    x = the fund's coin weight this month, y = its bubble now; the dashed

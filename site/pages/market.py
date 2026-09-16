@@ -15,6 +15,7 @@ HTML = """
     <div style="text-align:left;font-size:13px;color:var(--slate-500);line-height:2">
       <div>آخرین روز معاملاتی: <b class="num gdate" style="color:var(--ink-800)">—</b></div>
       <div>آخرین به‌روزرسانی: <b class="num gupdated" style="color:var(--ink-800)">—</b></div>
+      <div><b data-session="funds" style="color:var(--ink-800)">—</b></div>
     </div>
   </div>
 </div>
@@ -153,7 +154,7 @@ onGold(function(g){
     return '<tr'+(PAYWALL&&i>=5?' class="lock"':'')+TD+'>'+
       '<td'+TD+'>صندوق '+f.symbol+'</td>'+
       '<td'+TD+'>'+gNum(f.last_trade)+'</td>'+
-      '<td'+TD+'>'+gNum(f.nav_live)+'</td>'+
+      '<td'+TD+'>'+gNum(f.nav)+'</td>'+
       '<td'+TD+'><span class="chip '+cls+'">'+gPct(f.nominal_bubble)+'</span></td>'+
       '<td'+TD+'>'+gBillion(f.value)+'</td>'+
       '<td'+TD+'>'+gTime(f.trade_time)+'</td></tr>'}).join('');
