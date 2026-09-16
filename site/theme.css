@@ -619,7 +619,8 @@ footer a:hover{color:var(--gold-300)}
 .subnav a.on{color:var(--gold-700);border-bottom-color:var(--gold-500);font-weight:800}
 /* the 900px override is gone: --topbar-h is measured, so it is already right here */
 
-.dsec{padding-block:30px;border-bottom:1px solid var(--border)}
+.dsec{padding-block:30px;border-bottom:1px solid var(--border);
+  scroll-margin-top:calc(var(--topbar-h,116px) + 48px)}  /* top bar + sub-nav, for #hash links */
 .dsec h2{font-size:19px;font-weight:800;margin:0 0 4px}
 .dsec .sh{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:16px}
 .dsec .sh p{margin:0;font-size:13px;color:var(--slate-500)}

@@ -529,11 +529,38 @@ onGold(function(g){
 (function(){
   var links=[].slice.call(document.querySelectorAll('.subnav a'));
   var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'))});
-  window.addEventListener('scroll',function(){
-    var y=window.scrollY+180, act=0;
-    secs.forEach(function(s,i){if(s&&s.offsetTop<=y)act=i});
+  var nav=document.querySelector('.subnav');
+  /* everything pinned above the content: the sticky top bar and this sub-nav.
+     Measured each time — their heights change with the font, width and menus. */
+  function covered(){
+    /* where the sub-nav's bottom will be once it is stuck — not where it is
+       now: from the top of the page it still sits lower, in normal flow */
+    if(!nav) return 0;
+    var top=parseFloat(getComputedStyle(nav).top)||0;
+    return Math.round(top+nav.getBoundingClientRect().height);
+  }
+  var lock=null;
+  function spy(){
+    if(lock!==null) return;                   /* keep the clicked tab lit while we scroll to it */
+    var y=covered()+24, act=0;
+    secs.forEach(function(s,i){if(s&&s.getBoundingClientRect().top<=y)act=i});
     links.forEach(function(a,i){a.classList.toggle('on',i===act)});
-  },{passive:true});
+  }
+  window.addEventListener('scroll',spy,{passive:true});
+  links.forEach(function(a,i){
+    a.addEventListener('click',function(e){
+      var s=secs[i]; if(!s) return;
+      e.preventDefault();
+      /* land with the section title just below the pinned bars, not under them */
+      var top=window.scrollY+s.getBoundingClientRect().top-covered()+1;
+      links.forEach(function(l,j){l.classList.toggle('on',j===i)});
+      lock=i; clearTimeout(a._t); a._t=setTimeout(function(){lock=null;spy()},900);
+      var calm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({top:Math.max(0,top),behavior:calm?'auto':'smooth'});
+      if(history.replaceState) history.replaceState(null,'',a.getAttribute('href'));
+    });
+  });
+  spy();
 })();
 """
 
@@ -728,11 +755,38 @@ if(!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').ma
 (function(){
   var links=[].slice.call(document.querySelectorAll('.subnav a'));
   var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'))});
-  window.addEventListener('scroll',function(){
-    var y=window.scrollY+180, act=0;
-    secs.forEach(function(s,i){if(s&&s.offsetTop<=y)act=i});
+  var nav=document.querySelector('.subnav');
+  /* everything pinned above the content: the sticky top bar and this sub-nav.
+     Measured each time — their heights change with the font, width and menus. */
+  function covered(){
+    /* where the sub-nav's bottom will be once it is stuck — not where it is
+       now: from the top of the page it still sits lower, in normal flow */
+    if(!nav) return 0;
+    var top=parseFloat(getComputedStyle(nav).top)||0;
+    return Math.round(top+nav.getBoundingClientRect().height);
+  }
+  var lock=null;
+  function spy(){
+    if(lock!==null) return;                   /* keep the clicked tab lit while we scroll to it */
+    var y=covered()+24, act=0;
+    secs.forEach(function(s,i){if(s&&s.getBoundingClientRect().top<=y)act=i});
     links.forEach(function(a,i){a.classList.toggle('on',i===act)});
-  },{passive:true});
+  }
+  window.addEventListener('scroll',spy,{passive:true});
+  links.forEach(function(a,i){
+    a.addEventListener('click',function(e){
+      var s=secs[i]; if(!s) return;
+      e.preventDefault();
+      /* land with the section title just below the pinned bars, not under them */
+      var top=window.scrollY+s.getBoundingClientRect().top-covered()+1;
+      links.forEach(function(l,j){l.classList.toggle('on',j===i)});
+      lock=i; clearTimeout(a._t); a._t=setTimeout(function(){lock=null;spy()},900);
+      var calm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({top:Math.max(0,top),behavior:calm?'auto':'smooth'});
+      if(history.replaceState) history.replaceState(null,'',a.getAttribute('href'));
+    });
+  });
+  spy();
 })();
 """
 
