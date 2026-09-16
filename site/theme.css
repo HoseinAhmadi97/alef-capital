@@ -669,40 +669,55 @@ footer a:hover{color:var(--gold-300)}
 .d.d-up{background:rgba(22,163,74,.12);color:var(--up-text)}
 .d.d-dn{background:rgba(220,38,38,.10);color:var(--down)}
 
-/* NAV trend — every fund's intraday line, one highlighted, ranked list beside */
-.navgrid{display:grid;grid-template-columns:1fr minmax(220px,280px);gap:16px;align-items:stretch}
-@media(max-width:900px){.navgrid{grid-template-columns:1fr}}
-.navchart{padding:20px}
-.navhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
-.navhead b{font-size:17px;font-weight:800;color:var(--ink-800);margin-inline-end:10px}
-.navplot{position:relative}
-.navplot svg{width:100%;height:280px;display:block;touch-action:pan-y}
-@media(max-width:600px){.navplot svg{height:220px}}
-.navplot .gl{stroke:var(--border);stroke-width:1;vector-effect:non-scaling-stroke}
-.navplot .zl{stroke:var(--border-strong);stroke-width:1;stroke-dasharray:4 4;vector-effect:non-scaling-stroke}
-#navLines path{stroke:var(--slate-400);stroke-width:1.2;opacity:.28;vector-effect:non-scaling-stroke;cursor:pointer;transition:opacity .2s}
-#navLines path:hover{opacity:.7}
-#navHot,#navGuide{vector-effect:non-scaling-stroke}
+/* NAV trend — market band + small multiples */
+.nvkey{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:11.5px;color:var(--slate-500)}
+.nvkey span{display:inline-flex;align-items:center;gap:6px}
+.nvkey i{display:inline-block;width:16px;border-radius:2px}
+.nvkey .k-med{height:3px;background:var(--gold-600)}
+.nvkey .k-iqr{height:10px;background:rgba(240,180,41,.35)}
+.nvkey .k-rng{height:10px;background:rgba(240,180,41,.12)}
+.nvband{padding:18px 20px 14px}
+.nvhead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+.nvnow small,.nvfacts small{display:block;font-size:11px;font-weight:600;color:var(--slate-400)}
+.nvnow b{display:block;font-size:26px;font-weight:900;line-height:1.3;font-variant-numeric:tabular-nums}
+.nvfacts{display:flex;gap:22px;flex-wrap:wrap}
+.nvfacts b{display:block;font-size:13.5px;font-weight:800;color:var(--ink-800);font-variant-numeric:tabular-nums;white-space:nowrap}
+.nvplot{position:relative}
+.nvplot svg{width:100%;height:240px;display:block;touch-action:pan-y}
+@media(max-width:600px){.nvplot svg{height:190px}}
+.nvplot .gl{stroke:var(--border);stroke-width:1;vector-effect:non-scaling-stroke}
+.nvplot .zl{stroke:var(--border-strong);stroke-width:1;stroke-dasharray:4 4;vector-effect:non-scaling-stroke}
+.nv-rng{fill:rgba(240,180,41,.12)}
+.nv-iqr{fill:rgba(240,180,41,.32)}
+.nv-med{fill:none;stroke:var(--gold-600);stroke-width:2.6;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.nv-fund{fill:none;stroke-width:2.4;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.nv-guide{stroke:var(--slate-400);stroke-dasharray:3 3;vector-effect:non-scaling-stroke}
 .navyl span{position:absolute;inset-inline-start:4px;transform:translateY(-110%);font-size:10.5px;color:var(--slate-400);font-variant-numeric:tabular-nums;pointer-events:none}
 .navdot{position:absolute;width:10px;height:10px;border-radius:50%;background:var(--gold-600);border:2px solid var(--surface);
   transform:translate(-50%,-50%);pointer-events:none;box-shadow:0 0 0 1px var(--gold-600)}
-/* the hidden attribute must win over any display rule (e.g. .navempty's grid) */
-[hidden]{display:none!important}
 .navempty{position:absolute;inset:0;display:grid;place-items:center;font-size:13px;color:var(--slate-400);pointer-events:none}
-.navtip{position:absolute;top:6px;transform:translateX(-50%);background:var(--ink-900);color:var(--surface);
-  font-size:12px;padding:6px 10px;border-radius:8px;white-space:nowrap;pointer-events:none;font-variant-numeric:tabular-nums}
+.navtip{position:absolute;top:4px;transform:translateX(-50%);background:var(--ink-900);color:var(--surface);
+  font-size:12px;padding:6px 10px;border-radius:8px;white-space:nowrap;pointer-events:none;font-variant-numeric:tabular-nums;text-align:center}
+.navtip .nvt-r{display:block;font-size:10.5px;opacity:.7;margin-top:1px}
 :root[data-theme="dark"] .navtip{background:var(--surface-3);color:var(--ink-800)}
 /* time runs left → right like the plot, whatever the page direction */
 .navaxis{display:flex;justify-content:space-between;direction:ltr;font-size:11px;color:var(--slate-500);margin-top:6px;font-variant-numeric:tabular-nums}
-.navrank{padding:18px;display:flex;flex-direction:column;max-height:420px}
-.navlist{overflow-y:auto;display:grid;gap:2px;margin-inline:-6px;padding-inline:6px}
-.navlist button{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;width:100%;font:inherit;font-size:13px;
-  text-align:start;padding:7px 9px;border-radius:8px;border:0;background:transparent;color:var(--ink-800);cursor:pointer}
-.navlist button:hover{background:var(--surface-2)}
-.navlist button[aria-selected="true"]{background:var(--gold-50);box-shadow:inset 3px 0 0 var(--gold-400)}
-.navlist .v{font-weight:800;font-variant-numeric:tabular-nums}
-.navlist .bar{grid-column:1/-1;height:3px;border-radius:2px;background:var(--surface-3);overflow:hidden;margin-top:3px}
-.navlist .bar i{display:block;height:100%}
+
+.nvsm{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px;margin-top:12px}
+.nvs{display:flex;flex-direction:column;gap:4px;padding:9px 10px 8px;border-radius:12px;border:1px solid var(--border);
+  background:var(--surface);cursor:pointer;font:inherit;text-align:start;color:inherit;transition:border-color .15s,box-shadow .15s}
+.nvs:hover{border-color:var(--border-strong)}
+.nvs[aria-pressed="true"]{border-color:var(--gold-400);box-shadow:0 0 0 3px rgba(240,180,41,.18)}
+.nvs-h{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.nvs-h b{font-size:13px;font-weight:800;color:var(--ink-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nvs-h em{font-style:normal;font-size:12.5px;font-weight:800;font-variant-numeric:tabular-nums}
+.nvs svg{width:100%;height:34px;display:block}
+.nvs .z{stroke:var(--border-strong);stroke-width:1;stroke-dasharray:2 3;vector-effect:non-scaling-stroke}
+.nvs .l{fill:none;stroke-width:1.6;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.nvs-f{font-size:10.5px;color:var(--slate-400);font-variant-numeric:tabular-nums}
+.nvs.pos em{color:var(--up-text)} .nvs.pos .l{stroke:var(--up)} .nvs.pos .a{fill:rgba(22,163,74,.12)}
+.nvs.neg em{color:var(--down)}    .nvs.neg .l{stroke:var(--down)} .nvs.neg .a{fill:rgba(220,38,38,.10)}
+.nvs.zero em{color:var(--slate-500)} .nvs.zero .l{stroke:var(--slate-400)} .nvs.zero .a{fill:none}
 
 /* asset mix — whole-market donut + one 100% bar per fund */
 :root{--mix-coin:#D9A32B;--mix-bar:#3B6FE0;--mix-other:#94A3B8}
@@ -720,11 +735,12 @@ footer a:hover{color:var(--gold-300)}
   border:1px solid var(--border);background:var(--surface);color:var(--slate-600)}
 .mixsort button[aria-pressed="true"]{background:var(--gold-50);border-color:var(--gold-400);color:var(--gold-700)}
 .mixbars{display:grid;gap:7px}
-.mb{display:grid;grid-template-columns:86px 1fr 64px;align-items:center;gap:10px;font-size:12.5px}
+/* the value column fits the longest value (e.g. «۳۲۴٫۱ همت») on one line */
+.mb{display:grid;grid-template-columns:86px 1fr 92px;align-items:center;gap:10px;font-size:12.5px}
 .mb-n{font-weight:700;color:var(--ink-800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mb-bar{display:flex;height:16px;border-radius:5px;overflow:hidden;background:var(--surface-3)}
 .mb-bar i{display:block;height:100%;transition:width .5s ease}
-.mb-v{text-align:left;font-weight:800;font-variant-numeric:tabular-nums}
+.mb-v{text-align:left;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
 .mbkey{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--slate-500);margin-bottom:12px}
 .mbkey span{display:inline-flex;align-items:center;gap:6px}
 .lockcell{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:800;color:var(--gold-700);

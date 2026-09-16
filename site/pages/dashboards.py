@@ -132,37 +132,49 @@ GOLD = """
 </div>
 </section>
 
-<!-- NAV TREND -->
+<!-- NAV TREND — the market as a band, every fund as a small multiple -->
 <section class="dsec" id="nav">
 <div class="wrap">
-  <div class="sh"><div><h2>روند ارزش خالص دارایی (NAV)</h2><p>تغییر NAV همه صندوق‌ها نسبت به آخرین NAV روز قبل · روی نمودار یا فهرست، صندوق را انتخاب کنید</p></div>
-    <div style="font-size:12px;color:var(--slate-500)" id="navDay">—</div></div>
-  <div class="navgrid">
-    <div class="card navchart">
-      <div class="navhead">
-        <div><b id="navSel">—</b><span id="navSelV" class="d">—</span></div>
-        <span id="navSelNav" style="font-size:12.5px;color:var(--slate-500)">—</span>
-      </div>
-      <div class="navplot" id="navPlot">
-        <svg id="navSvg" viewBox="0 0 640 300" preserveAspectRatio="none" role="img" aria-label="روند درون‌روزی NAV صندوق‌های طلا">
-          <g id="navGrid"></g>
-          <g id="navLines" fill="none" stroke-linejoin="round" stroke-linecap="round"></g>
-          <path id="navArea"></path>
-          <path id="navHot" fill="none" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"></path>
-          <line id="navGuide" y1="0" y2="300" stroke="var(--slate-400)" stroke-dasharray="3 3" style="display:none"></line>
-        </svg>
-        <div class="navyl" id="navYl"></div>
-        <div class="navdot" id="navDot" hidden></div>
-        <div class="navtip" id="navTip" hidden></div>
-        <div class="navempty" id="navEmpty">در حال دریافت داده…</div>
-      </div>
-      <div class="navaxis" id="navAxis"></div>
-    </div>
-    <div class="card navrank">
-      <div class="lch" style="margin-bottom:8px"><span class="lbl">تغییر NAV نسبت به دیروز</span><span style="font-size:11.5px;color:var(--slate-400)">بیشترین ← کمترین</span></div>
-      <div id="navList" class="navlist" role="listbox" aria-label="انتخاب صندوق"></div>
+  <div class="sh">
+    <div><h2>روند ارزش خالص دارایی (NAV)</h2><p>تغییر NAV نسبت به آخرین NAV روز قبل · روی هر صندوق بزنید تا روی نمودار بازار دیده شود</p></div>
+    <div class="nvkey">
+      <span><i class="k-med"></i>میانه صندوق‌ها</span>
+      <span><i class="k-iqr"></i>نیمه میانی</span>
+      <span><i class="k-rng"></i>کل بازه</span>
+      <span id="nvDay">—</span>
     </div>
   </div>
+
+  <div class="card nvband">
+    <div class="nvhead">
+      <div class="nvnow">
+        <small id="nvWho">میانه همه صندوق‌ها</small>
+        <b class="num" id="nvVal">—</b>
+      </div>
+      <div class="nvfacts">
+        <div><small>بیشترین</small><b class="num" id="nvTop">—</b></div>
+        <div><small>کمترین</small><b class="num" id="nvBot">—</b></div>
+        <div><small>بالای دیروز</small><b class="num" id="nvUp">—</b></div>
+      </div>
+    </div>
+    <div class="nvplot" id="nvPlot">
+      <svg id="nvSvg" viewBox="0 0 640 240" preserveAspectRatio="none" role="img" aria-label="بازه تغییر NAV صندوق‌های طلا در طول روز">
+        <g id="nvGrid"></g>
+        <path id="nvRange" class="nv-rng"></path>
+        <path id="nvIqr" class="nv-iqr"></path>
+        <path id="nvMed" class="nv-med"></path>
+        <path id="nvFund" class="nv-fund"></path>
+        <line id="nvGuide" class="nv-guide" y1="0" y2="240" style="display:none"></line>
+      </svg>
+      <div class="navyl" id="nvYl"></div>
+      <div class="navdot" id="nvDot" hidden></div>
+      <div class="navtip" id="nvTip" hidden></div>
+      <div class="navempty" id="nvEmpty">در حال دریافت داده…</div>
+    </div>
+    <div class="navaxis" id="nvAxis"></div>
+  </div>
+
+  <div class="nvsm" id="nvSmall" role="group" aria-label="صندوق‌ها"></div>
 </div>
 </section>
 
@@ -196,7 +208,6 @@ GOLD = """
         <span><i style="background:var(--mix-coin)"></i>گواهی سکه</span>
         <span><i style="background:var(--mix-bar)"></i>گواهی شمش</span>
         <span><i style="background:var(--mix-other)"></i>نقد و سایر</span>
-        <span style="margin-inline-start:auto" id="mixKeyLabel">عدد سمت چپ: سهم سکه</span>
       </div>
       <div class="mixbars" id="mixBars"></div>
     </div>
@@ -325,117 +336,153 @@ onGold(function(g){
       gPct(f.change_pct)+'</span></div>'}).join('');
 });
 
-/* ── NAV trend — every fund's intraday NAV, as % change from its previous-day
-   close (prev_close; the first NAV of the day only when there is none), so
-   the zero line means "unchanged since yesterday". Its own feed (GOLD_NAV_API): only this page needs it, so the
-   snapshot every page polls stays small. ── */
+/* ── NAV trend ──
+   Every fund's NAV as % change from its previous-day close (prev_close).
+   31 overlapping lines are unreadable, so the market is drawn as a band:
+   the full range, the middle half (25th–75th percentile) and the median.
+   Each fund gets a small multiple on one shared scale — shapes are
+   directly comparable — and picking one draws it over the band.
+   Own feed (GOLD_NAV_API): only this page needs it. */
 (function(){
-  var W=640, H=300, PAD=14;
-  var svg=document.getElementById('navSvg'); if(!svg) return;
-  var plot=document.getElementById('navPlot'), lines=document.getElementById('navLines'),
-      hot=document.getElementById('navHot'), area=document.getElementById('navArea'),
-      grid=document.getElementById('navGrid'), guide=document.getElementById('navGuide'),
-      dot=document.getElementById('navDot'), tip=document.getElementById('navTip'),
-      list=document.getElementById('navList'), yl=document.getElementById('navYl');
-  var D=null, sel=null, lo=0, hi=0;
+  var W=640, H=240, PAD=12;
+  var svg=document.getElementById('nvSvg'); if(!svg) return;
+  var $=function(id){return document.getElementById(id)};
+  var D=null, P=null, sel=null, lo=0, hi=0;
 
-  function pcts(f){
-    var base=f.prev_close||null;
-    return f.nav.map(function(v){
-      if(v==null) return null;
-      if(base==null) base=v;
-      return (v/base-1)*100});
-  }
   function X(i){return D.times.length<2?0:i/(D.times.length-1)*W}
   function Y(v){return PAD+(hi-v)/(hi-lo||1)*(H-2*PAD)}
-  function path(ps){
-    var d='', pen=false;
-    ps.forEach(function(v,i){
-      if(v==null){pen=false; return}
-      d+=(pen?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)+' '; pen=true});
+  function fmt(v){return gPct(v==null?null:v/100)}
+  function line(vs){
+    var d='',pen=false;
+    vs.forEach(function(v,i){if(v==null){pen=false;return}
+      d+=(pen?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)+' ';pen=true});
     return d;
   }
-  function fmt(v){return gPct(v==null?null:v/100)}
-
-  function select(isin){
-    sel=D.funds.filter(function(f){return f.isin===isin})[0]||D.funds[0];
-    if(!sel) return;
-    var ps=sel.p, color=gColor(sel.change_pct)||'var(--slate-500)';
-    var d=path(ps);
-    hot.setAttribute('d',d); hot.style.stroke=color;
-    var first=ps.findIndex(function(v){return v!=null}), last=-1;
-    for(var i=ps.length-1;i>=0;i--) if(ps[i]!=null){last=i;break}
-    if(first>=0&&last>first){
-      area.setAttribute('d',d+'L'+X(last).toFixed(1)+' '+Y(0).toFixed(1)+' L'+X(first).toFixed(1)+' '+Y(0).toFixed(1)+' Z');
-      area.style.fill=gSign(sel.change_pct)<0?'rgba(220,38,38,.08)':'rgba(22,163,74,.10)';
-    } else area.removeAttribute('d');
-    [].forEach.call(lines.children,function(p){p.style.display=p.getAttribute('data-isin')===sel.isin?'none':''});
-    gText('navSel','صندوق '+sel.symbol);
-    var chip=gText('navSelV',gPct(sel.change_pct));
-    chip.className='d '+gTone(sel.change_pct,'d-up','d-dn');
-    gText('navSelNav','NAV '+gNum(gToman(sel.last))+' تومان · '+gTime(D.times[last]));
-    [].forEach.call(list.children,function(b){
-      b.setAttribute('aria-selected',b.getAttribute('data-isin')===sel.isin?'true':'false')});
-    hideTip();
+  function band(a,b){               /* area between two series */
+    var idx=[];a.forEach(function(v,i){if(v!=null&&b[i]!=null)idx.push(i)});
+    if(idx.length<2) return '';
+    return 'M'+idx.map(function(i){return X(i).toFixed(1)+' '+Y(a[i]).toFixed(1)}).join(' L')+
+      ' L'+idx.slice().reverse().map(function(i){return X(i).toFixed(1)+' '+Y(b[i]).toFixed(1)}).join(' L')+' Z';
+  }
+  function q(sorted,p){              /* linear-interpolated quantile */
+    var k=(sorted.length-1)*p, f=Math.floor(k), c=Math.ceil(k);
+    return sorted[f]+(sorted[c]-sorted[f])*(k-f);
   }
 
   function draw(d){
     D=d;
-    document.getElementById('navEmpty').hidden=!!(d.funds.length&&d.times.length>1);
-    if(!d.funds.length||d.times.length<2) return;
-    d.funds.forEach(function(f){f.p=pcts(f)});
-    var all=[]; d.funds.forEach(function(f){f.p.forEach(function(v){if(v!=null)all.push(v)})});
+    var ok=d.funds.length&&d.times.length>1;
+    $('nvEmpty').hidden=!!ok; if(!ok) return;
+
+    d.funds.forEach(function(f){
+      var base=f.prev_close||null;
+      f.p=f.nav.map(function(v){if(v==null)return null; if(base==null)base=v; return (v/base-1)*100});
+    });
+    var n=d.times.length;
+    P={min:[],q1:[],med:[],q3:[],max:[]};
+    for(var i=0;i<n;i++){
+      var col=d.funds.map(function(f){return f.p[i]}).filter(function(v){return v!=null}).sort(function(a,b){return a-b});
+      if(!col.length){['min','q1','med','q3','max'].forEach(function(k){P[k].push(null)});continue}
+      P.min.push(col[0]); P.q1.push(q(col,.25)); P.med.push(q(col,.5)); P.q3.push(q(col,.75)); P.max.push(col[col.length-1]);
+    }
+    var all=P.min.concat(P.max).filter(function(v){return v!=null});
     lo=Math.min(0,Math.min.apply(null,all)); hi=Math.max(0,Math.max.apply(null,all));
     var pad=(hi-lo)*0.08||0.1; lo-=pad; hi+=pad;
 
-    /* gridlines at round steps, labelled outside the (stretched) SVG */
-    var span=hi-lo, step=[0.1,0.2,0.25,0.5,1,2,5].filter(function(s){return span/s<=6})[0]||10, g='', labels='';
+    /* grid + labels outside the stretched svg */
+    var span=hi-lo, step=[0.1,0.2,0.25,0.5,1,2,5].filter(function(s){return span/s<=5})[0]||10, g='', lab='';
     for(var v=Math.ceil(lo/step)*step; v<=hi+1e-9; v+=step){
-      var y=Y(v), zero=Math.abs(v)<1e-9;
-      g+='<line class="'+(zero?'zl':'gl')+'" x1="0" x2="'+W+'" y1="'+y.toFixed(1)+'" y2="'+y.toFixed(1)+'"/>';
-      labels+='<span style="top:'+(y/H*100).toFixed(2)+'%">'+(zero?'۰٪':fmt(v))+'</span>';
+      var y=Y(v), z=Math.abs(v)<1e-9;
+      g+='<line class="'+(z?'zl':'gl')+'" x1="0" x2="'+W+'" y1="'+y.toFixed(1)+'" y2="'+y.toFixed(1)+'"/>';
+      lab+='<span style="top:'+(y/H*100).toFixed(2)+'%">'+(z?'۰٪':fmt(v))+'</span>';
     }
-    grid.innerHTML=g; yl.innerHTML=labels;
+    $('nvGrid').innerHTML=g; $('nvYl').innerHTML=lab;
+    $('nvRange').setAttribute('d',band(P.max,P.min));
+    $('nvIqr').setAttribute('d',band(P.q3,P.q1));
+    $('nvMed').setAttribute('d',line(P.med));
 
-    lines.innerHTML=d.funds.map(function(f){
-      return '<path data-isin="'+f.isin+'" d="'+path(f.p)+'"><title>'+f.symbol+' '+gPct(f.change_pct)+'</title></path>'}).join('');
+    var mid=Math.floor((n-1)/2);
+    $('nvAxis').innerHTML='<span>'+gTime(d.times[0])+'</span><span>'+gTime(d.times[mid])+'</span><span>'+gTime(d.times[n-1])+'</span>';
+    gText('nvDay',gDate(d.times[n-1]));
 
-    var n=d.times.length, mid=Math.floor((n-1)/2);
-    document.getElementById('navAxis').innerHTML=
-      '<span>'+gTime(d.times[0])+'</span><span>'+gTime(d.times[mid])+'</span><span>'+gTime(d.times[n-1])+'</span>';
-    gText('navDay','آخرین روز با داده: '+gDate(d.times[n-1]));
+    /* headline facts, from each fund's latest change */
+    var ranked=d.funds.filter(function(f){return f.change_pct!=null})
+      .sort(function(a,b){return b.change_pct-a.change_pct});
+    if(ranked.length){
+      var top=ranked[0], bot=ranked[ranked.length-1];
+      $('nvTop').innerHTML=top.symbol+' <span style="color:'+gColor(top.change_pct)+'">'+gPct(top.change_pct)+'</span>';
+      $('nvBot').innerHTML=bot.symbol+' <span style="color:'+gColor(bot.change_pct)+'">'+gPct(bot.change_pct)+'</span>';
+      var up=ranked.filter(function(f){return f.change_pct>0}).length;
+      gText('nvUp',fa(up)+' از '+fa(ranked.length));
+    }
 
-    var ranked=d.funds.slice().sort(function(a,b){return (b.change_pct||0)-(a.change_pct||0)});
-    var mx=Math.max.apply(null,ranked.map(function(f){return Math.abs(f.change_pct||0)}))||1;
-    list.innerHTML=ranked.map(function(f){
-      return '<button type="button" role="option" data-isin="'+f.isin+'"><span>'+f.symbol+'</span>'+
-        '<span class="v" style="color:'+gColor(f.change_pct)+'">'+gPct(f.change_pct)+'</span>'+
-        '<span class="bar"><i style="width:'+(Math.abs(f.change_pct||0)/mx*100).toFixed(1)+'%;background:'+
-        gBarColor(f.change_pct,true)+'"></i></span></button>'}).join('');
-
-    select(sel?sel.isin:d.funds[0].isin);
+    smallMultiples(ranked);
+    select(sel?sel.isin:null);
   }
 
-  function hideTip(){tip.hidden=true; dot.hidden=true; guide.style.display='none'}
+  /* one card per fund, shared y-scale so the shapes compare honestly */
+  function smallMultiples(ranked){
+    var box=$('nvSmall'), SW=100, SH=34;
+    function sx(i){return i/(D.times.length-1)*SW}
+    function sy(v){return 2+(hi-v)/(hi-lo||1)*(SH-4)}
+    var zy=sy(0).toFixed(1);
+    box.innerHTML=ranked.map(function(f){
+      var d='',pen=false,first=-1,last=-1;
+      f.p.forEach(function(v,i){if(v==null){pen=false;return}
+        if(first<0)first=i; last=i;
+        d+=(pen?'L':'M')+sx(i).toFixed(2)+' '+sy(v).toFixed(2)+' ';pen=true});
+      var tone=gSign(f.change_pct)>0?'pos':(gSign(f.change_pct)<0?'neg':'zero');
+      var area=first>=0&&last>first?d+'L'+sx(last).toFixed(2)+' '+zy+' L'+sx(first).toFixed(2)+' '+zy+' Z':'';
+      return '<button type="button" class="nvs '+tone+'" data-isin="'+f.isin+'" aria-pressed="false">'+
+        '<span class="nvs-h"><b>'+f.symbol+'</b><em>'+gPct(f.change_pct)+'</em></span>'+
+        '<svg viewBox="0 0 '+SW+' '+SH+'" preserveAspectRatio="none" aria-hidden="true">'+
+          '<line x1="0" x2="'+SW+'" y1="'+zy+'" y2="'+zy+'" class="z"/>'+
+          '<path d="'+area+'" class="a"/><path d="'+d+'" class="l"/></svg>'+
+        '<span class="nvs-f">NAV '+gNum(gToman(f.last))+'</span></button>'}).join('');
+  }
+
+  function select(isin){
+    sel=isin&&D?D.funds.filter(function(f){return f.isin===isin})[0]:null;
+    var fund=$('nvFund');
+    if(sel){
+      fund.setAttribute('d',line(sel.p));
+      fund.style.stroke=gColor(sel.change_pct)||'var(--slate-500)';
+      gText('nvWho','صندوق '+sel.symbol);
+      var v=$('nvVal'); v.textContent=gPct(sel.change_pct); v.style.color=gColor(sel.change_pct);
+    }else{
+      fund.removeAttribute('d');
+      var m=P?P.med.filter(function(x){return x!=null}).pop():null;
+      gText('nvWho','میانه همه صندوق‌ها');
+      var v2=$('nvVal'); v2.textContent=fmt(m); v2.style.color=gColor(m==null?null:m/100);
+    }
+    [].forEach.call($('nvSmall').children,function(b){
+      b.setAttribute('aria-pressed',sel&&b.getAttribute('data-isin')===sel.isin?'true':'false')});
+    hide();
+  }
+
+  function hide(){$('nvTip').hidden=true;$('nvDot').hidden=true;$('nvGuide').style.display='none'}
   function at(ev){
-    if(!D||!sel) return;
+    if(!D||!P) return;
     var r=svg.getBoundingClientRect(), cx=(ev.touches?ev.touches[0].clientX:ev.clientX)-r.left;
     var i=Math.max(0,Math.min(D.times.length-1,Math.round(cx/r.width*(D.times.length-1))));
-    var v=sel.p[i]; if(v==null){hideTip(); return}
+    var v=sel?sel.p[i]:P.med[i]; if(v==null){hide();return}
     var px=X(i)/W*r.width, py=Y(v)/H*r.height;
-    guide.setAttribute('x1',X(i)); guide.setAttribute('x2',X(i)); guide.style.display='';
-    dot.style.left=px+'px'; dot.style.top=py+'px'; dot.hidden=false;
-    tip.innerHTML=sel.symbol+' · '+gTime(D.times[i])+' · <b style="color:'+(gColor(v)||'inherit')+'">'+fmt(v)+'</b>';
-    tip.style.left=Math.min(Math.max(px,80),r.width-80)+'px'; tip.hidden=false;
+    var g=$('nvGuide'); g.setAttribute('x1',X(i)); g.setAttribute('x2',X(i)); g.style.display='';
+    var dot=$('nvDot'); dot.style.left=px+'px'; dot.style.top=py+'px'; dot.hidden=false;
+    var tip=$('nvTip');
+    tip.innerHTML=gTime(D.times[i])+' · '+(sel?sel.symbol:'میانه')+' <b style="color:'+(gColor(v/100)||'inherit')+'">'+fmt(v)+'</b>'+
+      '<span class="nvt-r">بازه '+fmt(P.min[i])+' تا '+fmt(P.max[i])+'</span>';
+    tip.style.left=Math.min(Math.max(px,90),r.width-90)+'px'; tip.hidden=false;
   }
   svg.addEventListener('mousemove',at);
-  svg.addEventListener('mouseleave',hideTip);
+  svg.addEventListener('mouseleave',hide);
   svg.addEventListener('touchstart',at,{passive:true});
   svg.addEventListener('touchmove',at,{passive:true});
-  lines.addEventListener('click',function(e){
-    var p=e.target.closest('path'); if(p) select(p.getAttribute('data-isin'))});
-  list.addEventListener('click',function(e){
-    var b=e.target.closest('button'); if(b) select(b.getAttribute('data-isin'))});
+  $('nvSmall').addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b) return;
+    var isin=b.getAttribute('data-isin');
+    select(sel&&sel.isin===isin?null:isin);       /* tap again to go back to the median */
+  });
 
   goldFeed(GOLD_NAV_API, 60, draw);
 })();
@@ -480,7 +527,6 @@ onGold(function(g){
     donut(funds);
     var k=KEYS[key];
     funds.sort(function(a,b){return k.v(b)-k.v(a)});
-    gText('mixKeyLabel','عدد سمت چپ: '+k.label);
     bars.innerHTML=funds.map(function(f){
       var t=f.symbol+' — سکه '+fa(Math.round(f.w.sk*100))+'٪، شمش '+fa(Math.round(f.w.sh*100))+'٪، سایر '+fa(Math.round(f.w.ot*100))+'٪';
       return '<div class="mb" title="'+t+'"><span class="mb-n">'+f.symbol+'</span><div class="mb-bar">'+
