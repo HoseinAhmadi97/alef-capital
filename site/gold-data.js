@@ -194,6 +194,21 @@ function gBillion(rial) {
   if (rial == null) return '—';
   return fa(grp(rial / 1e10)) + ' میلیارد';
 }
+/* A number for a data table:
+   - Persian digits with the Persian thousands separator «٬» (U+066C), not ","
+   - for values of a million or more, the last three digits are set quieter,
+     so the significant part reads first: ۲۳۲٬۸۰۰<quiet>٬۰۰۰</quiet>
+   Digits are tabular (theme.css), so right-aligned columns line up by place. */
+function gNumT(n) {
+  if (n == null || isNaN(n)) return '—';
+  var s = fa(grp(Math.abs(n))).replace(/,/g, '٬');
+  var sign = n < 0 ? '−' : '';
+  if (Math.abs(n) >= 1e6) {
+    var i = s.lastIndexOf('٬');
+    return sign + '<span class="nh">' + s.slice(0, i) + '</span><span class="nt">' + s.slice(i) + '</span>';
+  }
+  return sign + s;
+}
 function gText(id, text) { var e = document.getElementById(id); if (e) e.textContent = text; return e; }
 
 /* ── pieces several pages share ── */

@@ -96,8 +96,15 @@ GOLD = """
   </div>
   <div class="dwrap"><div class="tscroll twin">
     <table class="dt" id="gTable">
-      <thead><tr><th data-sort="text">نماد</th><th data-sort="num">آخرین قیمت</th><th data-sort="num">درصد تغییر</th><th data-sort="num">مقدار تغییر</th>
-        <th data-sort="num">ارزش ذاتی (NAV)</th><th data-sort="num">حباب</th><th data-sort="num">دلار محاسباتی</th><th data-sort="num">ارزش معاملات</th><th data-sort="text">زمان</th></tr></thead>
+      <thead><tr><th data-sort="text">نماد</th>
+        <th data-sort="num">آخرین قیمت<small>تومان</small></th>
+        <th data-sort="num">تغییر<small>درصد</small></th>
+        <th data-sort="num">تغییر<small>تومان</small></th>
+        <th data-sort="num" class="gs">NAV<small>تومان</small></th>
+        <th data-sort="num">حباب<small>نسبت به NAV</small></th>
+        <th data-sort="num">دلار محاسباتی<small>تومان</small></th>
+        <th data-sort="num" class="gs">ارزش معاملات<small>میلیارد تومان</small></th>
+        <th data-sort="text">زمان<small>آخرین معامله</small></th></tr></thead>
       <tbody id="gBody"></tbody>
     </table>
   </div></div>
@@ -111,12 +118,15 @@ GOLD = """
   <div class="sh"><div><h2>طلا و سکه — بازار نقدی</h2><p>مبنای محاسبه ارزش ذاتی گواهی‌های سپرده</p></div></div>
   <div class="dwrap"><div class="tscroll">
     <table class="dt" id="sTable">
-      <thead><tr><th data-sort="text">عنوان</th><th data-sort="num">آخرین قیمت</th><th data-sort="num">درصد تغییر</th><th data-sort="num">مقدار تغییر</th>
-        <th>ارزش ذاتی</th><th>حباب</th><th>دلار محاسباتی</th></tr></thead>
+      <thead><tr><th data-sort="text">عنوان</th>
+        <th data-sort="num">آخرین قیمت<small>تومان</small></th>
+        <th data-sort="num">تغییر<small>درصد</small></th>
+        <th data-sort="num">تغییر<small>تومان</small></th>
+        <th class="gs">ارزش ذاتی<small>تومان</small></th><th>حباب</th><th>دلار محاسباتی<small>تومان</small></th></tr></thead>
       <tbody id="sBody"></tbody>
     </table>
   </div></div>
-  <p style="font-size:12px;color:var(--slate-400);margin-top:10px">قیمت‌ها به تومان · ارزش ذاتی، حباب و دلار محاسباتی سکه‌ها به‌زودی</p>
+  <p style="font-size:12px;color:var(--slate-400);margin-top:10px">ارزش ذاتی، حباب و دلار محاسباتی سکه‌ها به‌زودی</p>
 </div>
 </section>
 
@@ -253,7 +263,7 @@ function chgCells(f,abs){
   var cls=gTone(f,'up','dn');
   /* the arrow is a small marker in front of the number, not a character in it */
   var pct=gArrow(f).replace(/^(\S+)\s/,'<span class="arr">$1</span>');
-  return gTd(pct,f,cls)+gTd(abs==null?'—':gNum(Math.abs(abs)),abs,cls)}
+  return gTd(pct,f,cls)+gTd(abs==null?'—':gNumT(Math.abs(abs)),abs,cls)}
 function bubCell(b){
   if(PAYWALL) return LOCK;
   return '<span class="pill '+gTone(b,'up','dn')+'">'+gPct(b)+'</span>'}
@@ -296,11 +306,11 @@ onGold(function(g){
   b.innerHTML=rows.map(function(f){
     var implied=f.last_trade&&f.nav&&usd?usd*f.last_trade/f.nav:null;
     return '<tr>'+gTd(f.symbol,f.symbol)+
-      gTd(gNum(gToman(f.last_trade)),f.last_trade,'k')+chgCells(f.change_pct,gToman(f.change))+
-      gTd(cell(gNum(gToman(f.nav))),f.nav,'s')+
+      gTd(gNumT(gToman(f.last_trade)),f.last_trade,'k')+chgCells(f.change_pct,gToman(f.change))+
+      gTd(cell(gNumT(gToman(f.nav))),f.nav,'s gs')+
       gTd(bubCell(f.nominal_bubble),f.nominal_bubble)+
-      gTd(cell(gNum(implied)),implied,'s')+
-      gTd(withUnit(gBillion(f.value)),f.value,'s')+
+      gTd(cell(gNumT(implied)),implied,'s')+
+      gTd(f.value==null?'—':gNumT(f.value/1e10),f.value,'s gs')+
       gTd(gTime(f.trade_time),f.trade_time,'m')+'</tr>'}).join('');
   gResort(document.getElementById('gTable'));
 });
@@ -314,9 +324,9 @@ onGold(function(g){
   var b=document.getElementById('sBody'); if(!b) return;
   b.innerHTML=SPOT.map(function(s){
     var r=g.m[s[1]], k=r&&r.unit==='IRR'?0.1:1, px=goldToman(r);   /* toman */
-    return '<tr>'+gTd(s[0],s[0])+gTd(gNum(px),px,'k')+
+    return '<tr>'+gTd(s[0],s[0])+gTd(gNumT(px),px,'k')+
       chgCells(r?r.change_pct:null,r&&r.change!=null?r.change*k:null)+
-      '<td>—</td><td>—</td><td>—</td></tr>'}).join('');
+      '<td class="gs">—</td><td>—</td><td>—</td></tr>'}).join('');
   gResort(document.getElementById('sTable'));
 });
 

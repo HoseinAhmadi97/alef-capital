@@ -659,10 +659,29 @@ footer a:hover{color:var(--gold-300)}
 .dt .pill.up{background:rgba(22,163,74,.12);color:var(--up-text)}
 .dt .pill.dn{background:rgba(220,38,38,.10);color:var(--down)}
 
+/* ── gold dashboard tables: reading numbers ──
+   - numbers are right-aligned: with tabular digits the ones, thousands and
+     millions places line up down the column, so magnitudes compare at a glance
+   - units live under the header, not in every cell
+   - light zebra rows guide the eye across; a hairline separates column groups
+     (price & change | NAV & bubble | trading) */
+#gTable th,#gTable td,#sTable th,#sTable td{text-align:right}
+#gTable th,#sTable th{vertical-align:bottom;line-height:1.35;padding-block:10px 9px}
+.dt th small{display:block;font-size:10px;font-weight:500;color:var(--slate-400);margin-top:2px;letter-spacing:0}
+#gTable td,#sTable td{padding-block:12px}
+#gTable tbody tr:nth-child(even),#sTable tbody tr:nth-child(even){background:color-mix(in srgb,var(--surface-2) 70%,transparent)}
+#gTable tbody tr:hover,#sTable tbody tr:hover{background:var(--surface-3)}
+#gTable .gs,#sTable .gs{border-inline-start:1px solid var(--border)}
+.dt td{font-feature-settings:"tnum" 1}
+.dt .nt{color:var(--slate-400);font-weight:500}
+.dt td.k .nh{color:var(--ink-900)}
+.dt td.up .nt,.dt td.dn .nt{color:inherit;opacity:.55}
+
 /* sortable headers — the arrow shows the active column and direction */
 .dt th[data-sort]{cursor:pointer;user-select:none;white-space:nowrap}
 .dt th[data-sort]:hover,.dt th[data-sort]:focus-visible{color:var(--ink-800);outline:none;box-shadow:inset 0 -2px 0 var(--gold-400)}
 .dt th[data-sort]::after{content:"↕";margin-inline-start:5px;opacity:.35;font-size:10px}
+.dt th[data-sort] small{display:block}
 .dt th[aria-sort="ascending"]::after{content:"▲";opacity:1;color:var(--gold-600)}
 .dt th[aria-sort="descending"]::after{content:"▼";opacity:1;color:var(--gold-600)}
 
