@@ -270,7 +270,7 @@ onGold(function(g){
   var rows=g.funds.slice().sort(function(x,y){return (y.value||0)-(x.value||0)});
   b.innerHTML=rows.map(function(f){
     var implied=f.last_trade&&f.nav&&usd?usd*f.last_trade/f.nav:null;
-    return '<tr>'+gTd('<span class="pre">صندوق</span>'+f.symbol,f.symbol)+
+    return '<tr>'+gTd(f.symbol,f.symbol)+
       gTd(gNum(f.last_trade),f.last_trade,'k')+chgCells(f.change_pct,f.change)+
       gTd(cell(gNum(f.nav)),f.nav,'s')+
       gTd(bubCell(f.nominal_bubble),f.nominal_bubble)+

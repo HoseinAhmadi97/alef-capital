@@ -152,7 +152,7 @@ onGold(function(g){
   b.innerHTML=rows.map(function(f,i){
     var cls=gTone(f.nominal_bubble,'up','down','neu');
     return '<tr'+(PAYWALL&&i>=5?' class="lock"':'')+TD+'>'+
-      '<td'+TD+'>صندوق '+f.symbol+'</td>'+
+      '<td'+TD+'><b>'+f.symbol+'</b></td>'+
       '<td'+TD+'>'+gNum(f.last_trade)+'</td>'+
       '<td'+TD+'>'+gNum(f.nav)+'</td>'+
       '<td'+TD+'><span class="chip '+cls+'">'+gPct(f.nominal_bubble)+'</span></td>'+

@@ -126,7 +126,9 @@ header{position:relative;z-index:2;background:var(--surface-glass);backdrop-filt
   linear-gradient(rgba(14,116,144,.05) 1px,transparent 1px),
   linear-gradient(90deg,rgba(14,116,144,.05) 1px,transparent 1px);
   background-size:auto,44px 44px,44px 44px}
-.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(32px,5vw,60px);align-items:center}
+/* start, not center: the live cards column is taller, and centring pushed the
+   headline and the two dashboard buttons below the fold on first load */
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(32px,5vw,60px);align-items:start}
 @media(max-width:940px){.hero-grid{grid-template-columns:1fr}}
 h1{font-size:clamp(34px,4.6vw,60px);font-weight:800;line-height:1.16}
 .grad{background:linear-gradient(135deg,#C9861A,#8A5A08);-webkit-background-clip:text;background-clip:text;color:transparent}

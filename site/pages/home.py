@@ -63,18 +63,6 @@ HTML = """<!-- HERO -->
         <table class="opt"><tbody id="optBody"></tbody></table>
       </div>
 
-      <div class="lcard">
-        <div class="lch"><span class="lbl">طلای ۱۸ عیار <small style="font-weight:500">(ریال)</small></span><span class="live" data-session="physical"><i></i><span>زنده</span></span></div>
-        <div class="lcv"><span class="big num" id="goldPx">—</span><span class="chip neu" id="goldD">—</span></div>
-        <svg class="spark" id="spark" viewBox="0 0 240 44" preserveAspectRatio="none">
-          <defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="rgba(240,180,41,.35)"/><stop offset="100%" stop-color="rgba(240,180,41,0)"/>
-          </linearGradient></defs>
-          <path id="sparkFill" fill="url(#sg)"></path>
-          <path id="sparkLine" fill="none" stroke="#C9861A" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path>
-          <circle id="sparkDot" r="3" fill="#C9861A"></circle>
-        </svg>
-      </div>
 
     </div>
     <div class="lcbar">
@@ -373,29 +361,7 @@ function drawOpts(){
   var h=document.getElementById('hbC'); if(h) h.textContent=fa(OPTS.length+8);
 }
 
-/* ---------- 3. 18k gold price and its intraday sparkline ---------- */
-onGold(function(g){
-  var r=g.m.geram18, el=document.getElementById('goldPx');
-  if(el&&r){var prev=el.textContent; el.textContent=gNum(goldRial(r));
-    if(prev!=='—'&&prev!==el.textContent) flash(el,gSign(r.change_pct)>=0)}
-  var ch=document.getElementById('goldD');
-  if(ch&&r){var s=gSign(r.change_pct);
-    ch.className='chip '+(s>0?'up':(s<0?'down':'neu')); ch.textContent=gArrow(r.change_pct)}
-
-  var line=document.getElementById('sparkLine'), fill=document.getElementById('sparkFill'),
-      dot=document.getElementById('sparkDot'), ser=g.series.geram18;
-  if(!line||!ser||ser.points.length<2) return;
-  var vs=ser.points.map(function(p){return p.value});
-  var W=240,H=44,lo=Math.min.apply(null,vs),hi=Math.max.apply(null,vs),rng=(hi-lo)||1;
-  var pts=vs.map(function(v,i){return [i/(vs.length-1)*W, H-4-((v-lo)/rng)*(H-10)]});
-  var d=pts.map(function(p,i){return (i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)}).join(' ');
-  line.setAttribute('d',d);
-  fill.setAttribute('d',d+' L'+W+' '+H+' L0 '+H+' Z');
-  var last=pts[pts.length-1];
-  dot.setAttribute('cx',last[0]); dot.setAttribute('cy',last[1]);
-});
-
-/* ---------- 4. progress bar: time until the next data poll ---------- */
+/* ---------- 3. progress bar: time until the next data poll ---------- */
 (function(){
   drawOpts();
   var prog=document.getElementById('prog'); if(!prog||CALM) return;
