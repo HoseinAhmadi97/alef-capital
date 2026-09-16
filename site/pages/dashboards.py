@@ -28,27 +28,15 @@ GOLD = """
     <span class="guest">نسخه مهمان</span>
     <h1>داشبورد آربیتراژ صندوق طلا</h1>
   </div>
-  <!-- status rail: three quiet facts, each with one line of context -->
+  <!-- market state, with the time of the last data update under it -->
   <div class="ah-rail">
     <div class="hstat">
-      <small>بازار صندوق‌ها</small>
       <span class="live" data-session="funds"><i></i><span>—</span></span>
-      <em class="gsched" data-sched="funds">—</em>
-    </div>
-    <div class="hstat">
-      <small>روز معاملاتی</small>
-      <b class="num gdate">—</b>
-      <em class="gweekday">—</em>
-    </div>
-    <div class="hstat">
-      <small>به‌روزرسانی</small>
-      <b class="num gupdated">—</b>
-      <span class="gpoll" title="تا به‌روزرسانی بعدی"><i></i></span>
+      <em>به‌روزرسانی <span class="num gupdated">—</span></em>
     </div>
   </div>
   <div class="ah-cta">
     <a class="btn btn-s" href="product-gold.html" style="padding:11px 20px;font-size:14px">معرفی محصول</a>
-    <a class="btn btn-p" href="pricing.html" style="padding:11px 20px;font-size:14px">ورود / عضویت</a>
   </div>
 </div>
 </div>

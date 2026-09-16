@@ -590,10 +590,10 @@ footer a:hover{color:var(--gold-300)}
 .ah-rail{display:flex;justify-content:center}
 .hstat{flex:none;display:flex;flex-direction:column;align-items:flex-start;gap:1px;
   padding-inline:20px;border-inline-start:1px solid var(--border)}
-.hstat:first-child{border-inline-start:0}
+.hstat:first-child{border-inline-start:0;padding-inline-start:0}
 .hstat small{font-size:11px;font-weight:600;color:var(--slate-400);white-space:nowrap}
 .hstat b{font-size:16px;font-weight:800;line-height:1.55;color:var(--ink-900);font-variant-numeric:tabular-nums;white-space:nowrap}
-.hstat em{font-style:normal;font-size:11px;color:var(--slate-400);white-space:nowrap}
+.hstat em{font-style:normal;font-size:11px;color:var(--slate-400);white-space:nowrap;font-variant-numeric:tabular-nums}
 .hstat .live,.hstat .live.is-soon,.hstat .live.is-closed{background:none;padding:0;font-size:16px;font-weight:800;line-height:1.55;gap:7px}
 .hstat .live i{width:8px;height:8px}
 .hstat .live:not(.is-closed):not(.is-soon){color:var(--up-text)}
@@ -761,22 +761,22 @@ footer a:hover{color:var(--gold-300)}
 
 /* treemap */
 /* dashboard overview: market map + compact number tiles */
-.ovgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.75fr);gap:16px;align-items:stretch}
+.ovgrid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1.35fr);gap:16px clamp(24px,4vw,48px);align-items:stretch}
 @media(max-width:980px){.ovgrid{grid-template-columns:1fr}}
-.mtiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.mtile{padding:8px 12px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border);min-width:0}
+.mtiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mtile{padding:10px 16px;border-radius:12px;background:var(--surface-2);border:1px solid var(--border);min-width:0}
 .mtile.wide{grid-column:1/-1}
 /* the map fills the height of the tiles column, so neither side leaves a gap */
 .ovmap{min-width:0;display:flex;flex-direction:column}
-.ovmap .tmap{flex:1;grid-auto-rows:minmax(44px,1fr)}
+.ovmap .tmap{flex:1;grid-auto-rows:minmax(40px,1fr)}
 @media(max-width:980px){.ovmap .tmap{flex:none;grid-auto-rows:48px}}
 .ovcap{margin:6px 0 0;font-size:10.5px;color:var(--slate-400)}
 .mtile.hl{background:var(--gold-50);border-color:rgba(240,180,41,.45)}
-.mtile small{display:block;font-size:11px;font-weight:600;color:var(--slate-500);margin-bottom:2px;
+.mtile small{display:block;font-size:12px;font-weight:600;color:var(--slate-500);margin-bottom:2px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mtile b{display:block;font-size:16px;font-weight:800;line-height:1.4;color:var(--ink-900);font-variant-numeric:tabular-nums;
+.mtile b{display:block;font-size:clamp(17px,1.6vw,21px);font-weight:800;line-height:1.4;color:var(--ink-900);font-variant-numeric:tabular-nums;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mtile .sub{font-size:10.5px;color:var(--slate-400);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mtile .sub{font-size:11.5px;color:var(--slate-400);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mtile .up{color:var(--up-text);font-weight:700}
 .mtile .dn{color:var(--down);font-weight:700}
 .tmap{display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:52px;gap:3px}
