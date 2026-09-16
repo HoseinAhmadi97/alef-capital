@@ -94,7 +94,7 @@ GOLD = """
     <div><h2>صندوق‌های طلای بورس</h2><p>ارزش ذاتی، حباب و دلار محاسباتی هر صندوق — لحظه‌ای و بدون ثبت‌نام</p></div>
 @@IFLOCK@@    <a class="lockcell" href="pricing.html" style="font-size:12.5px;padding:7px 14px">🔒 باز کردن همه ستون‌ها</a>@@END@@
   </div>
-  <div class="dwrap"><div class="tscroll">
+  <div class="dwrap"><div class="tscroll twin">
     <table class="dt" id="gTable">
       <thead><tr><th data-sort="text">نماد</th><th data-sort="num">آخرین قیمت</th><th data-sort="num">درصد تغییر</th><th data-sort="num">مقدار تغییر</th>
         <th data-sort="num">ارزش ذاتی (NAV)</th><th data-sort="num">حباب</th><th data-sort="num">دلار محاسباتی</th><th data-sort="num">ارزش معاملات</th><th data-sort="text">زمان</th></tr></thead>
