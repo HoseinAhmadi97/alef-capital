@@ -120,7 +120,7 @@ GOLD = """
 <!-- NAV TREND -->
 <section class="dsec" id="nav">
 <div class="wrap">
-  <div class="sh"><div><h2>روند ارزش خالص دارایی (NAV)</h2><p>تغییر NAV همه صندوق‌ها از ابتدای روز · روی نمودار یا فهرست، صندوق را انتخاب کنید</p></div>
+  <div class="sh"><div><h2>روند ارزش خالص دارایی (NAV)</h2><p>تغییر NAV همه صندوق‌ها نسبت به آخرین NAV روز قبل · روی نمودار یا فهرست، صندوق را انتخاب کنید</p></div>
     <div style="font-size:12px;color:var(--slate-500)" id="navDay">—</div></div>
   <div class="navgrid">
     <div class="card navchart">
@@ -144,7 +144,7 @@ GOLD = """
       <div class="navaxis" id="navAxis"></div>
     </div>
     <div class="card navrank">
-      <div class="lch" style="margin-bottom:8px"><span class="lbl">تغییر NAV امروز</span><span style="font-size:11.5px;color:var(--slate-400)">بیشترین ← کمترین</span></div>
+      <div class="lch" style="margin-bottom:8px"><span class="lbl">تغییر NAV نسبت به دیروز</span><span style="font-size:11.5px;color:var(--slate-400)">بیشترین ← کمترین</span></div>
       <div id="navList" class="navlist" role="listbox" aria-label="انتخاب صندوق"></div>
     </div>
   </div>
@@ -308,8 +308,9 @@ onGold(function(g){
       gPct(f.change_pct)+'</span></div>'}).join('');
 });
 
-/* ── NAV trend — every fund's intraday NAV, as % change from its first NAV
-   of the day. Its own feed (GOLD_NAV_API): only this page needs it, so the
+/* ── NAV trend — every fund's intraday NAV, as % change from its previous-day
+   close (prev_close; the first NAV of the day only when there is none), so
+   the zero line means "unchanged since yesterday". Its own feed (GOLD_NAV_API): only this page needs it, so the
    snapshot every page polls stays small. ── */
 (function(){
   var W=640, H=300, PAD=14;
@@ -322,7 +323,7 @@ onGold(function(g){
   var D=null, sel=null, lo=0, hi=0;
 
   function pcts(f){
-    var base=null;
+    var base=f.prev_close||null;
     return f.nav.map(function(v){
       if(v==null) return null;
       if(base==null) base=v;
