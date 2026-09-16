@@ -189,7 +189,10 @@ GOLD = """
   </div>
   <div class="mixgrid">
     <div class="card mixsum">
-      <div class="lch"><span class="lbl">ترکیب کل بازار صندوق‌های طلا</span></div>
+      <div class="lch mixsum-h">
+        <span class="lbl" id="mixTitle">ترکیب کل بازار صندوق‌های طلا</span>
+        <button type="button" class="mixreset" id="mixReset" hidden>کل بازار ←</button>
+      </div>
       <svg viewBox="0 0 120 120" role="img" aria-labelledby="mixDonutT">
         <title id="mixDonutT">سهم سکه، شمش و سایر در کل بازار صندوق‌های طلا، وزنی با ارزش بازار</title>
         <g id="mixDonut" transform="rotate(-90 60 60)"></g>
@@ -197,7 +200,7 @@ GOLD = """
         <text x="60" y="73" text-anchor="middle" font-size="8.5" fill="var(--slate-500)">سهم سکه</text>
       </svg>
       <div class="mixleg" id="mixLegend"></div>
-      <p style="font-size:11.5px;color:var(--slate-400);margin:12px 0 0">میانگین وزنی با ارزش بازار هر صندوق</p>
+      <p style="font-size:11.5px;color:var(--slate-400);margin:12px 0 0" id="mixNote">میانگین وزنی با ارزش بازار هر صندوق · روی هر صندوق بزنید</p>
     </div>
     <div class="card" style="padding:20px">
       <div class="mbkey">
@@ -477,15 +480,26 @@ onGold(function(g){
     bubble:{label:'حباب',v:function(f){return f.nominal_bubble==null?-1e9:-f.nominal_bubble},
       fmt:function(f){return '<span style="color:'+gColor(f.nominal_bubble)+'">'+gPct(f.nominal_bubble)+'</span>'}}
   };
-  var key='sekke', G=null;
+  var key='sekke', G=null, pick=null;   /* pick: isin of the fund shown in the donut, or null for the market */
   function pct0(f){return fa(Math.round(KEYS[key].v(f)*100))+'٪'}
 
   function donut(funds){
-    var cap=0, sk=0, sh=0;
-    funds.forEach(function(f){var c=f.market_cap||0; cap+=c; sk+=f.w.sk*c; sh+=f.w.sh*c});
-    if(!cap) return;
-    var parts=[['sekke',sk/cap,'var(--mix-coin)','گواهی سکه'],['shemsh',sh/cap,'var(--mix-bar)','گواهی شمش'],
-               ['other',Math.max(0,1-(sk+sh)/cap),'var(--mix-other)','نقد و سایر']];
+    /* one fund's own mix when a fund is picked, else the market-cap-weighted whole */
+    var f=pick&&funds.filter(function(x){return x.isin===pick})[0], sk, sh;
+    if(f){ sk=f.w.sk; sh=f.w.sh; }
+    else{
+      pick=null;
+      var cap=0; sk=0; sh=0;
+      funds.forEach(function(x){var c=x.market_cap||0; cap+=c; sk+=x.w.sk*c; sh+=x.w.sh*c});
+      if(!cap) return;
+      sk/=cap; sh/=cap;
+    }
+    gText('mixTitle',f?'ترکیب دارایی صندوق '+f.symbol:'ترکیب کل بازار صندوق‌های طلا');
+    gText('mixNote',f?'از آخرین گزارش ماهانه صندوق · ارزش بازار '+gHemat(f.market_cap)
+                     :'میانگین وزنی با ارزش بازار هر صندوق · روی هر صندوق بزنید');
+    document.getElementById('mixReset').hidden=!f;
+    var parts=[['sekke',sk,'var(--mix-coin)','گواهی سکه'],['shemsh',sh,'var(--mix-bar)','گواهی شمش'],
+               ['other',Math.max(0,1-sk-sh),'var(--mix-other)','نقد و سایر']];
     var R=46, C=2*Math.PI*R, off=0;
     document.getElementById('mixDonut').innerHTML=
       '<circle cx="60" cy="60" r="'+R+'" fill="none" stroke="var(--surface-3)" stroke-width="16"/>'+
@@ -508,12 +522,22 @@ onGold(function(g){
     funds.sort(function(a,b){return k.v(b)-k.v(a)});
     bars.innerHTML=funds.map(function(f){
       var t=f.symbol+' — سکه '+fa(Math.round(f.w.sk*100))+'٪، شمش '+fa(Math.round(f.w.sh*100))+'٪، سایر '+fa(Math.round(f.w.ot*100))+'٪';
-      return '<div class="mb" title="'+t+'"><span class="mb-n">'+f.symbol+'</span><div class="mb-bar">'+
+      return '<button type="button" class="mb'+(f.isin===pick?' on':'')+'" data-isin="'+f.isin+'" aria-pressed="'+(f.isin===pick)+'" title="'+t+'">'+
+        '<span class="mb-n">'+f.symbol+'</span><span class="mb-bar">'+
         '<i style="width:'+(f.w.sk*100).toFixed(1)+'%;background:var(--mix-coin)"></i>'+
         '<i style="width:'+(f.w.sh*100).toFixed(1)+'%;background:var(--mix-bar)"></i>'+
         '<i style="width:'+(f.w.ot*100).toFixed(1)+'%;background:var(--mix-other)"></i>'+
-        '</div><span class="mb-v">'+k.fmt(f)+'</span></div>'}).join('');
+        '</span><span class="mb-v">'+k.fmt(f)+'</span></button>'}).join('');
   }
+
+  /* pick a fund → the donut shows its mix; pick it again (or "کل بازار") → back to the market */
+  bars.addEventListener('click',function(e){
+    var b=e.target.closest('.mb'); if(!b) return;
+    var isin=b.getAttribute('data-isin');
+    pick=pick===isin?null:isin;
+    render();
+  });
+  document.getElementById('mixReset').addEventListener('click',function(){pick=null; render()});
 
   document.querySelectorAll('.mixsort button').forEach(function(b){
     b.addEventListener('click',function(){
