@@ -124,7 +124,7 @@ GOLD = """
 <section class="dsec" id="nav">
 <div class="wrap">
   <div class="sh">
-    <div><h2>روند ارزش خالص دارایی (NAV)</h2><p>تغییر NAV نسبت به آخرین NAV روز قبل · روی هر صندوق بزنید تا روی نمودار بازار دیده شود</p></div>
+    <div><h2>روند ارزش خالص دارایی (NAV)</h2><p>تغییر NAV نسبت به آخرین NAV روز قبل · روی ردیف هر صندوق بزنید تا روی نمودار بازار دیده شود</p></div>
     <div class="nvkey">
       <span><i class="k-med"></i>میانه صندوق‌ها</span>
       <span><i class="k-iqr"></i>نیمه میانی</span>
@@ -162,7 +162,21 @@ GOLD = """
     <div class="navaxis" id="nvAxis"></div>
   </div>
 
-  <div class="nvsm" id="nvSmall" role="group" aria-label="صندوق‌ها"></div>
+  <!-- heatmap: one row per fund, one column per 5 minutes, colour = change since yesterday -->
+  <div class="card nvheat">
+    <div class="nvheat-h">
+      <span>هر ردیف یک صندوق · هر ستون ۵ دقیقه</span>
+      <span class="nvscale"><em id="nvScaleLo">—</em><i></i><em id="nvScaleHi">—</em></span>
+    </div>
+    <div class="nvheat-body">
+      <div class="nvheat-names" id="nvNames"></div>
+      <div class="nvheat-plot">
+        <svg id="nvHeat" preserveAspectRatio="none" shape-rendering="crispEdges" role="img" aria-label="تغییر NAV هر صندوق در طول روز"></svg>
+        <div class="navtip" id="nvHeatTip" hidden></div>
+      </div>
+    </div>
+    <div class="navaxis nvheat-axis" id="nvHeatAxis"></div>
+  </div>
 </div>
 </section>
 
@@ -404,29 +418,40 @@ onGold(function(g){
       gText('nvUp',fa(up)+' از '+fa(ranked.length));
     }
 
-    smallMultiples(ranked);
+    heatmap(ranked);
     select(sel?sel.isin:null);
   }
 
-  /* one card per fund, shared y-scale so the shapes compare honestly */
-  function smallMultiples(ranked){
-    var box=$('nvSmall'), SW=100, SH=34;
-    function sx(i){return i/(D.times.length-1)*SW}
-    function sy(v){return 2+(hi-v)/(hi-lo||1)*(SH-4)}
-    var zy=sy(0).toFixed(1);
-    box.innerHTML=ranked.map(function(f){
-      var d='',pen=false,first=-1,last=-1;
-      f.p.forEach(function(v,i){if(v==null){pen=false;return}
-        if(first<0)first=i; last=i;
-        d+=(pen?'L':'M')+sx(i).toFixed(2)+' '+sy(v).toFixed(2)+' ';pen=true});
-      var tone=gSign(f.change_pct)>0?'pos':(gSign(f.change_pct)<0?'neg':'zero');
-      var area=first>=0&&last>first?d+'L'+sx(last).toFixed(2)+' '+zy+' L'+sx(first).toFixed(2)+' '+zy+' Z':'';
-      return '<button type="button" class="nvs '+tone+'" data-isin="'+f.isin+'" aria-pressed="false">'+
-        '<span class="nvs-h"><b>'+f.symbol+'</b><em>'+gPct(f.change_pct)+'</em></span>'+
-        '<svg viewBox="0 0 '+SW+' '+SH+'" preserveAspectRatio="none" aria-hidden="true">'+
-          '<line x1="0" x2="'+SW+'" y1="'+zy+'" y2="'+zy+'" class="z"/>'+
-          '<path d="'+area+'" class="a"/><path d="'+d+'" class="l"/></svg>'+
-        '<span class="nvs-f">NAV '+gNum(gToman(f.last))+'</span></button>'}).join('');
+  /* heatmap: every fund × every 5-minute bucket in one view. Rows sorted
+     by the latest change; colour intensity scales with |change| against
+     the largest move of the day, green up / red down (site colour rule). */
+  var ROWS=[];
+  function heatmap(ranked){
+    ROWS=ranked;
+    var svg=$('nvHeat'), n=D.times.length, R=ranked.length, M=0;
+    ranked.forEach(function(f){f.p.forEach(function(v){if(v!=null)M=Math.max(M,Math.abs(v))})});
+    M=M||1;
+    svg.setAttribute('viewBox','0 0 '+n+' '+R);
+    var cells='';
+    ranked.forEach(function(f,r){
+      f.p.forEach(function(v,i){
+        var fill;
+        if(v==null) fill='var(--surface-3)';
+        else{
+          var a=(0.10+0.82*Math.min(1,Math.abs(v)/M)).toFixed(3);
+          fill=v>0?'rgba(22,163,74,'+a+')':(v<0?'rgba(220,38,38,'+a+')':'rgba(148,163,184,.25)');
+        }
+        cells+='<rect x="'+i+'" y="'+r+'" width="1.04" height="0.86" fill="'+fill+'"/>';
+      });
+    });
+    svg.innerHTML=cells+'<rect id="nvHeatSel" x="0" y="0" width="'+n+'" height="0.86" class="nvh-sel" style="display:none"/>';
+    svg.style.height=(R*12)+'px';
+    $('nvNames').innerHTML=ranked.map(function(f){
+      return '<button type="button" data-isin="'+f.isin+'" aria-pressed="false"><b>'+f.symbol+'</b>'+
+        '<em style="color:'+gColor(f.change_pct)+'">'+gPct(f.change_pct)+'</em></button>'}).join('');
+    gText('nvScaleLo',fmt(-M)); gText('nvScaleHi',fmt(M));
+    var mid=Math.floor((n-1)/2);
+    $('nvHeatAxis').innerHTML='<span>'+gTime(D.times[0])+'</span><span>'+gTime(D.times[mid])+'</span><span>'+gTime(D.times[n-1])+'</span>';
   }
 
   function select(isin){
@@ -443,8 +468,10 @@ onGold(function(g){
       gText('nvWho','میانه همه صندوق‌ها');
       var v2=$('nvVal'); v2.textContent=fmt(m); v2.style.color=gColor(m==null?null:m/100);
     }
-    [].forEach.call($('nvSmall').children,function(b){
+    [].forEach.call($('nvNames').children,function(b){
       b.setAttribute('aria-pressed',sel&&b.getAttribute('data-isin')===sel.isin?'true':'false')});
+    var hl=$('nvHeatSel'), row=sel?ROWS.indexOf(sel):-1;
+    if(hl){ if(row>=0){hl.setAttribute('y',row); hl.style.display='';} else hl.style.display='none'; }
     hide();
   }
 
@@ -466,11 +493,29 @@ onGold(function(g){
   svg.addEventListener('mouseleave',hide);
   svg.addEventListener('touchstart',at,{passive:true});
   svg.addEventListener('touchmove',at,{passive:true});
-  $('nvSmall').addEventListener('click',function(e){
-    var b=e.target.closest('button'); if(!b) return;
-    var isin=b.getAttribute('data-isin');
-    select(sel&&sel.isin===isin?null:isin);       /* tap again to go back to the median */
+  function toggle(isin){select(sel&&sel.isin===isin?null:isin)}   /* tap again → back to the median */
+  $('nvNames').addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(b) toggle(b.getAttribute('data-isin'));
   });
+  var heat=$('nvHeat'), htip=$('nvHeatTip');
+  function cellAt(ev){
+    if(!D||!ROWS.length) return null;
+    var r=heat.getBoundingClientRect(), p=ev.touches?ev.touches[0]:ev;
+    var i=Math.floor((p.clientX-r.left)/r.width*D.times.length), row=Math.floor((p.clientY-r.top)/r.height*ROWS.length);
+    if(i<0||row<0||i>=D.times.length||row>=ROWS.length) return null;
+    return {i:i,row:row,r:r};
+  }
+  heat.addEventListener('mousemove',function(ev){
+    var c=cellAt(ev); if(!c){htip.hidden=true;return}
+    var f=ROWS[c.row], v=f.p[c.i];
+    htip.innerHTML=f.symbol+' · '+gTime(D.times[c.i])+' <b style="color:'+(gColor(v==null?null:v/100)||'inherit')+'">'+fmt(v)+'</b>';
+    var x=(c.i+.5)/D.times.length*c.r.width;
+    htip.style.left=Math.min(Math.max(x,70),c.r.width-70)+'px';
+    htip.style.top=Math.max(0,(c.row/ROWS.length*c.r.height)-34)+'px';
+    htip.hidden=false;
+  });
+  heat.addEventListener('mouseleave',function(){htip.hidden=true});
+  heat.addEventListener('click',function(ev){var c=cellAt(ev); if(c) toggle(ROWS[c.row].isin)});
 
   goldFeed(GOLD_NAV_API, 60, draw);
 })();

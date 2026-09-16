@@ -703,21 +703,27 @@ footer a:hover{color:var(--gold-300)}
 /* time runs left → right like the plot, whatever the page direction */
 .navaxis{display:flex;justify-content:space-between;direction:ltr;font-size:11px;color:var(--slate-500);margin-top:6px;font-variant-numeric:tabular-nums}
 
-.nvsm{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px;margin-top:12px}
-.nvs{display:flex;flex-direction:column;gap:4px;padding:9px 10px 8px;border-radius:12px;border:1px solid var(--border);
-  background:var(--surface);cursor:pointer;font:inherit;text-align:start;color:inherit;transition:border-color .15s,box-shadow .15s}
-.nvs:hover{border-color:var(--border-strong)}
-.nvs[aria-pressed="true"]{border-color:var(--gold-400);box-shadow:0 0 0 3px rgba(240,180,41,.18)}
-.nvs-h{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
-.nvs-h b{font-size:13px;font-weight:800;color:var(--ink-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.nvs-h em{font-style:normal;font-size:12.5px;font-weight:800;font-variant-numeric:tabular-nums}
-.nvs svg{width:100%;height:34px;display:block}
-.nvs .z{stroke:var(--border-strong);stroke-width:1;stroke-dasharray:2 3;vector-effect:non-scaling-stroke}
-.nvs .l{fill:none;stroke-width:1.6;stroke-linejoin:round;vector-effect:non-scaling-stroke}
-.nvs-f{font-size:10.5px;color:var(--slate-400);font-variant-numeric:tabular-nums}
-.nvs.pos em{color:var(--up-text)} .nvs.pos .l{stroke:var(--up)} .nvs.pos .a{fill:rgba(22,163,74,.12)}
-.nvs.neg em{color:var(--down)}    .nvs.neg .l{stroke:var(--down)} .nvs.neg .a{fill:rgba(220,38,38,.10)}
-.nvs.zero em{color:var(--slate-500)} .nvs.zero .l{stroke:var(--slate-400)} .nvs.zero .a{fill:none}
+/* NAV heatmap — funds × time */
+.nvheat{padding:16px 20px 14px;margin-top:14px}
+.nvheat-h{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+  font-size:11.5px;color:var(--slate-500);margin-bottom:10px}
+.nvscale{display:inline-flex;align-items:center;gap:8px;direction:ltr}
+.nvscale em{font-style:normal;font-variant-numeric:tabular-nums}
+.nvscale i{display:inline-block;width:110px;height:8px;border-radius:9px;
+  background:linear-gradient(90deg,rgba(220,38,38,.9),rgba(220,38,38,.12) 45%,rgba(148,163,184,.25) 50%,rgba(22,163,74,.12) 55%,rgba(22,163,74,.9))}
+.nvheat-body{display:grid;grid-template-columns:128px minmax(0,1fr);gap:12px;align-items:start}
+.nvheat-names{display:grid;grid-auto-rows:12px}
+.nvheat-names button{display:flex;justify-content:space-between;align-items:center;gap:6px;height:12px;padding:0 6px;
+  border:0;border-radius:3px;background:none;font:inherit;font-size:10.5px;line-height:12px;color:var(--ink-800);cursor:pointer}
+.nvheat-names button:hover{background:var(--surface-2)}
+.nvheat-names button[aria-pressed="true"]{background:var(--gold-50);box-shadow:inset 2px 0 0 var(--gold-500)}
+.nvheat-names b{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nvheat-names em{font-style:normal;font-weight:800;font-variant-numeric:tabular-nums}
+.nvheat-plot{position:relative;min-width:0}
+.nvheat-plot svg{display:block;width:100%;cursor:crosshair;border-radius:4px}
+.nvh-sel{fill:none;stroke:var(--gold-500);stroke-width:2;vector-effect:non-scaling-stroke}
+.nvheat-axis{margin-inline-start:140px}
+@media(max-width:600px){.nvheat-body{grid-template-columns:96px minmax(0,1fr);gap:8px}.nvheat-axis{margin-inline-start:104px}}
 
 /* asset mix — whole-market donut + one 100% bar per fund */
 :root{--mix-coin:#D9A32B;--mix-bar:#3B6FE0;--mix-other:#94A3B8}
