@@ -93,6 +93,8 @@ a{color:var(--gold-700);text-decoration:none}
    top:59px — the moment the real header height differed from that guess
    (longer menu label, different font metrics, zoom) the two overlapped
    on scroll. Sticking the wrapper needs no magic number at all. */
+/* the hidden attribute must win over any display rule (e.g. .navempty's grid) */
+[hidden]{display:none!important}
 .topbar{position:sticky;top:0;z-index:60}
 /* position + z-index: backdrop-filter makes the header its own stacking context,
    and without these it painted under the ticker — taking the menus with it */
@@ -669,61 +671,102 @@ footer a:hover{color:var(--gold-300)}
 .d.d-up{background:rgba(22,163,74,.12);color:var(--up-text)}
 .d.d-dn{background:rgba(220,38,38,.10);color:var(--down)}
 
-/* NAV trend — market band + small multiples */
-.nvkey{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:11.5px;color:var(--slate-500)}
-.nvkey span{display:inline-flex;align-items:center;gap:6px}
-.nvkey i{display:inline-block;width:16px;border-radius:2px}
-.nvkey .k-med{height:3px;background:var(--gold-600)}
-.nvkey .k-iqr{height:10px;background:rgba(240,180,41,.35)}
-.nvkey .k-rng{height:10px;background:rgba(240,180,41,.12)}
-.nvband{padding:18px 20px 14px}
-.nvhead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:8px}
-.nvnow small,.nvfacts small{display:block;font-size:11px;font-weight:600;color:var(--slate-400)}
-.nvnow b{display:block;font-size:26px;font-weight:900;line-height:1.3;font-variant-numeric:tabular-nums}
-.nvfacts{display:flex;gap:22px;flex-wrap:wrap}
-.nvfacts b{display:block;font-size:13.5px;font-weight:800;color:var(--ink-800);font-variant-numeric:tabular-nums;white-space:nowrap}
-.nvplot{position:relative}
-.nvplot svg{width:100%;height:240px;display:block;touch-action:pan-y}
-@media(max-width:600px){.nvplot svg{height:190px}}
-.nvplot .gl{stroke:var(--border);stroke-width:1;vector-effect:non-scaling-stroke}
-.nvplot .zl{stroke:var(--border-strong);stroke-width:1;stroke-dasharray:4 4;vector-effect:non-scaling-stroke}
-.nv-rng{fill:rgba(240,180,41,.12)}
-.nv-iqr{fill:rgba(240,180,41,.32)}
-.nv-med{fill:none;stroke:var(--gold-600);stroke-width:2.6;stroke-linejoin:round;vector-effect:non-scaling-stroke}
-.nv-fund{fill:none;stroke-width:2.4;stroke-linejoin:round;vector-effect:non-scaling-stroke}
-.nv-guide{stroke:var(--slate-400);stroke-dasharray:3 3;vector-effect:non-scaling-stroke}
-.navyl span{position:absolute;inset-inline-start:4px;transform:translateY(-110%);font-size:10.5px;color:var(--slate-400);font-variant-numeric:tabular-nums;pointer-events:none}
-.navdot{position:absolute;width:10px;height:10px;border-radius:50%;background:var(--gold-600);border:2px solid var(--surface);
-  transform:translate(-50%,-50%);pointer-events:none;box-shadow:0 0 0 1px var(--gold-600)}
-.navempty{position:absolute;inset:0;display:grid;place-items:center;font-size:13px;color:var(--slate-400);pointer-events:none}
-.navtip{position:absolute;top:4px;transform:translateX(-50%);background:var(--ink-900);color:var(--surface);
-  font-size:12px;padding:6px 10px;border-radius:8px;white-space:nowrap;pointer-events:none;font-variant-numeric:tabular-nums;text-align:center}
-.navtip .nvt-r{display:block;font-size:10.5px;opacity:.7;margin-top:1px}
-:root[data-theme="dark"] .navtip{background:var(--surface-3);color:var(--ink-800)}
-/* time runs left → right like the plot, whatever the page direction */
-.navaxis{display:flex;justify-content:space-between;direction:ltr;font-size:11px;color:var(--slate-500);margin-top:6px;font-variant-numeric:tabular-nums}
+/* NAV trend — every fund's line, one highlighted; ranked list beside */
+.navlegend{display:flex;gap:16px;flex-wrap:wrap;align-items:center;font-size:11.5px;color:var(--slate-500)}
+.navlegend span{display:inline-flex;align-items:center;gap:6px}
+.navlegend i{display:inline-block;width:18px;height:0;border-top:2px solid}
+.navlegend .lg-sel{border-top-width:3px;border-color:var(--up)}
+.navlegend .lg-med{border-top-style:dashed;border-color:var(--gold-600)}
+.navlegend .lg-oth{border-color:var(--slate-400);opacity:.45}
+.navgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(230px,290px);gap:16px;align-items:stretch}
+@media(max-width:900px){.navgrid{grid-template-columns:1fr}}
 
-/* NAV heatmap — funds × time */
-.nvheat{padding:16px 20px 14px;margin-top:14px}
-.nvheat-h{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
-  font-size:11.5px;color:var(--slate-500);margin-bottom:10px}
-.nvscale{display:inline-flex;align-items:center;gap:8px;direction:ltr}
-.nvscale em{font-style:normal;font-variant-numeric:tabular-nums}
-.nvscale i{display:inline-block;width:110px;height:8px;border-radius:9px;
-  background:linear-gradient(90deg,rgba(220,38,38,.9),rgba(220,38,38,.12) 45%,rgba(148,163,184,.25) 50%,rgba(22,163,74,.12) 55%,rgba(22,163,74,.9))}
-.nvheat-body{display:grid;grid-template-columns:128px minmax(0,1fr);gap:12px;align-items:start}
-.nvheat-names{display:grid;grid-auto-rows:12px}
-.nvheat-names button{display:flex;justify-content:space-between;align-items:center;gap:6px;height:12px;padding:0 6px;
-  border:0;border-radius:3px;background:none;font:inherit;font-size:10.5px;line-height:12px;color:var(--ink-800);cursor:pointer}
-.nvheat-names button:hover{background:var(--surface-2)}
-.nvheat-names button[aria-pressed="true"]{background:var(--gold-50);box-shadow:inset 2px 0 0 var(--gold-500)}
-.nvheat-names b{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.nvheat-names em{font-style:normal;font-weight:800;font-variant-numeric:tabular-nums}
-.nvheat-plot{position:relative;min-width:0}
-.nvheat-plot svg{display:block;width:100%;cursor:crosshair;border-radius:4px}
-.nvh-sel{fill:none;stroke:var(--gold-500);stroke-width:2;vector-effect:non-scaling-stroke}
-.nvheat-axis{margin-inline-start:140px}
-@media(max-width:600px){.nvheat-body{grid-template-columns:96px minmax(0,1fr);gap:8px}.nvheat-axis{margin-inline-start:104px}}
+.navchart{padding:20px 22px 16px}
+.navhead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.navhead small{display:block;font-size:11px;font-weight:600;color:var(--slate-400);margin-bottom:2px}
+.navwho div{display:flex;align-items:center;gap:10px}
+.navwho b{font-size:22px;font-weight:900;color:var(--ink-900);line-height:1.3}
+.navnav{text-align:end}
+.navnav b{font-size:15px;font-weight:800;color:var(--ink-800);font-variant-numeric:tabular-nums}
+.navchip{display:inline-block;padding:4px 10px;border-radius:999px;font-size:13.5px;font-weight:800;font-variant-numeric:tabular-nums;
+  background:var(--surface-3);color:var(--slate-600)}
+.navchip.pos{background:rgba(22,163,74,.12);color:var(--up-text)}
+.navchip.neg{background:rgba(220,38,38,.10);color:var(--down)}
+
+.navplot{position:relative;margin-top:6px}
+.navplot svg{width:100%;height:300px;display:block;touch-action:pan-y;overflow:visible}
+@media(max-width:600px){.navplot svg{height:230px}}
+.navplot .gl{stroke:var(--border);stroke-width:1;opacity:.7;vector-effect:non-scaling-stroke}
+.navplot .zl{stroke:var(--slate-400);stroke-width:1;stroke-dasharray:2 4;vector-effect:non-scaling-stroke}
+#navLines path{stroke:var(--slate-400);stroke-width:1;opacity:.16;vector-effect:non-scaling-stroke;cursor:pointer;transition:opacity .2s,stroke-width .2s}
+#navLines path:hover{opacity:.6;stroke-width:1.6}
+#navMed{fill:none;stroke:var(--gold-600);stroke-width:1.6;stroke-dasharray:6 5;opacity:.85;vector-effect:non-scaling-stroke}
+.nav-hot{stroke-width:3;vector-effect:non-scaling-stroke;transition:stroke .3s}
+.nav-hot.pos{stroke:var(--up);filter:drop-shadow(0 3px 6px rgba(22,163,74,.35))}
+.nav-hot.neg{stroke:var(--down);filter:drop-shadow(0 3px 6px rgba(220,38,38,.3))}
+.nav-hot.zero{stroke:var(--slate-500)}
+#navGuide{stroke:var(--slate-400);stroke-dasharray:3 3;vector-effect:non-scaling-stroke}
+.navyl span{position:absolute;inset-inline-start:0;transform:translateY(-120%);font-size:10.5px;color:var(--slate-400);
+  font-variant-numeric:tabular-nums;pointer-events:none;background:var(--surface);padding:0 4px;border-radius:4px}
+.navyl span.z{color:var(--slate-500);font-weight:700}
+/* the live end of the picked line: pulsing point + current value */
+.navend{position:absolute;transform:translate(-50%,-50%);pointer-events:none}
+.navend i{display:block;width:10px;height:10px;border-radius:50%;background:currentColor;border:2px solid var(--surface);
+  box-shadow:0 0 0 0 currentColor;animation:navpulse 2s infinite}
+.navend span{position:absolute;inset-inline-end:14px;top:50%;transform:translateY(-50%);white-space:nowrap;
+  font-size:12px;font-weight:800;padding:3px 8px;border-radius:999px;background:var(--surface);
+  box-shadow:0 2px 8px rgba(15,23,42,.12);font-variant-numeric:tabular-nums}
+.navend.pos{color:var(--up)} .navend.pos span{color:var(--up-text)}
+.navend.neg{color:var(--down)} .navend.neg span{color:var(--down)}
+.navend.zero{color:var(--slate-500)}
+@keyframes navpulse{0%{box-shadow:0 0 0 0 rgba(22,163,74,.45)}70%{box-shadow:0 0 0 9px rgba(22,163,74,0)}100%{box-shadow:0 0 0 0 rgba(22,163,74,0)}}
+.navend.neg i{animation-name:navpulseneg}
+@keyframes navpulseneg{0%{box-shadow:0 0 0 0 rgba(220,38,38,.4)}70%{box-shadow:0 0 0 9px rgba(220,38,38,0)}100%{box-shadow:0 0 0 0 rgba(220,38,38,0)}}
+@media(prefers-reduced-motion:reduce){.navend i{animation:none}}
+.navdot{position:absolute;width:12px;height:12px;border-radius:50%;background:var(--surface);border:3px solid var(--slate-500);
+  transform:translate(-50%,-50%);pointer-events:none}
+.navdot.pos{border-color:var(--up)} .navdot.neg{border-color:var(--down)}
+.navempty{position:absolute;inset:0;display:grid;place-items:center;font-size:13px;color:var(--slate-400);pointer-events:none}
+.navtip{position:absolute;top:0;transform:translateX(-50%);min-width:130px;background:var(--ink-900);color:var(--surface);
+  font-size:12px;padding:7px 10px;border-radius:10px;pointer-events:none;font-variant-numeric:tabular-nums;
+  box-shadow:0 8px 20px rgba(15,23,42,.2)}
+.navtip .t{display:block;font-size:10.5px;opacity:.65;margin-bottom:3px}
+.navtip .r{display:flex;justify-content:space-between;gap:14px}
+.navtip .r em{font-style:normal;opacity:.85}
+.navtip .r b.pos{color:#4ADE80} .navtip .r b.neg{color:#FB7185}
+.navtip .r.m b{color:#F0C158}
+:root[data-theme="dark"] .navtip{background:var(--surface-3);color:var(--ink-800)}
+.navaxis{display:flex;justify-content:space-between;direction:ltr;font-size:11px;color:var(--slate-500);margin-top:8px;font-variant-numeric:tabular-nums}
+
+/* ranked list */
+.navrank{padding:16px 14px 10px;display:flex;flex-direction:column;max-height:452px}
+.navrank-h{display:flex;justify-content:space-between;align-items:baseline;padding:0 6px 10px;
+  font-size:13px;font-weight:800;color:var(--ink-800)}
+.navrank-h em{font-style:normal;font-size:11px;font-weight:600;color:var(--slate-400)}
+.navlist{overflow-y:auto;display:grid;gap:4px;padding:2px 4px 8px;scrollbar-width:thin;scrollbar-color:var(--border-strong) transparent;
+  -webkit-mask-image:linear-gradient(180deg,#000 0,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(180deg,#000 0,#000 calc(100% - 22px),transparent)}
+.navlist::-webkit-scrollbar{width:6px}
+.navlist::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:9px}
+.navlist::-webkit-scrollbar-track{background:transparent}
+.navlist button{display:grid;grid-template-columns:22px minmax(0,1fr) auto;grid-template-rows:auto 5px;column-gap:8px;row-gap:6px;align-items:center;
+  width:100%;font:inherit;text-align:start;padding:8px 10px 9px;border-radius:12px;border:1px solid transparent;
+  background:transparent;color:var(--ink-800);cursor:pointer;transition:background .15s,border-color .15s,box-shadow .15s}
+.navlist button:hover{background:var(--surface-2)}
+.navlist button:focus-visible{outline:none;border-color:var(--gold-400)}
+.navlist button[aria-selected="true"]{background:var(--surface);border-color:var(--gold-400);box-shadow:0 4px 14px rgba(184,120,26,.14)}
+.navlist .rk{grid-row:1/3;align-self:center;width:22px;height:22px;display:grid;place-items:center;border-radius:50%;
+  font-size:10.5px;font-weight:800;color:var(--slate-500);background:var(--surface-3)}
+.navlist button[aria-selected="true"] .rk{background:var(--gold-400);color:#3B2A06}
+.navlist .nm{font-size:13.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.navlist .v{font-size:12px;font-weight:800;padding:2px 8px;border-radius:999px;font-variant-numeric:tabular-nums}
+.navlist .bar{grid-column:2/4;height:5px;border-radius:9px;background:var(--surface-3);overflow:hidden}
+.navlist .bar i{display:block;height:100%;border-radius:9px;transition:width .5s ease}
+.navlist .pos .v{color:var(--up-text);background:rgba(22,163,74,.1)}
+.navlist .pos .bar i{background:linear-gradient(90deg,rgba(22,163,74,.45),rgba(22,163,74,.9))}
+.navlist .neg .v{color:var(--down);background:rgba(220,38,38,.09)}
+.navlist .neg .bar i{background:linear-gradient(90deg,rgba(220,38,38,.4),rgba(220,38,38,.85))}
+.navlist .zero .v{color:var(--slate-500);background:var(--surface-3)}
+.navlist .zero .bar i{background:var(--slate-400)}
 
 /* asset mix — whole-market donut + one 100% bar per fund */
 :root{--mix-coin:#D9A32B;--mix-bar:#3B6FE0;--mix-other:#94A3B8}

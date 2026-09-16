@@ -120,62 +120,56 @@ GOLD = """
 </div>
 </section>
 
-<!-- NAV TREND — the market as a band, every fund as a small multiple -->
+<!-- NAV TREND — every fund's line, one highlighted, a ranked list to pick from -->
 <section class="dsec" id="nav">
 <div class="wrap">
-  <div class="sh">
-    <div><h2>روند ارزش خالص دارایی (NAV)</h2><p>تغییر NAV نسبت به آخرین NAV روز قبل · روی ردیف هر صندوق بزنید تا روی نمودار بازار دیده شود</p></div>
-    <div class="nvkey">
-      <span><i class="k-med"></i>میانه صندوق‌ها</span>
-      <span><i class="k-iqr"></i>نیمه میانی</span>
-      <span><i class="k-rng"></i>کل بازه</span>
-      <span id="nvDay">—</span>
+  <div class="sh"><div><h2>روند ارزش خالص دارایی (NAV)</h2><p>تغییر NAV همه صندوق‌ها نسبت به آخرین NAV روز قبل · روی نمودار یا فهرست، صندوق را انتخاب کنید</p></div>
+    <div class="navlegend">
+      <span><i class="lg-sel"></i>صندوق انتخابی</span>
+      <span><i class="lg-med"></i>میانه صندوق‌ها</span>
+      <span><i class="lg-oth"></i>سایر صندوق‌ها</span>
+      <span id="navDay">—</span>
     </div>
   </div>
-
-  <div class="card nvband">
-    <div class="nvhead">
-      <div class="nvnow">
-        <small id="nvWho">میانه همه صندوق‌ها</small>
-        <b class="num" id="nvVal">—</b>
+  <div class="navgrid">
+    <div class="card navchart">
+      <div class="navhead">
+        <div class="navwho">
+          <small>صندوق انتخابی</small>
+          <div><b id="navSel">—</b><span id="navSelV" class="navchip">—</span></div>
+        </div>
+        <div class="navnav">
+          <small>آخرین NAV</small>
+          <b class="num" id="navSelNav">—</b>
+        </div>
       </div>
-      <div class="nvfacts">
-        <div><small>بیشترین</small><b class="num" id="nvTop">—</b></div>
-        <div><small>کمترین</small><b class="num" id="nvBot">—</b></div>
-        <div><small>بالای دیروز</small><b class="num" id="nvUp">—</b></div>
+      <div class="navplot" id="navPlot">
+        <svg id="navSvg" viewBox="0 0 640 300" preserveAspectRatio="none" role="img" aria-label="روند درون‌روزی NAV صندوق‌های طلا">
+          <defs>
+            <linearGradient id="navGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop id="navGradTop" offset="0%" stop-color="rgb(22,163,74)" stop-opacity=".26"/>
+              <stop id="navGradBot" offset="100%" stop-color="rgb(22,163,74)" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <g id="navGrid"></g>
+          <g id="navLines" fill="none" stroke-linejoin="round" stroke-linecap="round"></g>
+          <path id="navMed"></path>
+          <path id="navArea" fill="url(#navGrad)"></path>
+          <path id="navHot" fill="none" stroke-linejoin="round" stroke-linecap="round"></path>
+          <line id="navGuide" y1="0" y2="300" style="display:none"></line>
+        </svg>
+        <div class="navyl" id="navYl"></div>
+        <div class="navend" id="navEnd" hidden><i></i><span id="navEndV"></span></div>
+        <div class="navdot" id="navDot" hidden></div>
+        <div class="navtip" id="navTip" hidden></div>
+        <div class="navempty" id="navEmpty">در حال دریافت داده…</div>
       </div>
+      <div class="navaxis" id="navAxis"></div>
     </div>
-    <div class="nvplot" id="nvPlot">
-      <svg id="nvSvg" viewBox="0 0 640 240" preserveAspectRatio="none" role="img" aria-label="بازه تغییر NAV صندوق‌های طلا در طول روز">
-        <g id="nvGrid"></g>
-        <path id="nvRange" class="nv-rng"></path>
-        <path id="nvIqr" class="nv-iqr"></path>
-        <path id="nvMed" class="nv-med"></path>
-        <path id="nvFund" class="nv-fund"></path>
-        <line id="nvGuide" class="nv-guide" y1="0" y2="240" style="display:none"></line>
-      </svg>
-      <div class="navyl" id="nvYl"></div>
-      <div class="navdot" id="nvDot" hidden></div>
-      <div class="navtip" id="nvTip" hidden></div>
-      <div class="navempty" id="nvEmpty">در حال دریافت داده…</div>
+    <div class="card navrank">
+      <div class="navrank-h"><span>تغییر نسبت به دیروز</span><em><span class="gcount">—</span> صندوق</em></div>
+      <div id="navList" class="navlist" role="listbox" aria-label="انتخاب صندوق"></div>
     </div>
-    <div class="navaxis" id="nvAxis"></div>
-  </div>
-
-  <!-- heatmap: one row per fund, one column per 5 minutes, colour = change since yesterday -->
-  <div class="card nvheat">
-    <div class="nvheat-h">
-      <span>هر ردیف یک صندوق · هر ستون ۵ دقیقه</span>
-      <span class="nvscale"><em id="nvScaleLo">—</em><i></i><em id="nvScaleHi">—</em></span>
-    </div>
-    <div class="nvheat-body">
-      <div class="nvheat-names" id="nvNames"></div>
-      <div class="nvheat-plot">
-        <svg id="nvHeat" preserveAspectRatio="none" shape-rendering="crispEdges" role="img" aria-label="تغییر NAV هر صندوق در طول روز"></svg>
-        <div class="navtip" id="nvHeatTip" hidden></div>
-      </div>
-    </div>
-    <div class="navaxis nvheat-axis" id="nvHeatAxis"></div>
   </div>
 </div>
 </section>
@@ -338,184 +332,136 @@ onGold(function(g){
       gPct(f.change_pct)+'</span></div>'}).join('');
 });
 
-/* ── NAV trend ──
-   Every fund's NAV as % change from its previous-day close (prev_close).
-   31 overlapping lines are unreadable, so the market is drawn as a band:
-   the full range, the middle half (25th–75th percentile) and the median.
-   Each fund gets a small multiple on one shared scale — shapes are
-   directly comparable — and picking one draws it over the band.
-   Own feed (GOLD_NAV_API): only this page needs it. */
+/* ── NAV trend — every fund's intraday NAV as % change from its previous-day
+   close (prev_close; the first NAV of the day only when there is none), so
+   the zero line means "unchanged since yesterday". The picked fund is drawn
+   bold over faint lines for the rest, with the market median as a dashed
+   reference. Own feed (GOLD_NAV_API): only this page needs it. ── */
 (function(){
-  var W=640, H=240, PAD=12;
-  var svg=document.getElementById('nvSvg'); if(!svg) return;
+  var W=640, H=300, PAD=16;
+  var svg=document.getElementById('navSvg'); if(!svg) return;
   var $=function(id){return document.getElementById(id)};
-  var D=null, P=null, sel=null, lo=0, hi=0;
+  var lines=$('navLines'), hot=$('navHot'), area=$('navArea'), med=$('navMed'), grid=$('navGrid'),
+      guide=$('navGuide'), dot=$('navDot'), tip=$('navTip'), list=$('navList'), yl=$('navYl');
+  var D=null, sel=null, lo=0, hi=0, MED=[];
 
+  function pcts(f){
+    var base=f.prev_close||null;
+    return f.nav.map(function(v){
+      if(v==null) return null;
+      if(base==null) base=v;
+      return (v/base-1)*100});
+  }
   function X(i){return D.times.length<2?0:i/(D.times.length-1)*W}
   function Y(v){return PAD+(hi-v)/(hi-lo||1)*(H-2*PAD)}
-  function fmt(v){return gPct(v==null?null:v/100)}
-  function line(vs){
-    var d='',pen=false;
-    vs.forEach(function(v,i){if(v==null){pen=false;return}
-      d+=(pen?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)+' ';pen=true});
+  function path(ps){
+    var d='', pen=false;
+    ps.forEach(function(v,i){
+      if(v==null){pen=false; return}
+      d+=(pen?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)+' '; pen=true});
     return d;
   }
-  function band(a,b){               /* area between two series */
-    var idx=[];a.forEach(function(v,i){if(v!=null&&b[i]!=null)idx.push(i)});
-    if(idx.length<2) return '';
-    return 'M'+idx.map(function(i){return X(i).toFixed(1)+' '+Y(a[i]).toFixed(1)}).join(' L')+
-      ' L'+idx.slice().reverse().map(function(i){return X(i).toFixed(1)+' '+Y(b[i]).toFixed(1)}).join(' L')+' Z';
-  }
-  function q(sorted,p){              /* linear-interpolated quantile */
-    var k=(sorted.length-1)*p, f=Math.floor(k), c=Math.ceil(k);
-    return sorted[f]+(sorted[c]-sorted[f])*(k-f);
+  function fmt(v){return gPct(v==null?null:v/100)}
+  function tone(f){var s=gSign(f); return s>0?'pos':(s<0?'neg':'zero')}
+
+  function select(isin){
+    sel=D.funds.filter(function(f){return f.isin===isin})[0]||D.funds[0];
+    if(!sel) return;
+    var ps=sel.p, t=tone(sel.change_pct);
+    var rgb=t==='neg'?'rgb(220,38,38)':(t==='pos'?'rgb(22,163,74)':'rgb(100,116,139)');
+    var d=path(ps);
+    hot.setAttribute('d',d); hot.setAttribute('class','nav-hot '+t);
+    $('navGradTop').setAttribute('stop-color',rgb); $('navGradBot').setAttribute('stop-color',rgb);
+    var first=ps.findIndex(function(v){return v!=null}), last=-1;
+    for(var i=ps.length-1;i>=0;i--) if(ps[i]!=null){last=i;break}
+    if(first>=0&&last>first){
+      /* fill towards the chart's bottom, so the gradient fades out below the line */
+      area.setAttribute('d',d+'L'+X(last).toFixed(1)+' '+H+' L'+X(first).toFixed(1)+' '+H+' Z');
+      var end=$('navEnd');
+      end.style.left=(X(last)/W*100)+'%'; end.style.top=(Y(ps[last])/H*100)+'%';
+      end.className='navend '+t; gText('navEndV',fmt(ps[last])); end.hidden=false;
+    } else { area.removeAttribute('d'); $('navEnd').hidden=true; }
+    [].forEach.call(lines.children,function(p){p.style.display=p.getAttribute('data-isin')===sel.isin?'none':''});
+    gText('navSel',sel.symbol);
+    var chip=gText('navSelV',gPct(sel.change_pct)); chip.className='navchip '+t;
+    gText('navSelNav',gNum(gToman(sel.last))+' تومان');
+    [].forEach.call(list.children,function(b){
+      var on=b.getAttribute('data-isin')===sel.isin;
+      b.setAttribute('aria-selected',on?'true':'false');
+      if(on&&b.scrollIntoView&&list.scrollHeight>list.clientHeight){
+        var top=b.offsetTop-list.offsetTop, bottom=top+b.offsetHeight;
+        if(top<list.scrollTop||bottom>list.scrollTop+list.clientHeight) list.scrollTop=top-list.clientHeight/2;
+      }
+    });
+    hideTip();
   }
 
   function draw(d){
     D=d;
     var ok=d.funds.length&&d.times.length>1;
-    $('nvEmpty').hidden=!!ok; if(!ok) return;
-
-    d.funds.forEach(function(f){
-      var base=f.prev_close||null;
-      f.p=f.nav.map(function(v){if(v==null)return null; if(base==null)base=v; return (v/base-1)*100});
-    });
-    var n=d.times.length;
-    P={min:[],q1:[],med:[],q3:[],max:[]};
-    for(var i=0;i<n;i++){
-      var col=d.funds.map(function(f){return f.p[i]}).filter(function(v){return v!=null}).sort(function(a,b){return a-b});
-      if(!col.length){['min','q1','med','q3','max'].forEach(function(k){P[k].push(null)});continue}
-      P.min.push(col[0]); P.q1.push(q(col,.25)); P.med.push(q(col,.5)); P.q3.push(q(col,.75)); P.max.push(col[col.length-1]);
-    }
-    var all=P.min.concat(P.max).filter(function(v){return v!=null});
+    $('navEmpty').hidden=!!ok; if(!ok) return;
+    d.funds.forEach(function(f){f.p=pcts(f)});
+    var all=[]; d.funds.forEach(function(f){f.p.forEach(function(v){if(v!=null)all.push(v)})});
     lo=Math.min(0,Math.min.apply(null,all)); hi=Math.max(0,Math.max.apply(null,all));
-    var pad=(hi-lo)*0.08||0.1; lo-=pad; hi+=pad;
+    var pad=(hi-lo)*0.1||0.1; lo-=pad; hi+=pad;
 
-    /* grid + labels outside the stretched svg */
-    var span=hi-lo, step=[0.1,0.2,0.25,0.5,1,2,5].filter(function(s){return span/s<=5})[0]||10, g='', lab='';
-    for(var v=Math.ceil(lo/step)*step; v<=hi+1e-9; v+=step){
-      var y=Y(v), z=Math.abs(v)<1e-9;
-      g+='<line class="'+(z?'zl':'gl')+'" x1="0" x2="'+W+'" y1="'+y.toFixed(1)+'" y2="'+y.toFixed(1)+'"/>';
-      lab+='<span style="top:'+(y/H*100).toFixed(2)+'%">'+(z?'۰٪':fmt(v))+'</span>';
-    }
-    $('nvGrid').innerHTML=g; $('nvYl').innerHTML=lab;
-    $('nvRange').setAttribute('d',band(P.max,P.min));
-    $('nvIqr').setAttribute('d',band(P.q3,P.q1));
-    $('nvMed').setAttribute('d',line(P.med));
-
-    var mid=Math.floor((n-1)/2);
-    $('nvAxis').innerHTML='<span>'+gTime(d.times[0])+'</span><span>'+gTime(d.times[mid])+'</span><span>'+gTime(d.times[n-1])+'</span>';
-    gText('nvDay',gDate(d.times[n-1]));
-
-    /* headline facts, from each fund's latest change */
-    var ranked=d.funds.filter(function(f){return f.change_pct!=null})
-      .sort(function(a,b){return b.change_pct-a.change_pct});
-    if(ranked.length){
-      var top=ranked[0], bot=ranked[ranked.length-1];
-      $('nvTop').innerHTML=top.symbol+' <span style="color:'+gColor(top.change_pct)+'">'+gPct(top.change_pct)+'</span>';
-      $('nvBot').innerHTML=bot.symbol+' <span style="color:'+gColor(bot.change_pct)+'">'+gPct(bot.change_pct)+'</span>';
-      var up=ranked.filter(function(f){return f.change_pct>0}).length;
-      gText('nvUp',fa(up)+' از '+fa(ranked.length));
-    }
-
-    heatmap(ranked);
-    select(sel?sel.isin:null);
-  }
-
-  /* heatmap: every fund × every 5-minute bucket in one view. Rows sorted
-     by the latest change; colour intensity scales with |change| against
-     the largest move of the day, green up / red down (site colour rule). */
-  var ROWS=[];
-  function heatmap(ranked){
-    ROWS=ranked;
-    var svg=$('nvHeat'), n=D.times.length, R=ranked.length, M=0;
-    ranked.forEach(function(f){f.p.forEach(function(v){if(v!=null)M=Math.max(M,Math.abs(v))})});
-    M=M||1;
-    svg.setAttribute('viewBox','0 0 '+n+' '+R);
-    var cells='';
-    ranked.forEach(function(f,r){
-      f.p.forEach(function(v,i){
-        var fill;
-        if(v==null) fill='var(--surface-3)';
-        else{
-          var a=(0.10+0.82*Math.min(1,Math.abs(v)/M)).toFixed(3);
-          fill=v>0?'rgba(22,163,74,'+a+')':(v<0?'rgba(220,38,38,'+a+')':'rgba(148,163,184,.25)');
-        }
-        cells+='<rect x="'+i+'" y="'+r+'" width="1.04" height="0.86" fill="'+fill+'"/>';
-      });
+    /* market median at every bucket — the reference the picked fund is read against */
+    MED=d.times.map(function(_,i){
+      var col=d.funds.map(function(f){return f.p[i]}).filter(function(v){return v!=null}).sort(function(a,b){return a-b});
+      if(!col.length) return null;
+      var k=(col.length-1)/2; return (col[Math.floor(k)]+col[Math.ceil(k)])/2;
     });
-    svg.innerHTML=cells+'<rect id="nvHeatSel" x="0" y="0" width="'+n+'" height="0.86" class="nvh-sel" style="display:none"/>';
-    svg.style.height=(R*12)+'px';
-    $('nvNames').innerHTML=ranked.map(function(f){
-      return '<button type="button" data-isin="'+f.isin+'" aria-pressed="false"><b>'+f.symbol+'</b>'+
-        '<em style="color:'+gColor(f.change_pct)+'">'+gPct(f.change_pct)+'</em></button>'}).join('');
-    gText('nvScaleLo',fmt(-M)); gText('nvScaleHi',fmt(M));
-    var mid=Math.floor((n-1)/2);
-    $('nvHeatAxis').innerHTML='<span>'+gTime(D.times[0])+'</span><span>'+gTime(D.times[mid])+'</span><span>'+gTime(D.times[n-1])+'</span>';
-  }
+    med.setAttribute('d',path(MED));
 
-  function select(isin){
-    sel=isin&&D?D.funds.filter(function(f){return f.isin===isin})[0]:null;
-    var fund=$('nvFund');
-    if(sel){
-      fund.setAttribute('d',line(sel.p));
-      fund.style.stroke=gColor(sel.change_pct)||'var(--slate-500)';
-      gText('nvWho','صندوق '+sel.symbol);
-      var v=$('nvVal'); v.textContent=gPct(sel.change_pct); v.style.color=gColor(sel.change_pct);
-    }else{
-      fund.removeAttribute('d');
-      var m=P?P.med.filter(function(x){return x!=null}).pop():null;
-      gText('nvWho','میانه همه صندوق‌ها');
-      var v2=$('nvVal'); v2.textContent=fmt(m); v2.style.color=gColor(m==null?null:m/100);
+    var span=hi-lo, step=[0.1,0.2,0.25,0.5,1,2,5].filter(function(s){return span/s<=5})[0]||10, g='', labels='';
+    for(var v=Math.ceil(lo/step)*step; v<=hi+1e-9; v+=step){
+      var y=Y(v), zero=Math.abs(v)<1e-9;
+      g+='<line class="'+(zero?'zl':'gl')+'" x1="0" x2="'+W+'" y1="'+y.toFixed(1)+'" y2="'+y.toFixed(1)+'"/>';
+      labels+='<span'+(zero?' class="z"':'')+' style="top:'+(y/H*100).toFixed(2)+'%">'+(zero?'دیروز':fmt(v))+'</span>';
     }
-    [].forEach.call($('nvNames').children,function(b){
-      b.setAttribute('aria-pressed',sel&&b.getAttribute('data-isin')===sel.isin?'true':'false')});
-    var hl=$('nvHeatSel'), row=sel?ROWS.indexOf(sel):-1;
-    if(hl){ if(row>=0){hl.setAttribute('y',row); hl.style.display='';} else hl.style.display='none'; }
-    hide();
+    grid.innerHTML=g; yl.innerHTML=labels;
+
+    lines.innerHTML=d.funds.map(function(f){
+      return '<path data-isin="'+f.isin+'" d="'+path(f.p)+'"><title>'+f.symbol+' '+gPct(f.change_pct)+'</title></path>'}).join('');
+
+    var n=d.times.length, mid=Math.floor((n-1)/2);
+    $('navAxis').innerHTML='<span>'+gTime(d.times[0])+'</span><span>'+gTime(d.times[mid])+'</span><span>'+gTime(d.times[n-1])+'</span>';
+    gText('navDay',gDate(d.times[n-1]));
+
+    var ranked=d.funds.slice().sort(function(a,b){return (b.change_pct||0)-(a.change_pct||0)});
+    var mx=Math.max.apply(null,ranked.map(function(f){return Math.abs(f.change_pct||0)}))||1;
+    list.innerHTML=ranked.map(function(f,i){
+      var t=tone(f.change_pct);
+      return '<button type="button" role="option" data-isin="'+f.isin+'" class="'+t+'">'+
+        '<span class="rk">'+fa(i+1)+'</span><span class="nm">'+f.symbol+'</span>'+
+        '<span class="v">'+gPct(f.change_pct)+'</span>'+
+        '<span class="bar"><i style="width:'+Math.max(4,Math.abs(f.change_pct||0)/mx*100).toFixed(1)+'%"></i></span></button>'}).join('');
+
+    select(sel?sel.isin:ranked[0].isin);
   }
 
-  function hide(){$('nvTip').hidden=true;$('nvDot').hidden=true;$('nvGuide').style.display='none'}
+  function hideTip(){tip.hidden=true; dot.hidden=true; guide.style.display='none'}
   function at(ev){
-    if(!D||!P) return;
+    if(!D||!sel) return;
     var r=svg.getBoundingClientRect(), cx=(ev.touches?ev.touches[0].clientX:ev.clientX)-r.left;
     var i=Math.max(0,Math.min(D.times.length-1,Math.round(cx/r.width*(D.times.length-1))));
-    var v=sel?sel.p[i]:P.med[i]; if(v==null){hide();return}
+    var v=sel.p[i]; if(v==null){hideTip(); return}
     var px=X(i)/W*r.width, py=Y(v)/H*r.height;
-    var g=$('nvGuide'); g.setAttribute('x1',X(i)); g.setAttribute('x2',X(i)); g.style.display='';
-    var dot=$('nvDot'); dot.style.left=px+'px'; dot.style.top=py+'px'; dot.hidden=false;
-    var tip=$('nvTip');
-    tip.innerHTML=gTime(D.times[i])+' · '+(sel?sel.symbol:'میانه')+' <b style="color:'+(gColor(v/100)||'inherit')+'">'+fmt(v)+'</b>'+
-      '<span class="nvt-r">بازه '+fmt(P.min[i])+' تا '+fmt(P.max[i])+'</span>';
-    tip.style.left=Math.min(Math.max(px,90),r.width-90)+'px'; tip.hidden=false;
+    guide.setAttribute('x1',X(i)); guide.setAttribute('x2',X(i)); guide.style.display='';
+    dot.style.left=px+'px'; dot.style.top=py+'px'; dot.className='navdot '+tone(v); dot.hidden=false;
+    tip.innerHTML='<span class="t">'+gTime(D.times[i])+'</span>'+
+      '<span class="r"><em>'+sel.symbol+'</em><b class="'+tone(v)+'">'+fmt(v)+'</b></span>'+
+      '<span class="r m"><em>میانه</em><b>'+fmt(MED[i])+'</b></span>';
+    tip.style.left=Math.min(Math.max(px,80),r.width-80)+'px'; tip.hidden=false;
   }
   svg.addEventListener('mousemove',at);
-  svg.addEventListener('mouseleave',hide);
+  svg.addEventListener('mouseleave',hideTip);
   svg.addEventListener('touchstart',at,{passive:true});
   svg.addEventListener('touchmove',at,{passive:true});
-  function toggle(isin){select(sel&&sel.isin===isin?null:isin)}   /* tap again → back to the median */
-  $('nvNames').addEventListener('click',function(e){
-    var b=e.target.closest('button'); if(b) toggle(b.getAttribute('data-isin'));
-  });
-  var heat=$('nvHeat'), htip=$('nvHeatTip');
-  function cellAt(ev){
-    if(!D||!ROWS.length) return null;
-    var r=heat.getBoundingClientRect(), p=ev.touches?ev.touches[0]:ev;
-    var i=Math.floor((p.clientX-r.left)/r.width*D.times.length), row=Math.floor((p.clientY-r.top)/r.height*ROWS.length);
-    if(i<0||row<0||i>=D.times.length||row>=ROWS.length) return null;
-    return {i:i,row:row,r:r};
-  }
-  heat.addEventListener('mousemove',function(ev){
-    var c=cellAt(ev); if(!c){htip.hidden=true;return}
-    var f=ROWS[c.row], v=f.p[c.i];
-    htip.innerHTML=f.symbol+' · '+gTime(D.times[c.i])+' <b style="color:'+(gColor(v==null?null:v/100)||'inherit')+'">'+fmt(v)+'</b>';
-    var x=(c.i+.5)/D.times.length*c.r.width;
-    htip.style.left=Math.min(Math.max(x,70),c.r.width-70)+'px';
-    htip.style.top=Math.max(0,(c.row/ROWS.length*c.r.height)-34)+'px';
-    htip.hidden=false;
-  });
-  heat.addEventListener('mouseleave',function(){htip.hidden=true});
-  heat.addEventListener('click',function(ev){var c=cellAt(ev); if(c) toggle(ROWS[c.row].isin)});
+  lines.addEventListener('click',function(e){
+    var p=e.target.closest('path'); if(p) select(p.getAttribute('data-isin'))});
+  list.addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(b) select(b.getAttribute('data-isin'))});
 
   goldFeed(GOLD_NAV_API, 60, draw);
 })();
