@@ -206,7 +206,22 @@ onGold(function (g) {
   document.querySelectorAll('.gcount').forEach(function (e) { e.textContent = fa(g.summary.fund_count); });
   document.querySelectorAll('.gupdated').forEach(function (e) { e.textContent = gTime(g.generated_at, true); });
   document.querySelectorAll('.gdate').forEach(function (e) { e.textContent = gDate(g.generated_at); });
+  document.querySelectorAll('.gweekday').forEach(function (e) {
+    try {
+      e.textContent = new Intl.DateTimeFormat('fa-IR', { timeZone: 'Asia/Tehran', weekday: 'long' })
+        .format(new Date(g.generated_at));
+    } catch (err) { e.textContent = ''; }
+  });
+  GOLD_RECEIVED_AT = Date.now();
 });
+
+/* a thin bar that fills until the next poll: <span class="gpoll"><i></i></span> */
+var GOLD_RECEIVED_AT = null;
+setInterval(function () {
+  if (GOLD_RECEIVED_AT == null) return;
+  var w = Math.min(100, (Date.now() - GOLD_RECEIVED_AT) / GOLD_POLL_MS * 100) + '%';
+  document.querySelectorAll('.gpoll i').forEach(function (i) { i.style.width = w; });
+}, 500);
 
 /* ticker — built once, then updated in place so the marquee never jumps */
 onGold(function (g) {
@@ -279,7 +294,9 @@ function gRenderSessions() {
     if (el.classList.contains('live')) {
       el.classList.toggle('is-closed', s.state === 'closed');
       el.classList.toggle('is-soon', s.state === 'soon');
-      var label = s.state === 'soon' ? T.soon(clock) : T.badge[s.state];
+      /* under a label that already names the market (dashboard header), say only the state */
+      var badge = el.closest('.hstat') ? { open: 'باز است', closed: 'بسته است' } : T.badge;
+      var label = s.state === 'soon' ? T.soon(clock) : badge[s.state];
       var span = el.querySelector('span') || el.appendChild(document.createElement('span'));
       if (span.textContent !== label) span.textContent = label;
       return;
@@ -292,6 +309,21 @@ function gRenderSessions() {
 }
 gRenderSessions();
 setInterval(gRenderSessions, 1000);
+
+/* a schedule as words, from MARKET_HOURS: <em class="gsched" data-sched="funds">
+   → «شنبه تا چهارشنبه · ۱۲ تا ۱۸» */
+(function () {
+  var NAMES = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'];
+  var WEEK = [6, 0, 1, 2, 3, 4, 5];                    /* the Iranian week starts on Saturday */
+  function hour(t) { return /:00$/.test(t) ? fa(+t.split(':')[0]) : fa(t); }
+  document.querySelectorAll('.gsched').forEach(function (el) {
+    var cfg = MARKET_HOURS[el.getAttribute('data-sched')]; if (!cfg) return;
+    var days = WEEK.filter(function (d) { return cfg.days.indexOf(d) >= 0; });
+    var span = days.length === 7 ? 'همه روزها'
+      : NAMES[days[0]] + (days.length > 1 ? ' تا ' + NAMES[days[days.length - 1]] : '');
+    el.textContent = span + ' · ' + hour(cfg.open) + ' تا ' + hour(cfg.close);
+  });
+})();
 
 /* bubble vs coin-weight scatter (product page and market page).
    x = the fund's coin weight this month, y = its bubble now; the dashed

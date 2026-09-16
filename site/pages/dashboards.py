@@ -24,11 +24,29 @@ SIGNUP = """
 GOLD = """
 <div class="apphead">
 <div class="wrap">
-  <div>
-    <h1><span class="guest">نسخه مهمان</span>داشبورد آربیتراژ صندوق طلا</h1>
-    <p>آخرین روز معاملاتی: <b class="num gdate">—</b> · آخرین به‌روزرسانی: <b class="num gupdated">—</b> · <span data-session="funds">—</span></p>
+  <div class="ah-title">
+    <span class="guest">نسخه مهمان</span>
+    <h1>داشبورد آربیتراژ صندوق طلا</h1>
   </div>
-  <div style="display:flex;gap:10px;flex-wrap:wrap">
+  <!-- status rail: three quiet facts, each with one line of context -->
+  <div class="ah-rail">
+    <div class="hstat">
+      <small>بازار صندوق‌ها</small>
+      <span class="live" data-session="funds"><i></i><span>—</span></span>
+      <em class="gsched" data-sched="funds">—</em>
+    </div>
+    <div class="hstat">
+      <small>آخرین روز معاملاتی</small>
+      <b class="num gdate">—</b>
+      <em class="gweekday">—</em>
+    </div>
+    <div class="hstat">
+      <small>آخرین به‌روزرسانی</small>
+      <b class="num gupdated">—</b>
+      <span class="gpoll" title="تا به‌روزرسانی بعدی"><i></i></span>
+    </div>
+  </div>
+  <div class="ah-cta">
     <a class="btn btn-s" href="product-gold.html" style="padding:11px 20px;font-size:14px">معرفی محصول</a>
     <a class="btn btn-p" href="pricing.html" style="padding:11px 20px;font-size:14px">ورود / عضویت</a>
   </div>

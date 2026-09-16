@@ -582,7 +582,27 @@ footer a:hover{color:var(--gold-300)}
 
 /* ===== DASHBOARD APP PAGES ===== */
 .apphead{background:var(--surface-2);border-bottom:1px solid var(--border);padding-block:22px}
-.apphead .wrap{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+.apphead .wrap{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:clamp(16px,3vw,40px)}
+.ah-title .guest{margin-bottom:6px}
+.ah-title h1{margin:0}
+.ah-cta{display:flex;gap:10px;flex-wrap:wrap}
+/* the status rail sits in the header's empty middle; hairlines, no boxes */
+.ah-rail{display:flex;justify-content:center}
+.hstat{display:flex;flex-direction:column;align-items:flex-start;gap:1px;min-width:0;
+  padding-inline:clamp(14px,2.4vw,30px);border-inline-start:1px solid var(--border)}
+.hstat:first-child{border-inline-start:0}
+.hstat small{font-size:11px;font-weight:600;color:var(--slate-400)}
+.hstat b{font-size:16px;font-weight:800;line-height:1.55;color:var(--ink-900);font-variant-numeric:tabular-nums}
+.hstat em{font-style:normal;font-size:11px;color:var(--slate-400);white-space:nowrap}
+.hstat .live,.hstat .live.is-soon,.hstat .live.is-closed{background:none;padding:0;font-size:16px;font-weight:800;line-height:1.55;gap:7px}
+.hstat .live i{width:8px;height:8px}
+.hstat .live:not(.is-closed):not(.is-soon){color:var(--up-text)}
+.gpoll{display:block;width:74px;height:3px;margin-top:6px;border-radius:9px;background:var(--surface-3);overflow:hidden}
+.gpoll i{display:block;height:100%;width:0;background:var(--gold-500);transition:width .5s linear}
+@media(max-width:1060px){.apphead .wrap{grid-template-columns:minmax(0,1fr) auto}.ah-rail{grid-column:1/-1;justify-content:flex-start}
+  .hstat:first-child{padding-inline-start:0}}
+@media(max-width:600px){.apphead .wrap{grid-template-columns:1fr}.ah-rail{justify-content:space-between}
+  .hstat{padding-inline:8px}.hstat:last-child{padding-inline-end:0}.hstat b,.hstat .live{font-size:14px}}
 .apphead h1{font-size:clamp(21px,2.4vw,29px);font-weight:800;margin:0 0 6px}
 .apphead p{margin:0;font-size:13.5px;color:var(--slate-500)}
 .guest{display:inline-flex;align-items:center;gap:6px;background:rgba(240,180,41,.16);border:1px solid rgba(184,120,26,.3);
