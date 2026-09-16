@@ -25,8 +25,8 @@ HTML = """
 <div class="wrap">
   <div class="kpirow">
     <div class="kc"><small>میانگین حباب صندوق‌ها</small><b class="num" id="kAvg">—</b><span style="font-size:12px;color:var(--slate-500)"><span class="gcount">—</span> صندوق تحت پایش</span></div>
-    <div class="kc"><small>پرحباب‌ترین صندوق</small><b class="num" id="kMax" style="color:var(--down)">—</b><span style="font-size:12px;color:var(--slate-500)" id="kMaxN">—</span></div>
-    <div class="kc"><small>کم‌حباب‌ترین صندوق</small><b class="num" id="kMin" style="color:var(--up-text)">—</b><span style="font-size:12px;color:var(--slate-500)" id="kMinN">—</span></div>
+    <div class="kc"><small>پرحباب‌ترین صندوق</small><b class="num" id="kMax">—</b><span style="font-size:12px;color:var(--slate-500)" id="kMaxN">—</span></div>
+    <div class="kc"><small>کم‌حباب‌ترین صندوق</small><b class="num" id="kMin">—</b><span style="font-size:12px;color:var(--slate-500)" id="kMinN">—</span></div>
     <div class="kc"><small>ارزش معاملات صندوق‌های طلا</small><b class="num" id="kVal">—</b><span style="font-size:12px;color:var(--slate-500)">مجموع امروز</span></div>
   </div>
 </div>
@@ -110,8 +110,8 @@ HTML = """
 <section class="sec" style="padding-top:0">
 <div class="wrap">
   <div class="ctaband">
-    <h2>این جدول با تأخیر ۱۵ دقیقه است</h2>
-    <p>نسخه لحظه‌ای، تاریخچه ۶ ماهه و هشدار عبور حباب از آستانه، در پلن طلا.</p>
+    <h2>این جدول زنده است و هر چند ثانیه به‌روز می‌شود</h2>
+    <p>نقشه بازار، روند NAV همه صندوق‌ها و ترکیب دارایی هر صندوق، در داشبورد طلا.</p>
     <a class="btn btn-gold" href="dashboard-gold.html"><ico>🪙</ico>داشبورد طلا</a>
     <a class="btn btn-s" href="pricing.html" style="color:#DBE6FE;border-color:#334155;margin-inline-start:8px">مشاهده پلن‌ها</a>
   </div>
@@ -138,9 +138,9 @@ var TD=' style="border-color:var(--border)"';
 /* KPIs */
 onGold(function(g){
   var s=g.summary, a=gText('kAvg',gPct(s.avg_bubble));
-  if(a) a.style.color=s.avg_bubble<0?'var(--up-text)':'var(--down)';
-  if(s.max_bubble){gText('kMax',gPct(s.max_bubble.bubble)); gText('kMaxN',s.max_bubble.symbol)}
-  if(s.min_bubble){gText('kMin',gPct(s.min_bubble.bubble)); gText('kMinN',s.min_bubble.symbol)}
+  if(a) a.style.color=gColor(s.avg_bubble);
+  if(s.max_bubble){gText('kMax',gPct(s.max_bubble.bubble)).style.color=gColor(s.max_bubble.bubble); gText('kMaxN',s.max_bubble.symbol)}
+  if(s.min_bubble){gText('kMin',gPct(s.min_bubble.bubble)).style.color=gColor(s.min_bubble.bubble); gText('kMinN',s.min_bubble.symbol)}
   gText('kVal',gHemat(s.total_value));
 });
 
@@ -149,7 +149,7 @@ onGold(function(g){
   var b=document.getElementById('fundBody'); if(!b) return;
   var rows=g.funds.slice().sort(function(x,y){return (y.value||0)-(x.value||0)});
   b.innerHTML=rows.map(function(f,i){
-    var s=gSign(f.nominal_bubble), cls=s<0?'up':(s>0?'down':'neu');
+    var cls=gTone(f.nominal_bubble,'up','down','neu');
     return '<tr'+(PAYWALL&&i>=5?' class="lock"':'')+TD+'>'+
       '<td'+TD+'>صندوق '+f.symbol+'</td>'+
       '<td'+TD+'>'+gNum(f.last_trade)+'</td>'+
@@ -166,11 +166,9 @@ onGold(function(g){
     var price, f;
     if(k==='funds'){price=null; f=g.summary.avg_change_pct}
     else{var r=g.m[k]; price=goldShown(r); f=r?r.change_pct:null}
-    var s=gSign(f);
-    if(k==='funds'){val.textContent=gPct(f); val.style.color=s>0?'var(--up-text)':(s<0?'var(--down)':'')}
+    if(k==='funds'){val.textContent=gPct(f); val.style.color=gColor(f)}
     else{val.textContent=gNum(price); chg.textContent=gArrow(f)}
-    chg.className='d '+(s>0?'d-up':(s<0?'d-dn':''));
-    chg.style.background=s?'':'var(--surface-3)'; chg.style.color=s?'':'var(--slate-600)';
+    chg.className='d '+gTone(f,'d-up','d-dn');
   });
 });
 

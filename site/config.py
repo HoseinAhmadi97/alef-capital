@@ -154,6 +154,8 @@ TICKER = [
 # this path to Nexus (deploy/nginx.conf), `make serve` does the same.
 GOLD_API = "/api/gold/snapshot"
 GOLD_POLL_SECONDS = 20
+# Intraday NAV of every fund — read only by the gold dashboard, every 60 s
+GOLD_NAV_API = "/api/gold/nav-trend"
 
 # ─────────────────────────── Repeated copy ─────────────────────────
 RISK_SHORT = ("اطلاعات ارائه‌شده در این وب‌سایت صرفاً جنبه تحلیلی و اطلاع‌رسانی دارد و توصیه به خرید "

@@ -30,7 +30,7 @@ import config as C  # noqa: E402
 
 NEXUS_URL = os.environ.get("NEXUS_URL", "http://127.0.0.1:8100").rstrip("/")
 # site path → Nexus path; mirrors the nginx `location` in deploy/nginx.conf
-API_ROUTES = {C.GOLD_API: "/v1/gold/snapshot"}
+API_ROUTES = {C.GOLD_API: "/v1/gold/snapshot", C.GOLD_NAV_API: "/v1/gold/nav-trend"}
 
 
 class Handler(SimpleHTTPRequestHandler):

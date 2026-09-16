@@ -59,8 +59,8 @@ GOLD = """
   </div>
   <div class="tiles" style="margin-top:14px">
     <div class="tile" style="border-color:var(--gold-400);background:rgba(240,180,41,.05)"><small>میانگین حباب صندوق‌ها</small><b class="num" id="gAvg">—</b><div class="sub"><span class="gcount">—</span> صندوق تحت پایش</div></div>
-    <div class="tile"><small>پرحباب‌ترین صندوق</small><b class="num" id="gMax" style="color:var(--down)">—</b><div class="sub" id="gMaxN">—</div></div>
-    <div class="tile"><small>کم‌حباب‌ترین صندوق</small><b class="num" id="gMin" style="color:var(--up-text)">—</b><div class="sub" id="gMinN">—</div></div>
+    <div class="tile"><small>پرحباب‌ترین صندوق</small><b class="num" id="gMax">—</b><div class="sub" id="gMaxN">—</div></div>
+    <div class="tile"><small>کم‌حباب‌ترین صندوق</small><b class="num" id="gMin">—</b><div class="sub" id="gMinN">—</div></div>
     <div class="tile"><small>ارزش معاملات صندوق‌ها</small><b class="num" id="gVal">—</b><div class="sub">مجموع امروز</div></div>
   </div>
 </div>
@@ -74,13 +74,13 @@ GOLD = """
 @@IFLOCK@@    <a class="lockcell" href="pricing.html" style="font-size:12.5px;padding:7px 14px">🔒 باز کردن همه ستون‌ها</a>@@END@@
   </div>
   <div class="dwrap"><div class="tscroll">
-    <table class="dt">
-      <thead><tr><th>نماد</th><th>آخرین قیمت</th><th>درصد تغییر</th><th>مقدار تغییر</th>
-        <th>ارزش ذاتی (NAV)</th><th>حباب</th><th>دلار محاسباتی</th><th>زمان</th></tr></thead>
+    <table class="dt" id="gTable">
+      <thead><tr><th data-sort="text">نماد</th><th data-sort="num">آخرین قیمت</th><th data-sort="num">درصد تغییر</th><th data-sort="num">مقدار تغییر</th>
+        <th data-sort="num">ارزش ذاتی (NAV)</th><th data-sort="num">حباب</th><th data-sort="num">دلار محاسباتی</th><th data-sort="num">ارزش معاملات</th><th data-sort="text">زمان</th></tr></thead>
       <tbody id="gBody"></tbody>
     </table>
   </div></div>
-  <p style="font-size:12px;color:var(--slate-400);margin-top:10px"><span class="gcount">—</span> صندوق به ترتیب ارزش معاملات · قیمت و NAV به ریال · دلار محاسباتی = دلار × قیمت ÷ NAV</p>
+  <p style="font-size:12px;color:var(--slate-400);margin-top:10px"><span class="gcount">—</span> صندوق · برای مرتب‌سازی روی عنوان هر ستون بزنید · قیمت و NAV به ریال · ارزش معاملات به تومان · دلار محاسباتی = دلار × قیمت ÷ NAV</p>
 </div>
 </section>
 
@@ -89,8 +89,8 @@ GOLD = """
 <div class="wrap">
   <div class="sh"><div><h2>طلا و سکه — بازار نقدی</h2><p>مبنای محاسبه ارزش ذاتی گواهی‌های سپرده</p></div></div>
   <div class="dwrap"><div class="tscroll">
-    <table class="dt">
-      <thead><tr><th>عنوان</th><th>آخرین قیمت</th><th>درصد تغییر</th><th>مقدار تغییر</th>
+    <table class="dt" id="sTable">
+      <thead><tr><th data-sort="text">عنوان</th><th data-sort="num">آخرین قیمت</th><th data-sort="num">درصد تغییر</th><th data-sort="num">مقدار تغییر</th>
         <th>ارزش ذاتی</th><th>حباب</th><th>دلار محاسباتی</th></tr></thead>
       <tbody id="sBody"></tbody>
     </table>
@@ -120,27 +120,32 @@ GOLD = """
 <!-- NAV TREND -->
 <section class="dsec" id="nav">
 <div class="wrap">
-  <div class="sh"><div><h2>روند ارزش خالص دارایی (NAV)</h2><p>در نسخه مهمان فقط یک صندوق نمایش داده می‌شود</p></div></div>
-  <div class="lockgrid">
-    <div class="card">
-      <h3 style="font-size:15px;margin-bottom:4px">صندوق <span id="navFund">—</span> — روند NAV درون‌روزی</h3>
-      <p style="font-size:12.5px;color:var(--slate-500);margin:0 0 14px">بزرگ‌ترین صندوق طلا · تغییر NAV نسبت به ابتدای روز · <span id="navLast">—</span></p>
-      <svg viewBox="0 0 420 220" style="width:100%;height:auto;display:block">
-        <rect x="34" y="10" width="372" height="160" fill="var(--surface-2)" rx="8"/>
-        <line x1="34" y1="90" x2="406" y2="90" stroke="var(--border-strong)" stroke-dasharray="3 3"/>
-        <path id="navLine" fill="none" stroke="#C9861A" stroke-width="2.5" stroke-linejoin="round"/>
-        <text x="34" y="192" font-size="11" fill="#64748B" font-family="Vazirmatn" id="navT0"></text>
-        <text x="406" y="192" font-size="11" fill="#64748B" text-anchor="end" font-family="Vazirmatn" id="navT1"></text>
-        <text x="28" y="22" font-size="10" fill="#94A3B8" text-anchor="end" font-family="Vazirmatn" id="navTop"></text>
-        <text x="28" y="94" font-size="10" fill="#94A3B8" text-anchor="end" font-family="Vazirmatn">۰٪</text>
-        <text x="28" y="166" font-size="10" fill="#94A3B8" text-anchor="end" font-family="Vazirmatn" id="navBottom"></text>
-      </svg>
+  <div class="sh"><div><h2>روند ارزش خالص دارایی (NAV)</h2><p>تغییر NAV همه صندوق‌ها از ابتدای روز · روی نمودار یا فهرست، صندوق را انتخاب کنید</p></div>
+    <div style="font-size:12px;color:var(--slate-500)" id="navDay">—</div></div>
+  <div class="navgrid">
+    <div class="card navchart">
+      <div class="navhead">
+        <div><b id="navSel">—</b><span id="navSelV" class="d">—</span></div>
+        <span id="navSelNav" style="font-size:12.5px;color:var(--slate-500)">—</span>
+      </div>
+      <div class="navplot" id="navPlot">
+        <svg id="navSvg" viewBox="0 0 640 300" preserveAspectRatio="none" role="img" aria-label="روند درون‌روزی NAV صندوق‌های طلا">
+          <g id="navGrid"></g>
+          <g id="navLines" fill="none" stroke-linejoin="round" stroke-linecap="round"></g>
+          <path id="navArea"></path>
+          <path id="navHot" fill="none" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"></path>
+          <line id="navGuide" y1="0" y2="300" stroke="var(--slate-400)" stroke-dasharray="3 3" style="display:none"></line>
+        </svg>
+        <div class="navyl" id="navYl"></div>
+        <div class="navdot" id="navDot" hidden></div>
+        <div class="navtip" id="navTip" hidden></div>
+        <div class="navempty" id="navEmpty">در حال دریافت داده…</div>
+      </div>
+      <div class="navaxis" id="navAxis"></div>
     </div>
-    <div class="lockpanel">
-      <div class="ic">🔒</div>
-      <h3>مقایسه هم‌زمان <span class="gcount">—</span> صندوق</h3>
-      <p>روند <span dir="ltr">Latent NAV</span>، <span dir="ltr">Pure NAV</span> و نسبت این دو، به تفکیک هر صندوق و قابل مقایسه روی یک نمودار.</p>
-      <a class="btn btn-p" href="pricing.html" style="padding:11px 24px;font-size:14px">ورود / عضویت</a>
+    <div class="card navrank">
+      <div class="lch" style="margin-bottom:8px"><span class="lbl">تغییر NAV امروز</span><span style="font-size:11.5px;color:var(--slate-400)">بیشترین ← کمترین</span></div>
+      <div id="navList" class="navlist" role="listbox" aria-label="انتخاب صندوق"></div>
     </div>
   </div>
 </div>
@@ -149,13 +154,38 @@ GOLD = """
 <!-- ASSET MIX -->
 <section class="dsec" id="mix">
 <div class="wrap">
-  <div class="sh"><div><h2>ترکیب دارایی صندوق‌ها</h2><p>سهم سکه، شمش و سایر ابزارها — تعیین‌کننده اینکه حباب هر صندوق چقدر توجیه‌پذیر است</p></div></div>
-  <div class="dwrap"><div class="tscroll">
-    <table class="dt">
-      <thead><tr><th>صندوق</th><th>سهم گواهی سکه</th><th>سهم گواهی شمش</th><th>سایر / نقد</th><th>همبستگی با سکه</th><th>حباب تعدیل‌شده</th></tr></thead>
-      <tbody id="mixBody"></tbody>
-    </table>
-  </div></div>
+  <div class="sh">
+    <div><h2>ترکیب دارایی صندوق‌ها</h2><p>سهم سکه، شمش و سایر ابزارها — تعیین‌کننده اینکه حباب هر صندوق چقدر توجیه‌پذیر است</p></div>
+    <div class="mixsort" role="group" aria-label="مرتب‌سازی صندوق‌ها">
+      <button type="button" data-k="sekke" aria-pressed="true">بیشترین سکه</button>
+      <button type="button" data-k="shemsh" aria-pressed="false">بیشترین شمش</button>
+      <button type="button" data-k="other" aria-pressed="false">بیشترین نقد و سایر</button>
+      <button type="button" data-k="cap" aria-pressed="false">بزرگ‌ترین صندوق</button>
+      <button type="button" data-k="bubble" aria-pressed="false">کمترین حباب</button>
+    </div>
+  </div>
+  <div class="mixgrid">
+    <div class="card mixsum">
+      <div class="lch"><span class="lbl">ترکیب کل بازار صندوق‌های طلا</span></div>
+      <svg viewBox="0 0 120 120" role="img" aria-labelledby="mixDonutT">
+        <title id="mixDonutT">سهم سکه، شمش و سایر در کل بازار صندوق‌های طلا، وزنی با ارزش بازار</title>
+        <g id="mixDonut" transform="rotate(-90 60 60)"></g>
+        <text x="60" y="57" text-anchor="middle" font-size="15" font-weight="800" fill="var(--ink-800)" id="mixDonutV">—</text>
+        <text x="60" y="73" text-anchor="middle" font-size="8.5" fill="var(--slate-500)">سهم سکه</text>
+      </svg>
+      <div class="mixleg" id="mixLegend"></div>
+      <p style="font-size:11.5px;color:var(--slate-400);margin:12px 0 0">میانگین وزنی با ارزش بازار هر صندوق</p>
+    </div>
+    <div class="card" style="padding:20px">
+      <div class="mbkey">
+        <span><i style="background:var(--mix-coin)"></i>گواهی سکه</span>
+        <span><i style="background:var(--mix-bar)"></i>گواهی شمش</span>
+        <span><i style="background:var(--mix-other)"></i>نقد و سایر</span>
+        <span style="margin-inline-start:auto" id="mixKeyLabel">عدد سمت چپ: سهم سکه</span>
+      </div>
+      <div class="mixbars" id="mixBars"></div>
+    </div>
+  </div>
   <p style="font-size:12px;color:var(--slate-400);margin-top:10px">ترکیب دارایی از آخرین گزارش ماهانه هر صندوق · همبستگی با سکه و حباب تعدیل‌شده به‌زودی</p>
 </div>
 </section>
@@ -179,7 +209,7 @@ GOLD = """
     </div>
   </div>
 @@IFLOCK@@""" + SIGNUP.format(h="ارزش ذاتی، حباب و دلار محاسباتی را باز کنید",
-                    p="با عضویت رایگان، جدول کامل ۳۰ صندوق با تأخیر ۱۵ دقیقه در اختیارتان است. با پلن طلا، همان جدول لحظه‌ای می‌شود و محاسبه‌گر، تاریخچه ۶ ماهه و هشدار هم اضافه می‌شود.") + """@@END@@
+                    p="با عضویت رایگان، جدول کامل همه صندوق‌ها به‌صورت لحظه‌ای در اختیارتان است. با پلن طلا، محاسبه‌گر، تاریخچه ۶ ماهه و هشدار هم اضافه می‌شود.") + """@@END@@
 </div>
 </section>
 
@@ -195,11 +225,13 @@ GOLD_JS = paywall.js_flag() + """
    dollar × price/NAV. */
 function cell(v){return PAYWALL?LOCK:v}
 function chgCells(f,abs){
-  var s=gSign(f), cls=s<0?'dn':(s>0?'up':'');
-  return '<td class="'+cls+'">'+gArrow(f)+'</td><td class="'+cls+'">'+(abs==null?'—':gNum(Math.abs(abs)))+'</td>'}
+  var cls=gTone(f,'up','dn');
+  return gTd(gArrow(f),f,cls)+gTd(abs==null?'—':gNum(Math.abs(abs)),abs,cls)}
 function bubCell(b){
   if(PAYWALL) return LOCK;
-  var s=gSign(b); return '<span class="'+(s<0?'up':(s>0?'dn':''))+'">'+gPct(b)+'</span>'}
+  return '<span class="'+gTone(b,'up','dn')+'">'+gPct(b)+'</span>'}
+gSortable(document.getElementById('gTable'));
+gSortable(document.getElementById('sTable'));
 
 /* header state */
 onGold(function(g){
@@ -218,16 +250,15 @@ onGold(function(g){
       v.textContent=r.unit==='USD'?fa(r.price.toLocaleString('en-US',{maximumFractionDigits:2}))
                                   :gNum(goldShown(r));
     }
-    var s=gSign(f);
     if(k==='funds'){
-      v.style.color=s<0?'var(--down)':(s>0?'var(--up-text)':'');
+      v.style.color=gColor(f);
       sub.textContent='آخرین معامله · '+gTime(when);
-    }else sub.innerHTML='<span class="'+(s<0?'dn':(s>0?'up':''))+'">'+gArrow(f)+'</span> · '+gTime(when);
+    }else sub.innerHTML='<span class="'+gTone(f,'up','dn')+'">'+gArrow(f)+'</span> · '+gTime(when);
   });
   var s=g.summary, e=gText('gAvg',gPct(s.avg_bubble));
-  if(e) e.style.color=s.avg_bubble<0?'var(--up-text)':'var(--down)';
-  if(s.max_bubble){gText('gMax',gPct(s.max_bubble.bubble)); gText('gMaxN',s.max_bubble.symbol)}
-  if(s.min_bubble){gText('gMin',gPct(s.min_bubble.bubble)); gText('gMinN',s.min_bubble.symbol)}
+  if(e) e.style.color=gColor(s.avg_bubble);
+  if(s.max_bubble){gText('gMax',gPct(s.max_bubble.bubble)).style.color=gColor(s.max_bubble.bubble); gText('gMaxN',s.max_bubble.symbol)}
+  if(s.min_bubble){gText('gMin',gPct(s.min_bubble.bubble)).style.color=gColor(s.min_bubble.bubble); gText('gMinN',s.min_bubble.symbol)}
   gText('gVal',gHemat(s.total_value));
 });
 
@@ -237,11 +268,14 @@ onGold(function(g){
   var usd=g.m.dollar?g.m.dollar.price:null;
   var rows=g.funds.slice().sort(function(x,y){return (y.value||0)-(x.value||0)});
   b.innerHTML=rows.map(function(f){
-    var ok=f.last_trade&&f.nav_live;
-    return '<tr><td>صندوق '+f.symbol+'</td><td>'+gNum(f.last_trade)+'</td>'+chgCells(f.change_pct,f.change)+
-      '<td>'+cell(gNum(f.nav_live))+'</td>'+
-      '<td>'+bubCell(f.nominal_bubble)+'</td>'+
-      '<td>'+cell(ok&&usd?gNum(usd*f.last_trade/f.nav_live):'—')+'</td><td>'+gTime(f.trade_time)+'</td></tr>'}).join('');
+    var implied=f.last_trade&&f.nav_live&&usd?usd*f.last_trade/f.nav_live:null;
+    return '<tr>'+gTd('صندوق '+f.symbol,f.symbol)+gTd(gNum(f.last_trade),f.last_trade)+chgCells(f.change_pct,f.change)+
+      gTd(cell(gNum(f.nav_live)),f.nav_live)+
+      gTd(bubCell(f.nominal_bubble),f.nominal_bubble)+
+      gTd(cell(gNum(implied)),implied)+
+      gTd(gBillion(f.value),f.value)+
+      gTd(gTime(f.trade_time),f.trade_time)+'</tr>'}).join('');
+  gResort(document.getElementById('gTable'));
 });
 
 /* spot gold and coins — prices in rial. Intrinsic value, bubble and
@@ -252,10 +286,11 @@ var SPOT=[['طلا گرم ۱۸ عیار','geram18'],['سکه امامی','sekee'
 onGold(function(g){
   var b=document.getElementById('sBody'); if(!b) return;
   b.innerHTML=SPOT.map(function(s){
-    var r=g.m[s[1]], k=r&&r.unit==='IRT'?10:1;
-    return '<tr><td>'+s[0]+'</td><td>'+gNum(goldRial(r))+'</td>'+
+    var r=g.m[s[1]], k=r&&r.unit==='IRT'?10:1, px=goldRial(r);
+    return '<tr>'+gTd(s[0],s[0])+gTd(gNum(px),px)+
       chgCells(r?r.change_pct:null,r&&r.change!=null?r.change*k:null)+
       '<td>—</td><td>—</td><td>—</td></tr>'}).join('');
+  gResort(document.getElementById('sTable'));
 });
 
 /* treemap — block size by today's traded value, colour by day change */
@@ -273,36 +308,180 @@ onGold(function(g){
       gPct(f.change_pct)+'</span></div>'}).join('');
 });
 
-/* NAV trend — the largest fund, change against its first NAV of the day */
-onGold(function(g){
-  var p=document.getElementById('navLine'), ser=g.series.nav;
-  if(!p||!ser||ser.points.length<2) return;
-  var base=ser.points[0].value;
-  var ch=ser.points.map(function(q){return (q.value/base-1)*100});
-  var M=Math.max(0.1,Math.max.apply(null,ch.map(Math.abs)));
-  M=Math.ceil(M*10)/10;
-  p.setAttribute('d',ch.map(function(v,i){
-    var x=34+i/(ch.length-1)*372, y=90-v/M*68;
-    return (i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1)}).join(' '));
-  gText('navFund',ser.label);
-  gText('navT0',gTime(ser.points[0].time));
-  gText('navT1',gTime(ser.points[ser.points.length-1].time));
-  gText('navTop','‎+'+fa(M.toFixed(1)).replace('.','٫')+'٪');
-  gText('navBottom','‎−'+fa(M.toFixed(1)).replace('.','٫')+'٪');
-  gText('navLast','آخرین NAV '+gNum(ser.points[ser.points.length-1].value)+' ریال');
-});
+/* ── NAV trend — every fund's intraday NAV, as % change from its first NAV
+   of the day. Its own feed (GOLD_NAV_API): only this page needs it, so the
+   snapshot every page polls stays small. ── */
+(function(){
+  var W=640, H=300, PAD=14;
+  var svg=document.getElementById('navSvg'); if(!svg) return;
+  var plot=document.getElementById('navPlot'), lines=document.getElementById('navLines'),
+      hot=document.getElementById('navHot'), area=document.getElementById('navArea'),
+      grid=document.getElementById('navGrid'), guide=document.getElementById('navGuide'),
+      dot=document.getElementById('navDot'), tip=document.getElementById('navTip'),
+      list=document.getElementById('navList'), yl=document.getElementById('navYl');
+  var D=null, sel=null, lo=0, hi=0;
 
-/* asset mix — this month's reported weights, largest funds first */
-onGold(function(g){
-  var b=document.getElementById('mixBody'); if(!b) return;
-  function w(v){return v==null?'—':fa(Math.round(v*100))+'٪'}
-  var rows=g.funds.filter(function(f){return f.weights})
-    .sort(function(x,y){return (y.market_cap||0)-(x.market_cap||0)});
-  b.innerHTML=rows.map(function(f){
-    var sk=f.weights.sekke_weight||0, sh=f.weights.shemsh_weight||0;
-    return '<tr><td>'+f.symbol+'</td><td>'+w(sk)+'</td><td>'+w(sh)+'</td><td>'+w(Math.max(0,1-sk-sh))+'</td>'+
-      '<td>'+cell('—')+'</td><td>'+cell('—')+'</td></tr>'}).join('');
-});
+  function pcts(f){
+    var base=null;
+    return f.nav.map(function(v){
+      if(v==null) return null;
+      if(base==null) base=v;
+      return (v/base-1)*100});
+  }
+  function X(i){return D.times.length<2?0:i/(D.times.length-1)*W}
+  function Y(v){return PAD+(hi-v)/(hi-lo||1)*(H-2*PAD)}
+  function path(ps){
+    var d='', pen=false;
+    ps.forEach(function(v,i){
+      if(v==null){pen=false; return}
+      d+=(pen?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)+' '; pen=true});
+    return d;
+  }
+  function fmt(v){return gPct(v==null?null:v/100)}
+
+  function select(isin){
+    sel=D.funds.filter(function(f){return f.isin===isin})[0]||D.funds[0];
+    if(!sel) return;
+    var ps=sel.p, color=gColor(sel.change_pct)||'var(--slate-500)';
+    var d=path(ps);
+    hot.setAttribute('d',d); hot.style.stroke=color;
+    var first=ps.findIndex(function(v){return v!=null}), last=-1;
+    for(var i=ps.length-1;i>=0;i--) if(ps[i]!=null){last=i;break}
+    if(first>=0&&last>first){
+      area.setAttribute('d',d+'L'+X(last).toFixed(1)+' '+Y(0).toFixed(1)+' L'+X(first).toFixed(1)+' '+Y(0).toFixed(1)+' Z');
+      area.style.fill=gSign(sel.change_pct)<0?'rgba(220,38,38,.08)':'rgba(22,163,74,.10)';
+    } else area.removeAttribute('d');
+    [].forEach.call(lines.children,function(p){p.style.display=p.getAttribute('data-isin')===sel.isin?'none':''});
+    gText('navSel','صندوق '+sel.symbol);
+    var chip=gText('navSelV',gPct(sel.change_pct));
+    chip.className='d '+gTone(sel.change_pct,'d-up','d-dn');
+    gText('navSelNav','NAV '+gNum(sel.last)+' ریال · '+gTime(D.times[last]));
+    [].forEach.call(list.children,function(b){
+      b.setAttribute('aria-selected',b.getAttribute('data-isin')===sel.isin?'true':'false')});
+    hideTip();
+  }
+
+  function draw(d){
+    D=d;
+    document.getElementById('navEmpty').hidden=!!(d.funds.length&&d.times.length>1);
+    if(!d.funds.length||d.times.length<2) return;
+    d.funds.forEach(function(f){f.p=pcts(f)});
+    var all=[]; d.funds.forEach(function(f){f.p.forEach(function(v){if(v!=null)all.push(v)})});
+    lo=Math.min(0,Math.min.apply(null,all)); hi=Math.max(0,Math.max.apply(null,all));
+    var pad=(hi-lo)*0.08||0.1; lo-=pad; hi+=pad;
+
+    /* gridlines at round steps, labelled outside the (stretched) SVG */
+    var span=hi-lo, step=[0.1,0.2,0.25,0.5,1,2,5].filter(function(s){return span/s<=6})[0]||10, g='', labels='';
+    for(var v=Math.ceil(lo/step)*step; v<=hi+1e-9; v+=step){
+      var y=Y(v), zero=Math.abs(v)<1e-9;
+      g+='<line class="'+(zero?'zl':'gl')+'" x1="0" x2="'+W+'" y1="'+y.toFixed(1)+'" y2="'+y.toFixed(1)+'"/>';
+      labels+='<span style="top:'+(y/H*100).toFixed(2)+'%">'+(zero?'۰٪':fmt(v))+'</span>';
+    }
+    grid.innerHTML=g; yl.innerHTML=labels;
+
+    lines.innerHTML=d.funds.map(function(f){
+      return '<path data-isin="'+f.isin+'" d="'+path(f.p)+'"><title>'+f.symbol+' '+gPct(f.change_pct)+'</title></path>'}).join('');
+
+    var n=d.times.length, mid=Math.floor((n-1)/2);
+    document.getElementById('navAxis').innerHTML=
+      '<span>'+gTime(d.times[0])+'</span><span>'+gTime(d.times[mid])+'</span><span>'+gTime(d.times[n-1])+'</span>';
+    gText('navDay','آخرین روز با داده: '+gDate(d.times[n-1]));
+
+    var ranked=d.funds.slice().sort(function(a,b){return (b.change_pct||0)-(a.change_pct||0)});
+    var mx=Math.max.apply(null,ranked.map(function(f){return Math.abs(f.change_pct||0)}))||1;
+    list.innerHTML=ranked.map(function(f){
+      return '<button type="button" role="option" data-isin="'+f.isin+'"><span>'+f.symbol+'</span>'+
+        '<span class="v" style="color:'+gColor(f.change_pct)+'">'+gPct(f.change_pct)+'</span>'+
+        '<span class="bar"><i style="width:'+(Math.abs(f.change_pct||0)/mx*100).toFixed(1)+'%;background:'+
+        gBarColor(f.change_pct,true)+'"></i></span></button>'}).join('');
+
+    select(sel?sel.isin:d.funds[0].isin);
+  }
+
+  function hideTip(){tip.hidden=true; dot.hidden=true; guide.style.display='none'}
+  function at(ev){
+    if(!D||!sel) return;
+    var r=svg.getBoundingClientRect(), cx=(ev.touches?ev.touches[0].clientX:ev.clientX)-r.left;
+    var i=Math.max(0,Math.min(D.times.length-1,Math.round(cx/r.width*(D.times.length-1))));
+    var v=sel.p[i]; if(v==null){hideTip(); return}
+    var px=X(i)/W*r.width, py=Y(v)/H*r.height;
+    guide.setAttribute('x1',X(i)); guide.setAttribute('x2',X(i)); guide.style.display='';
+    dot.style.left=px+'px'; dot.style.top=py+'px'; dot.hidden=false;
+    tip.innerHTML=sel.symbol+' · '+gTime(D.times[i])+' · <b style="color:'+(gColor(v)||'inherit')+'">'+fmt(v)+'</b>';
+    tip.style.left=Math.min(Math.max(px,80),r.width-80)+'px'; tip.hidden=false;
+  }
+  svg.addEventListener('mousemove',at);
+  svg.addEventListener('mouseleave',hideTip);
+  svg.addEventListener('touchstart',at,{passive:true});
+  svg.addEventListener('touchmove',at,{passive:true});
+  lines.addEventListener('click',function(e){
+    var p=e.target.closest('path'); if(p) select(p.getAttribute('data-isin'))});
+  list.addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(b) select(b.getAttribute('data-isin'))});
+
+  goldFeed(GOLD_NAV_API, 60, draw);
+})();
+
+/* ── asset mix — whole market as a donut, each fund as a 100% bar ── */
+(function(){
+  var bars=document.getElementById('mixBars'); if(!bars) return;
+  var KEYS={
+    sekke:{label:'سهم سکه',v:function(f){return f.w.sk},fmt:pct0},
+    shemsh:{label:'سهم شمش',v:function(f){return f.w.sh},fmt:pct0},
+    other:{label:'سهم نقد و سایر',v:function(f){return f.w.ot},fmt:pct0},
+    cap:{label:'ارزش بازار',v:function(f){return f.market_cap||0},fmt:function(f){return gHemat(f.market_cap)}},
+    bubble:{label:'حباب',v:function(f){return f.nominal_bubble==null?-1e9:-f.nominal_bubble},
+      fmt:function(f){return '<span style="color:'+gColor(f.nominal_bubble)+'">'+gPct(f.nominal_bubble)+'</span>'}}
+  };
+  var key='sekke', G=null;
+  function pct0(f){return fa(Math.round(KEYS[key].v(f)*100))+'٪'}
+
+  function donut(funds){
+    var cap=0, sk=0, sh=0;
+    funds.forEach(function(f){var c=f.market_cap||0; cap+=c; sk+=f.w.sk*c; sh+=f.w.sh*c});
+    if(!cap) return;
+    var parts=[['sekke',sk/cap,'var(--mix-coin)','گواهی سکه'],['shemsh',sh/cap,'var(--mix-bar)','گواهی شمش'],
+               ['other',Math.max(0,1-(sk+sh)/cap),'var(--mix-other)','نقد و سایر']];
+    var R=46, C=2*Math.PI*R, off=0;
+    document.getElementById('mixDonut').innerHTML=
+      '<circle cx="60" cy="60" r="'+R+'" fill="none" stroke="var(--surface-3)" stroke-width="16"/>'+
+      parts.map(function(p){
+        var len=p[1]*C, s='<circle cx="60" cy="60" r="'+R+'" fill="none" stroke="'+p[2]+'" stroke-width="16"'+
+          ' stroke-dasharray="'+len.toFixed(2)+' '+(C-len).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'"/>';
+        off+=len; return s}).join('');
+    gText('mixDonutV',fa(Math.round(parts[0][1]*100))+'٪');
+    document.getElementById('mixLegend').innerHTML=parts.map(function(p){
+      return '<span><i style="background:'+p[2]+'"></i>'+p[3]+'<b>'+fa((p[1]*100).toFixed(1)).replace('.','٫')+'٪</b></span>'}).join('');
+  }
+
+  function render(){
+    if(!G) return;
+    var funds=G.funds.filter(function(f){return f.weights}).map(function(f){
+      var sk=f.weights.sekke_weight||0, sh=f.weights.shemsh_weight||0;
+      f.w={sk:sk,sh:sh,ot:Math.max(0,1-sk-sh)}; return f});
+    donut(funds);
+    var k=KEYS[key];
+    funds.sort(function(a,b){return k.v(b)-k.v(a)});
+    gText('mixKeyLabel','عدد سمت چپ: '+k.label);
+    bars.innerHTML=funds.map(function(f){
+      var t=f.symbol+' — سکه '+fa(Math.round(f.w.sk*100))+'٪، شمش '+fa(Math.round(f.w.sh*100))+'٪، سایر '+fa(Math.round(f.w.ot*100))+'٪';
+      return '<div class="mb" title="'+t+'"><span class="mb-n">'+f.symbol+'</span><div class="mb-bar">'+
+        '<i style="width:'+(f.w.sk*100).toFixed(1)+'%;background:var(--mix-coin)"></i>'+
+        '<i style="width:'+(f.w.sh*100).toFixed(1)+'%;background:var(--mix-bar)"></i>'+
+        '<i style="width:'+(f.w.ot*100).toFixed(1)+'%;background:var(--mix-other)"></i>'+
+        '</div><span class="mb-v">'+k.fmt(f)+'</span></div>'}).join('');
+  }
+
+  document.querySelectorAll('.mixsort button').forEach(function(b){
+    b.addEventListener('click',function(){
+      key=b.getAttribute('data-k');
+      document.querySelectorAll('.mixsort button').forEach(function(x){
+        x.setAttribute('aria-pressed',x===b?'true':'false')});
+      render();
+    });
+  });
+  onGold(function(g){G=g; render()});
+})();
 
 (function(){
   var links=[].slice.call(document.querySelectorAll('.subnav a'));
@@ -321,7 +500,7 @@ CC = """
 <div class="wrap">
   <div>
     <h1><span class="guest">نسخه مهمان</span>داشبورد کاوردکال</h1>
-    <p>آخرین روز معاملاتی: <b class="num">۱۴۰۵/۰۶/۱۶</b> · آخرین به‌روزرسانی: <b class="num" id="cClock">۱۷:۳۱:۰۴</b> · داده با تأخیر ۱۵ دقیقه</p>
+    <p>آخرین روز معاملاتی: <b class="num">۱۴۰۵/۰۶/۱۶</b> · آخرین به‌روزرسانی: <b class="num" id="cClock">۱۷:۳۱:۰۴</b> · داده نمایشی — اتصال به داده زنده به‌زودی</p>
   </div>
   <div style="display:flex;gap:10px;flex-wrap:wrap">
     <a class="btn btn-s" href="product-covered-call.html" style="padding:11px 20px;font-size:14px">معرفی محصول</a>
@@ -460,7 +639,7 @@ CC = """
   </div>
 
 """ + SIGNUP.format(h="نرخ معادل سالانه و حاشیه ریسک را باز کنید",
-                    p="با عضویت رایگان، دیدبان کامل با تأخیر ۱۵ دقیقه در اختیارتان است. با پلن حرفه‌ای، همان دیدبان لحظه‌ای می‌شود و استراتژی‌ساز، پرتفوی و هشدار هم اضافه می‌شود.") + """
+                    p="با عضویت رایگان، دیدبان کامل در اختیارتان است. با پلن حرفه‌ای، استراتژی‌ساز، پرتفوی و هشدار هم اضافه می‌شود.") + """
 </div>
 </section>
 

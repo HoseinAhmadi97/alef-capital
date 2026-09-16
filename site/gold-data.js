@@ -16,6 +16,7 @@
    Until then — or if the API is unreachable — elements keep their "—".
    ═════════════════════════════════════════════════════════════════════ */
 var GOLD_API = '__GOLD_API__', GOLD_POLL_MS = __POLL__ * 1000;
+var GOLD_NAV_API = '__GOLD_NAV_API__';
 var GOLD = null, GOLD_SUBS = [];
 
 function onGold(fn) {
@@ -27,31 +28,37 @@ function goldRun(fn) {
   try { fn(GOLD); } catch (e) { if (window.console) console.error(e); }
 }
 
-(function () {
+/* Poll one Nexus document with the load rules above; `fn` gets it only
+   when it changed (a 304 revalidation yields the same generated_at). */
+function goldFeed(url, seconds, fn) {
   var timer = null, last = null;
   function load() {
     if (!window.fetch) return;
-    fetch(GOLD_API, { cache: 'no-cache', headers: { Accept: 'application/json' } })
+    fetch(url, { cache: 'no-cache', headers: { Accept: 'application/json' } })
       .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(function (d) {
         document.documentElement.classList.remove('gold-offline');
-        if (d.generated_at === last) return;          /* 304 → same document */
+        if (d.generated_at === last) return;
         last = d.generated_at;
-        GOLD = goldIndex(d);
-        GOLD_SUBS.forEach(goldRun);
+        try { fn(d); } catch (e) { if (window.console) console.error(e); }
       })
       .catch(function (e) {
         document.documentElement.classList.add('gold-offline');
-        if (window.console) console.warn('gold data unavailable:', e.message);
+        if (window.console) console.warn('gold data unavailable (' + url + '):', e.message);
       });
   }
-  function start() { if (!timer) { load(); timer = setInterval(load, GOLD_POLL_MS); } }
+  function start() { if (!timer) { load(); timer = setInterval(load, seconds * 1000); } }
   function stop() { clearInterval(timer); timer = null; }
   document.addEventListener('visibilitychange', function () { document.hidden ? stop() : start(); });
   /* a page opened in a background tab still loads once, so it is ready
      when shown; only the polling waits for the tab to be visible */
   if (document.hidden) load(); else start();
-})();
+}
+
+goldFeed(GOLD_API, GOLD_POLL_MS / 1000, function (d) {
+  GOLD = goldIndex(d);
+  GOLD_SUBS.forEach(goldRun);
+});
 
 /* lookups the pages need, built once per document */
 function goldIndex(d) {
@@ -90,6 +97,65 @@ function gArrow(f, dec) {
   return a + ' ' + fa(s).replace('.', '٫') + '٪';
 }
 function gSign(f) { return f == null || Math.abs(f) < 0.00005 ? 0 : (f > 0 ? 1 : -1); }
+
+/* The site's one colour rule for signed numbers — price changes, bubbles,
+   anything with a sign: positive is green, negative is red, zero neutral.
+   Every page takes its colours from these, so no page can invert it. */
+function gColor(f) { var s = gSign(f); return s > 0 ? 'var(--up-text)' : (s < 0 ? 'var(--down)' : ''); }
+/* the class for a sign, given a page's class names: gTone(f, 'up', 'down', 'neu') */
+function gTone(f, pos, neg, zero) { var s = gSign(f); return s > 0 ? pos : (s < 0 ? neg : (zero || '')); }
+function gBarColor(f, strong) {
+  var s = gSign(f), a = strong ? '.75' : '.45';
+  return s > 0 ? 'rgba(22,163,74,' + a + ')' : (s < 0 ? 'rgba(220,38,38,' + a + ')' : 'rgba(148,163,184,.6)');
+}
+
+/* ── sortable tables ──
+   Mark sortable headers with data-sort="num" or data-sort="text" and give
+   each body cell data-v (the raw value to sort by). gSortable() wires the
+   headers once; call gResort() after every re-render so the order a
+   visitor picked survives the 20-second refresh. Missing values sort last. */
+function gSortable(table) {
+  if (!table || table._sort) return;
+  table._sort = { col: -1, dir: -1 };
+  [].forEach.call(table.tHead.rows[0].cells, function (th, i) {
+    if (!th.hasAttribute('data-sort')) return;
+    th.tabIndex = 0;
+    th.setAttribute('aria-sort', 'none');
+    function go() {
+      var s = table._sort, text = th.getAttribute('data-sort') === 'text';
+      s.dir = s.col === i ? -s.dir : (text ? 1 : -1);   /* numbers start largest first */
+      s.col = i;
+      gResort(table);
+    }
+    th.addEventListener('click', go);
+    th.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); }
+    });
+  });
+}
+function gResort(table) {
+  var s = table && table._sort; if (!s) return;
+  var head = table.tHead.rows[0].cells;
+  [].forEach.call(head, function (th, i) {
+    if (th.hasAttribute('data-sort'))
+      th.setAttribute('aria-sort', i === s.col ? (s.dir > 0 ? 'ascending' : 'descending') : 'none');
+  });
+  if (s.col < 0) return;
+  var text = head[s.col].getAttribute('data-sort') === 'text', body = table.tBodies[0];
+  var rows = [].slice.call(body.rows);
+  rows.sort(function (a, b) {
+    var x = a.cells[s.col].getAttribute('data-v'), y = b.cells[s.col].getAttribute('data-v');
+    if (text) return s.dir * String(x || '').localeCompare(String(y || ''), 'fa');
+    x = x === null || x === '' ? NaN : +x; y = y === null || y === '' ? NaN : +y;
+    if (isNaN(x) || isNaN(y)) return isNaN(x) - isNaN(y);
+    return s.dir * (x - y);
+  });
+  rows.forEach(function (r) { body.appendChild(r); });
+}
+/* a <td> carrying its sort value */
+function gTd(html, v, cls) {
+  return '<td' + (cls ? ' class="' + cls + '"' : '') + ' data-v="' + (v == null ? '' : v) + '">' + html + '</td>';
+}
 /* "14:39:21" or an ISO timestamp → ۱۴:۳۹ (Tehran — Nexus already sends +03:30) */
 function gTime(t, secs) {
   if (!t) return '—';

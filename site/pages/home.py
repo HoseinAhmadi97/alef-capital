@@ -133,7 +133,7 @@ HTML = """<!-- HERO -->
       <a class="btn btn-s" href="pricing.html">شروع رایگان</a>
       <ul class="feat">
         <li>۵ صندوق برتر</li>
-        <li>داده با تأخیر ۱۵ دقیقه</li>
+        <li>داده لحظه‌ای</li>
         <li>۱ هشدار</li>
         <li class="no">داشبورد کاوردکال</li>
         <li class="no">تاریخچه و خروجی اکسل</li>
@@ -212,7 +212,7 @@ HTML = """<!-- HERO -->
 <div class="wrap">
   <h2 class="h2" style="text-align:center">سوالات متداول خرید</h2>
   <div class="faq">
-    <details open><summary>آیا می‌توانم قبل از خرید، داشبورد را ببینم؟</summary><p>بله. صفحه «نبض بازار» بدون ثبت‌نام باز است و با ثبت‌نام رایگان به جدول کامل صندوق‌ها با تأخیر ۱۵ دقیقه دسترسی دارید. خارج از ساعات معاملاتی هم داده کامل آخرین روز معاملاتی برای همه در دسترس است.</p></details>
+    <details open><summary>آیا می‌توانم قبل از خرید، داشبورد را ببینم؟</summary><p>بله. صفحه «نبض بازار» و داشبورد طلا بدون ثبت‌نام باز هستند و داده لحظه‌ای همه صندوق‌ها را نشان می‌دهند. خارج از ساعات معاملاتی هم داده کامل آخرین روز معاملاتی برای همه در دسترس است.</p></details>
     <details><summary>تفاوت پلن طلا و حرفه‌ای در عمل چیست؟</summary><p>پلن طلا فقط حوزه صندوق‌های طلا را پوشش می‌دهد: حباب، NAV و ترکیب دارایی. پلن حرفه‌ای علاوه بر آن، دیدبان کامل قراردادهای اختیار خرید، محاسبه نرخ سود معادل سالانه، نمودار سود و زیان و دسترسی API را اضافه می‌کند.</p></details>
     <details><summary>داده‌ها از چه منبعی و با چه تأخیری می‌آیند؟</summary><p>داده مستقیماً از تابلوی معاملات بورس تهران و بورس کالا خوانده می‌شود. در پلن‌های پولی تأخیر عملی زیر یک ثانیه است و مهر زمان هر داده روی صفحه نمایش داده می‌شود.</p></details>
     <details><summary>امکان ارتقای پلن در میانه دوره وجود دارد؟</summary><p>بله. هزینه باقی‌مانده پلن فعلی به‌صورت اعتبار محاسبه و از مبلغ پلن جدید کسر می‌شود.</p></details>
@@ -264,12 +264,12 @@ onGold(function(g){
     if(d.children.length!==fs.length)
       d.innerHTML=fs.map(function(){return '<span></span>'}).join('');
     fs.forEach(function(f,i){
-      /* a negative bubble (trading below NAV) is the cheap side: green */
-      var b=d.children[i], v=f.nominal_bubble, cheap=v<0;
+      /* the site-wide sign colours: positive green, negative red */
+      var b=d.children[i], v=f.nominal_bubble;
       b.title=f.symbol+' '+gPct(v);
       b.style.height=(18+(mx?Math.abs(v)/mx:0)*82)+'%';
-      b.style.alignSelf=cheap?'flex-start':'flex-end';
-      b.style.background=cheap?'rgba(22,163,74,.55)':'rgba(220,38,38,.5)';
+      b.style.alignSelf=v<0?'flex-start':'flex-end';
+      b.style.background=gBarColor(v,true);
     });
   }
   var s=g.summary, el=document.getElementById('bubAvg');

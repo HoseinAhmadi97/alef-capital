@@ -189,6 +189,7 @@ def _ticker_rows():
 # The live-data consumer lives in its own file so it is plain JavaScript,
 # not JavaScript escaped inside a Python string.
 GOLD_JS = (io.open(os.path.join(HERE, "gold-data.js"), encoding="utf-8").read()
+           .replace("__GOLD_NAV_API__", C.GOLD_NAV_API)
            .replace("__GOLD_API__", C.GOLD_API)
            .replace("__POLL__", str(int(C.GOLD_POLL_SECONDS))))
 

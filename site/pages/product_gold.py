@@ -125,7 +125,7 @@ HTML = """
       </tbody>
     </table>
     </div>
-@@IFLOCK@@    <div class="lockmsg">🔒 <b>۲۵ صندوق دیگر</b> و داده لحظه‌ای، با پلن طلا — این جدول برای مهمان با تأخیر ۱۵ دقیقه است.</div>@@END@@
+@@IFLOCK@@    <div class="lockmsg">🔒 جدول کامل همه صندوق‌ها، تاریخچه و هشدار، با پلن طلا.</div>@@END@@
   </div>
 </div>
 </section>
@@ -180,7 +180,7 @@ HTML = """
   <div class="faq">
     <details open><summary>حباب صندوق دقیقاً چطور محاسبه می‌شود؟</summary><p>حباب، نسبت اختلاف قیمت معاملاتی هر واحد صندوق به ارزش خالص دارایی (NAV) همان واحد است. ما NAV را از ترکیب دارایی اعلامی صندوق و قیمت لحظه‌ای دارایی‌های پایه (گواهی سپرده سکه و شمش) بازسازی می‌کنیم، نه از NAV تأخیری منتشرشده.</p></details>
     <details><summary>تفاوت <span dir="ltr">Latent NAV</span> و <span dir="ltr">Pure NAV</span> چیست؟</summary><p><span dir="ltr">Pure NAV</span> ارزش خالص دارایی بر پایه قیمت دارایی‌های پایه است. <span dir="ltr">Latent NAV</span> اثر نقدشوندگی و آخرین معاملات واقعی را هم لحاظ می‌کند. نسبت این دو نشان می‌دهد قیمت‌گذاری بازار روی یک صندوق چقدر با ارزش بنیادی‌اش فاصله دارد.</p></details>
-    <details><summary>داده با چه تأخیری به‌روز می‌شود؟</summary><p>در پلن‌های پولی، تأخیر عملی زیر یک ثانیه است و مهر زمان هر داده روی صفحه نمایش داده می‌شود. برای کاربر مهمان و پلن رایگان، تأخیر ۱۵ دقیقه است.</p></details>
+    <details><summary>داده با چه تأخیری به‌روز می‌شود؟</summary><p>داده برای همه کاربران لحظه‌ای است: قیمت‌ها و حباب صندوق‌ها هر چند ثانیه به‌روز می‌شوند و مهر زمان آخرین به‌روزرسانی روی صفحه نمایش داده می‌شود.</p></details>
     <details><summary>آیا داشبورد به‌جای من معامله می‌کند؟</summary><p>خیر. این محصول یک ابزار داده و تحلیل است؛ تصمیم و اجرای معامله با شماست. اجرای خودکار روی حساب کارگزاری، خدمت جداگانه‌ای است که در صفحه مدیریت پرتفوی توضیح داده شده.</p></details>
     <details><summary>برای استفاده باید حساب کارگزاری خاصی داشته باشم؟</summary><p>خیر. داشبورد مستقل از کارگزاری شما کار می‌کند و فقط داده بازار را نمایش می‌دهد.</p></details>
   </div>
@@ -213,11 +213,11 @@ onGold(function(g){
     var mx=Math.max(0.5,Math.max.apply(null,b)), mn=Math.min(-0.5,Math.min.apply(null,b));
     el.innerHTML=fs.map(function(f,i){
       var v=b[i], h=Math.max(8,Math.round((v-mn)/(mx-mn)*100));
-      var c=v>=0?'rgba(220,38,38,.'+(v>1.2?'75':'40')+')':'rgba(22,163,74,.'+(v<-1?'75':'40')+')';
+      var c=gBarColor(f.nominal_bubble,Math.abs(v)>1);
       return '<span title="'+f.symbol+' '+gPct(f.nominal_bubble)+'" style="height:'+h+'%;background:'+c+'"></span>'}).join('');
   }
   var s=g.summary, a=gText('pAvg',gPct(s.avg_bubble));
-  if(a) a.style.color=s.avg_bubble<0?'var(--up-text)':'var(--down)';
+  if(a) a.style.color=gColor(s.avg_bubble);
   if(s.min_bubble) gText('pMin',s.min_bubble.symbol+' '+gPct(s.min_bubble.bubble));
   if(s.max_bubble) gText('pMax',s.max_bubble.symbol+' '+gPct(s.max_bubble.bubble));
 });
@@ -234,7 +234,7 @@ onGold(function(g){
   var rows=g.funds.filter(function(f){return f.nominal_bubble!=null})
     .sort(function(x,y){return (y.value||0)-(x.value||0)}).slice(0,7);
   b.innerHTML=rows.map(function(f){
-    var s=gSign(f.nominal_bubble), cls=s<0?'up':(s>0?'down':'neu');
+    var cls=gTone(f.nominal_bubble,'up','down','neu');
     return '<tr><td>صندوق '+f.symbol+'</td><td>'+gNum(f.last_trade)+'</td><td>'+gNum(f.nav_live)+'</td>'+
       '<td><span class="chip '+cls+'">'+gPct(f.nominal_bubble)+'</span></td>'+
       '<td>'+(usd?gNum(usd*f.last_trade/f.nav_live):'—')+'</td><td>'+gTime(f.trade_time)+'</td></tr>'}).join('');
