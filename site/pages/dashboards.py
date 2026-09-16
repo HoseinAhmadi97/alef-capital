@@ -226,10 +226,14 @@ GOLD_JS = paywall.js_flag() + """
 function cell(v){return PAYWALL?LOCK:v}
 function chgCells(f,abs){
   var cls=gTone(f,'up','dn');
-  return gTd(gArrow(f),f,cls)+gTd(abs==null?'—':gNum(Math.abs(abs)),abs,cls)}
+  /* the arrow is a small marker in front of the number, not a character in it */
+  var pct=gArrow(f).replace(/^(\S+)\s/,'<span class="arr">$1</span>');
+  return gTd(pct,f,cls)+gTd(abs==null?'—':gNum(Math.abs(abs)),abs,cls)}
 function bubCell(b){
   if(PAYWALL) return LOCK;
-  return '<span class="'+gTone(b,'up','dn')+'">'+gPct(b)+'</span>'}
+  return '<span class="pill '+gTone(b,'up','dn')+'">'+gPct(b)+'</span>'}
+/* "۳,۰۲۴ میلیارد" → the number at full weight, the unit small and grey */
+function withUnit(text){return text.replace(/\s(\S+)$/,'<span class="unit">$1</span>')}
 gSortable(document.getElementById('gTable'));
 gSortable(document.getElementById('sTable'));
 
@@ -266,12 +270,13 @@ onGold(function(g){
   var rows=g.funds.slice().sort(function(x,y){return (y.value||0)-(x.value||0)});
   b.innerHTML=rows.map(function(f){
     var implied=f.last_trade&&f.nav&&usd?usd*f.last_trade/f.nav:null;
-    return '<tr>'+gTd('صندوق '+f.symbol,f.symbol)+gTd(gNum(f.last_trade),f.last_trade)+chgCells(f.change_pct,f.change)+
-      gTd(cell(gNum(f.nav)),f.nav)+
+    return '<tr>'+gTd('<span class="pre">صندوق</span>'+f.symbol,f.symbol)+
+      gTd(gNum(f.last_trade),f.last_trade,'k')+chgCells(f.change_pct,f.change)+
+      gTd(cell(gNum(f.nav)),f.nav,'s')+
       gTd(bubCell(f.nominal_bubble),f.nominal_bubble)+
-      gTd(cell(gNum(implied)),implied)+
-      gTd(gBillion(f.value),f.value)+
-      gTd(gTime(f.trade_time),f.trade_time)+'</tr>'}).join('');
+      gTd(cell(gNum(implied)),implied,'s')+
+      gTd(withUnit(gBillion(f.value)),f.value,'s')+
+      gTd(gTime(f.trade_time),f.trade_time,'m')+'</tr>'}).join('');
   gResort(document.getElementById('gTable'));
 });
 
@@ -284,7 +289,7 @@ onGold(function(g){
   var b=document.getElementById('sBody'); if(!b) return;
   b.innerHTML=SPOT.map(function(s){
     var r=g.m[s[1]], k=r&&r.unit==='IRT'?10:1, px=goldRial(r);
-    return '<tr>'+gTd(s[0],s[0])+gTd(gNum(px),px)+
+    return '<tr>'+gTd(s[0],s[0])+gTd(gNum(px),px,'k')+
       chgCells(r?r.change_pct:null,r&&r.change!=null?r.change*k:null)+
       '<td>—</td><td>—</td><td>—</td></tr>'}).join('');
   gResort(document.getElementById('sTable'));
