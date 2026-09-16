@@ -94,7 +94,9 @@ a{color:var(--gold-700);text-decoration:none}
    (longer menu label, different font metrics, zoom) the two overlapped
    on scroll. Sticking the wrapper needs no magic number at all. */
 .topbar{position:sticky;top:0;z-index:60}
-header{background:var(--surface-glass);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+/* position + z-index: backdrop-filter makes the header its own stacking context,
+   and without these it painted under the ticker — taking the menus with it */
+header{position:relative;z-index:2;background:var(--surface-glass);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
 .nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:12px}
 .logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:18px;color:var(--ink-800)}
 .nav ul{display:flex;align-items:center;gap:24px;list-style:none;margin:0;padding:0}
@@ -626,7 +628,7 @@ footer a:hover{color:var(--gold-300)}
 .dt th[aria-sort="descending"]::after{content:"▼";opacity:1;color:var(--gold-600)}
 
 /* signed change chip: positive green, negative red, zero neutral */
-.d{display:inline-block;font-size:12.5px;font-weight:800;padding:3px 10px;border-radius:999px;
+.d:not(.tc){display:inline-block;font-size:12.5px;font-weight:800;padding:3px 10px;border-radius:999px;
    background:var(--surface-3);color:var(--slate-600);font-variant-numeric:tabular-nums}
 .d.d-up{background:rgba(22,163,74,.12);color:var(--up-text)}
 .d.d-dn{background:rgba(220,38,38,.10);color:var(--down)}
