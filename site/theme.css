@@ -783,7 +783,13 @@ footer a:hover{color:var(--gold-300)}
 .mixsort button{font:inherit;font-size:12.5px;font-weight:700;padding:6px 12px;border-radius:999px;cursor:pointer;
   border:1px solid var(--border);background:var(--surface);color:var(--slate-600)}
 .mixsort button[aria-pressed="true"]{background:var(--gold-50);border-color:var(--gold-400);color:var(--gold-700)}
-.mixbars{display:grid;gap:7px}
+/* the per-fund bars scroll inside a window, like the funds table; the colour
+   key above stays in place */
+.mixbars{display:grid;gap:7px;max-height:min(340px,60vh);overflow-y:auto;overscroll-behavior:contain;
+  padding-inline-end:6px;scrollbar-width:thin;scrollbar-color:var(--border-strong) transparent}
+.mixbars::-webkit-scrollbar{width:7px}
+.mixbars::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:9px}
+.mixbars::-webkit-scrollbar-track{background:transparent}
 /* the value column fits the longest value (e.g. «۳۲۴٫۱ همت») on one line */
 .mb{display:grid;grid-template-columns:86px 1fr 92px;align-items:center;gap:10px;font-size:12.5px}
 .mb-n{font-weight:700;color:var(--ink-800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
