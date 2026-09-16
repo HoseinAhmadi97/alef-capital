@@ -36,12 +36,12 @@ GOLD = """
       <em class="gsched" data-sched="funds">—</em>
     </div>
     <div class="hstat">
-      <small>آخرین روز معاملاتی</small>
+      <small>روز معاملاتی</small>
       <b class="num gdate">—</b>
       <em class="gweekday">—</em>
     </div>
     <div class="hstat">
-      <small>آخرین به‌روزرسانی</small>
+      <small>به‌روزرسانی</small>
       <b class="num gupdated">—</b>
       <span class="gpoll" title="تا به‌روزرسانی بعدی"><i></i></span>
     </div>
@@ -81,15 +81,15 @@ GOLD = """
   <div class="ovgrid">
     <div class="mtiles" id="gTiles">
       <!-- free market first -->
-      <div class="mtile wide" data-sym="geram18"><small>طلای ۱۸ عیار (ریال)</small><b class="num">—</b><div class="sub">—</div></div>
+      <div class="mtile" data-sym="geram18"><small>طلای ۱۸ عیار (ریال)</small><b class="num">—</b><div class="sub">—</div></div>
       <div class="mtile" data-sym="dollar"><small>دلار (تومان)</small><b class="num">—</b><div class="sub">—</div></div>
       <div class="mtile" data-sym="ons"><small>انس جهانی (دلار)</small><b class="num">—</b><div class="sub">—</div></div>
+      <div class="mtile" data-sym="funds"><small>میانگین تغییر صندوق‌ها</small><b class="num">—</b><div class="sub">—</div></div>
       <!-- then the gold funds -->
       <div class="mtile hl"><small>میانگین حباب</small><b class="num" id="gAvg">—</b><div class="sub"><span class="gcount">—</span> صندوق</div></div>
       <div class="mtile"><small>ارزش معاملات</small><b class="num" id="gVal">—</b><div class="sub">مجموع امروز</div></div>
       <div class="mtile"><small>پرحباب‌ترین</small><b class="num" id="gMax">—</b><div class="sub" id="gMaxN">—</div></div>
       <div class="mtile"><small>کم‌حباب‌ترین</small><b class="num" id="gMin">—</b><div class="sub" id="gMinN">—</div></div>
-      <div class="mtile wide" data-sym="funds"><small>میانگین تغییر صندوق‌ها</small><b class="num">—</b><div class="sub">—</div></div>
     </div>
     <div class="ovmap">
       <div class="tmap" id="tmap"></div>

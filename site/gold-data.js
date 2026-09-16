@@ -311,7 +311,7 @@ gRenderSessions();
 setInterval(gRenderSessions, 1000);
 
 /* a schedule as words, from MARKET_HOURS: <em class="gsched" data-sched="funds">
-   → «شنبه تا چهارشنبه · ۱۲ تا ۱۸» */
+   → «شنبه–چهارشنبه · ۱۲ تا ۱۸» */
 (function () {
   var NAMES = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'];
   var WEEK = [6, 0, 1, 2, 3, 4, 5];                    /* the Iranian week starts on Saturday */
@@ -320,7 +320,7 @@ setInterval(gRenderSessions, 1000);
     var cfg = MARKET_HOURS[el.getAttribute('data-sched')]; if (!cfg) return;
     var days = WEEK.filter(function (d) { return cfg.days.indexOf(d) >= 0; });
     var span = days.length === 7 ? 'همه روزها'
-      : NAMES[days[0]] + (days.length > 1 ? ' تا ' + NAMES[days[days.length - 1]] : '');
+      : NAMES[days[0]] + (days.length > 1 ? '–' + NAMES[days[days.length - 1]] : '');
     el.textContent = span + ' · ' + hour(cfg.open) + ' تا ' + hour(cfg.close);
   });
 })();
