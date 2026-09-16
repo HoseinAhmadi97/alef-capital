@@ -63,7 +63,7 @@ HTML = """
 <section class="sec" style="background:var(--surface-2);border-block:1px solid var(--border)">
 <div class="wrap">
   <h2 class="h2">قیمت دارایی‌های پایه</h2>
-  <p class="lead">همان قیمت‌هایی که ارزش ذاتی هر صندوق از روی آن‌ها بازسازی می‌شود. طلا، سکه و گواهی‌ها به ریال، دلار به تومان، انس به دلار.</p>
+  <p class="lead">همان قیمت‌هایی که ارزش ذاتی هر صندوق از روی آن‌ها بازسازی می‌شود. همه قیمت‌ها به تومان، انس جهانی به دلار.</p>
   <div class="six six4" id="basePrices">
     <div class="sx" data-sym="geram18"><span style="font-size:13px;color:var(--slate-500);display:block;margin-bottom:6px">طلای ۱۸ عیار</span><b class="num" style="font-size:21px;font-weight:800">—</b><div class="d" style="margin-top:8px">—</div></div>
     <div class="sx" data-sym="mesghal"><span style="font-size:13px;color:var(--slate-500);display:block;margin-bottom:6px">مظنه آبشده (مثقال)</span><b class="num" style="font-size:21px;font-weight:800">—</b><div class="d" style="margin-top:8px">—</div></div>

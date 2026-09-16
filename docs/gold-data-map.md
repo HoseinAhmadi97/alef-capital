@@ -128,8 +128,8 @@ with a `unit` field and never converts silently:
 | estjt, tabdeal, wallex | IRT (toman) |
 | estjt ounce | USD |
 
-The site converts toman to rial for display, except the dollar, which stays
-in toman as the design shows it.
+The site shows every Iranian price in toman (rial sources divided by 10);
+the global ounce stays in USD. Conversion lives only in `site/gold-data.js`.
 
 ## 5. Gaps to work on
 

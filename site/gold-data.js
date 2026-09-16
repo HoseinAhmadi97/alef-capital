@@ -80,23 +80,20 @@ function goldIndex(d) {
 
 /* ── formatting — sources report native units; conversion happens only here ── */
 
-/* toman → rial. Gold, coins and certificates are shown in rial. */
-function goldRial(r) {
-  if (!r || r.price == null) return null;
-  return r.unit === 'IRT' ? r.price * 10 : r.price;
-}
-/* rial → toman (every price in a table is shown in toman) */
+/* Every Iranian price on the site is shown in TOMAN; only the global ounce
+   stays in USD. Convert here and nowhere else. */
+
+/* rial → toman */
 function gToman(rial) { return rial == null ? null : rial / 10; }
 /* a market row's price in toman, whatever unit its source reports */
 function goldToman(r) {
   if (!r || r.price == null) return null;
   return r.unit === 'IRR' ? r.price / 10 : r.price;
 }
-/* the value a price cell shows: dollar in toman, ounce in USD, the rest in rial */
+/* the value a price shows: the ounce in USD, everything else in toman */
 function goldShown(r) {
   if (!r || r.price == null) return null;
-  if (r.symbol === 'dollar' || r.unit === 'USD') return r.price;
-  return goldRial(r);
+  return r.unit === 'USD' ? r.price : goldToman(r);
 }
 function gNum(n) { return n == null ? '—' : fa(grp(n)); }
 /* a fraction (0.0123) as a signed Persian percentage (‎+۱٫۲۳٪) */

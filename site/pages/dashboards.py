@@ -81,7 +81,7 @@ GOLD = """
   <div class="ovgrid">
     <div class="mtiles" id="gTiles">
       <!-- free market first -->
-      <div class="mtile" data-sym="geram18"><small>طلای ۱۸ عیار (ریال)</small><b class="num">—</b><div class="sub">—</div></div>
+      <div class="mtile" data-sym="geram18"><small>طلای ۱۸ عیار (تومان)</small><b class="num">—</b><div class="sub">—</div></div>
       <div class="mtile" data-sym="dollar"><small>دلار (تومان)</small><b class="num">—</b><div class="sub">—</div></div>
       <div class="mtile" data-sym="ons"><small>انس جهانی (دلار)</small><b class="num">—</b><div class="sub">—</div></div>
       <div class="mtile" data-sym="funds"><small>میانگین تغییر صندوق‌ها</small><b class="num">—</b><div class="sub">—</div></div>
