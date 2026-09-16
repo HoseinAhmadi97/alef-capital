@@ -127,7 +127,7 @@ GOLD = """
       <tbody id="sBody"></tbody>
     </table>
   </div></div>
-  <p style="font-size:12px;color:var(--slate-400);margin-top:10px">ارزش ذاتی از انس جهانی و دلار محاسبه می‌شود · برای گواهی سکه و گواهی شمش</p>
+  <p style="font-size:12px;color:var(--slate-400);margin-top:10px">ارزش ذاتی از انس جهانی و دلار محاسبه می‌شود · بهار آزادی، نیم و ربع سکه بر پایه سکه امامی</p>
 </div>
 </section>
 
