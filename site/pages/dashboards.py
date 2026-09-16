@@ -49,7 +49,7 @@ GOLD = """
 <!-- OVERVIEW — today's market: compact number tiles, the market map beside them -->
 <section class="dsec" id="overview">
 <div class="wrap">
-  <div class="sh"><div><h2>بازار امروز</h2><p>اندازه هر بلوک: ارزش معاملات امروز · رنگ: بازدهی روزانه</p></div>
+  <div class="sh"><div><h2>بازار امروز</h2></div>
     <div style="font-size:12px;color:var(--slate-500);display:flex;align-items:center;gap:7px">
       <span>بازدهی −</span>
       <i style="width:16px;height:12px;background:#B91C1C;border-radius:2px;display:inline-block"></i>
@@ -62,16 +62,21 @@ GOLD = """
   </div>
   <div class="ovgrid">
     <div class="mtiles" id="gTiles">
+      <!-- free market first -->
+      <div class="mtile wide" data-sym="geram18"><small>طلای ۱۸ عیار (ریال)</small><b class="num">—</b><div class="sub">—</div></div>
+      <div class="mtile" data-sym="dollar"><small>دلار (تومان)</small><b class="num">—</b><div class="sub">—</div></div>
+      <div class="mtile" data-sym="ons"><small>انس جهانی (دلار)</small><b class="num">—</b><div class="sub">—</div></div>
+      <!-- then the gold funds -->
       <div class="mtile hl"><small>میانگین حباب</small><b class="num" id="gAvg">—</b><div class="sub"><span class="gcount">—</span> صندوق</div></div>
       <div class="mtile"><small>ارزش معاملات</small><b class="num" id="gVal">—</b><div class="sub">مجموع امروز</div></div>
       <div class="mtile"><small>پرحباب‌ترین</small><b class="num" id="gMax">—</b><div class="sub" id="gMaxN">—</div></div>
       <div class="mtile"><small>کم‌حباب‌ترین</small><b class="num" id="gMin">—</b><div class="sub" id="gMinN">—</div></div>
-      <div class="mtile" data-sym="funds"><small>میانگین تغییر صندوق‌ها</small><b class="num">—</b><div class="sub">—</div></div>
-      <div class="mtile" data-sym="ons"><small>انس جهانی (دلار)</small><b class="num">—</b><div class="sub">—</div></div>
-      <div class="mtile" data-sym="geram18"><small>طلای ۱۸ عیار (ریال)</small><b class="num">—</b><div class="sub">—</div></div>
-      <div class="mtile" data-sym="dollar"><small>دلار (تومان)</small><b class="num">—</b><div class="sub">—</div></div>
+      <div class="mtile wide" data-sym="funds"><small>میانگین تغییر صندوق‌ها</small><b class="num">—</b><div class="sub">—</div></div>
     </div>
-    <div class="tmap" id="tmap"></div>
+    <div class="ovmap">
+      <div class="tmap" id="tmap"></div>
+      <p class="ovcap">اندازه هر بلوک: ارزش معاملات امروز · رنگ: بازدهی روزانه</p>
+    </div>
   </div>
 </div>
 </section>
