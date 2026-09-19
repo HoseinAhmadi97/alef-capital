@@ -1168,3 +1168,12 @@ footer a:hover{color:var(--gold-300)}
 :root[data-theme="dark"] .bm-band.mid{fill:rgba(250,204,21,.07)}
 
 .ovslide-t{font-size:15px;font-weight:800;margin:0 0 8px}
+
+/* dashboard: the market state sits beside the "today's market" heading */
+.apphead:not(:has(.ah-rail)) .wrap{grid-template-columns:minmax(0,1fr) auto}
+.ovhead{display:flex;align-items:center;flex-wrap:wrap;gap:6px 16px}
+.ovhead h2{margin:0}
+.ovstat{display:inline-flex;align-items:center;gap:10px;padding:4px 12px 4px 14px;border-radius:99px;background:var(--surface-3)}
+.ovstat .live,.ovstat .live.is-soon,.ovstat .live.is-closed{background:none;padding:0;font-size:13px;font-weight:800;gap:6px}
+.ovstat .live:not(.is-closed):not(.is-soon){color:var(--up-text)}
+.ovstat em{font-style:normal;font-size:11px;color:var(--slate-400);white-space:nowrap;padding-inline-start:10px;border-inline-start:1px solid var(--border)}

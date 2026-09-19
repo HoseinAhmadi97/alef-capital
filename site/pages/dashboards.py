@@ -28,13 +28,6 @@ GOLD = """
     <span class="guest">نسخه مهمان</span>
     <h1>داشبورد آربیتراژ صندوق طلا</h1>
   </div>
-  <!-- market state, with the time of the last data update under it -->
-  <div class="ah-rail">
-    <div class="hstat">
-      <span class="live" data-session="funds"><i></i><span>—</span></span>
-      <em>به‌روزرسانی <span class="num gupdated">—</span></em>
-    </div>
-  </div>
   <div class="ah-cta">
     <a class="btn btn-s" href="product-gold.html" style="padding:11px 20px;font-size:14px">معرفی محصول</a>
   </div>
@@ -55,7 +48,10 @@ GOLD = """
 <!-- OVERVIEW — today's market: compact number tiles, the market map beside them -->
 <section class="dsec" id="overview">
 <div class="wrap">
-  <div class="sh"><div><h2>بازار امروز</h2></div>
+  <div class="sh"><div class="ovhead"><h2>بازار امروز</h2>
+    <!-- market state, with the time of the last data update beside it -->
+    <span class="ovstat"><span class="live" data-session="funds"><i></i><span>—</span></span>
+      <em>به‌روزرسانی <span class="num gupdated">—</span></em></span></div>
     <div id="tmapKey" style="font-size:12px;color:var(--slate-500);display:flex;align-items:center;gap:7px">
       <span>بازدهی −</span>
       <i style="width:16px;height:12px;background:#B91C1C;border-radius:2px;display:inline-block"></i>
