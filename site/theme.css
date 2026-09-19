@@ -1190,3 +1190,6 @@ footer a:hover{color:var(--gold-300)}
 .scnf small{font-size:10.5px;font-weight:500;color:var(--slate-400)}
 .scnr{border:0;background:none;font:inherit;font-size:12px;font-weight:700;color:var(--gold-700,#A16207);cursor:pointer;padding:6px 4px}
 @media(max-width:600px){.scnf{flex:1}.scnf input{width:100%}}
+
+.scnr{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;background:rgba(202,138,4,.1)}
+.scnr:hover{background:rgba(202,138,4,.18)}

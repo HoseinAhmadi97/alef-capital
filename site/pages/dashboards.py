@@ -145,7 +145,7 @@ GOLD = """
     <div class="scnt"><b>سناریوی شما</b><span>با دلار و انس دلخواه، حباب ذاتی و دلار ذاتی بازار نقدی و صندوق‌ها دوباره حساب می‌شود</span></div>
     <label class="scnf">دلار<input id="scnD" inputmode="numeric" autocomplete="off" aria-label="قیمت دلار به تومان"><small>تومان</small></label>
     <label class="scnf">انس<input id="scnO" inputmode="decimal" autocomplete="off" aria-label="قیمت انس جهانی به دلار"><small>دلار</small></label>
-    <button type="button" class="scnr" id="scnReset" hidden>قیمت روز ↺</button>
+    <button type="button" class="scnr" id="scnReset" hidden><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v4.5h-4.5"/></svg>قیمت روز</button>
   </div>
 </div>
 </section>
@@ -394,7 +394,18 @@ function scnFund(g,f){
     GOLD_SUBS.forEach(goldRun);
   }
   var t; function soon(){clearTimeout(t); t=setTimeout(apply,180)}
-  D.addEventListener('input',soon); O.addEventListener('input',soon);
+  function tidy(el,dp){
+    /* rewrite what was typed (any digits) as Persian digits + ٬, caret kept from the end */
+    var raw=el.value, fromEnd=raw.length-(el.selectionEnd==null?raw.length:el.selectionEnd);
+    var v=raw.replace(/[0-9]/g,function(c){return String.fromCharCode(1776+ +c)}).replace(/[٠-٩]/g,function(c){return String.fromCharCode(c.charCodeAt(0)+144)})
+             .replace(/[.]/g,'٫').replace(/[^۰-۹٫]/g,'');
+    var parts=v.split('٫'), int=parts[0].replace(/^۰+(?=[۰-۹])/,''), grp='';
+    for(var i=int.length;i>0;i-=3) grp=int.slice(Math.max(0,i-3),i)+(grp?'٬'+grp:'');
+    var out=grp+(dp&&parts.length>1?'٫'+parts.slice(1).join('').slice(0,dp):'');
+    if(out!==raw){el.value=out; var c=Math.max(0,out.length-fromEnd); try{el.setSelectionRange(c,c)}catch(e){}}
+  }
+  D.addEventListener('input',function(){tidy(D,0); soon()});
+  O.addEventListener('input',function(){tidy(O,2); soon()});
   [D,O].forEach(function(el,i){el.addEventListener('blur',function(){var n=num(el.value); if(n) el.value=fmt(n,i?1:0)})});
   R.addEventListener('click',function(){D.value=fmt(live.d,0); O.value=fmt(live.o,1); apply()});
   onGold(function(g){
