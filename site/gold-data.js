@@ -349,7 +349,7 @@ function goldBubbleMix(g, box) {
     .map(function (f) { return { f: f, x: f.weights.sekke_weight * 100, y: f.nominal_bubble * 100, cap: f.market_cap || 0 }; });
   if (pts.length < 2) { box.innerHTML = '<div class="bmix-empty">داده کافی نیست</div>'; return; }
 
-  var W = 640, H = 360, L = 56, R = 624, T = 22, B = 318;
+  var W = 460, H = 300, L = 46, R = 450, T = 12, B = 266;
   function nice(v, step, up) { return (up ? Math.ceil(v / step) : Math.floor(v / step)) * step; }
   var xs = pts.map(function (p) { return p.x; }), ys = pts.map(function (p) { return p.y; });
   var xStep = Math.max.apply(null, xs) > 25 ? 10 : (Math.max.apply(null, xs) > 10 ? 5 : 2);
@@ -360,7 +360,7 @@ function goldBubbleMix(g, box) {
   function X(v) { return L + (v - x0) / (x1 - x0) * (R - L); }
   function Y(v) { return T + (y1 - v) / (y1 - y0) * (B - T); }
   var maxCap = Math.max.apply(null, pts.map(function (p) { return p.cap; })) || 1;
-  function rad(p) { return 5 + 15 * Math.sqrt(p.cap / maxCap); }
+  function rad(p) { return 5.5 + 14 * Math.sqrt(p.cap / maxCap); }
 
   /* least-squares trend */
   var n = pts.length, sx = 0, sy = 0, sxx = 0, sxy = 0;
@@ -370,10 +370,23 @@ function goldBubbleMix(g, box) {
 
   function pc(v, d) { return fa(v.toFixed(d == null ? 0 : d)).replace('.', '٫') + '٪'; }
   var o = [];
-  o.push('<rect x="' + L + '" y="' + T + '" width="' + (R - L) + '" height="' + (B - T) + '" rx="10" class="bm-bg"/>');
+  /* zones: premium above NAV (green wash), discount below (red wash) */
+  var zy = Math.max(T, Math.min(B, Y(0)));
+  o.push('<defs>' +
+    '<linearGradient id="bmUp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(22,163,74,.13)"/><stop offset="1" stop-color="rgba(22,163,74,.02)"/></linearGradient>' +
+    '<linearGradient id="bmDn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(220,38,38,.02)"/><stop offset="1" stop-color="rgba(220,38,38,.12)"/></linearGradient>' +
+    '<radialGradient id="bmGp" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#4ADE80"/><stop offset="1" stop-color="#15803D"/></radialGradient>' +
+    '<radialGradient id="bmGn" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#F87171"/><stop offset="1" stop-color="#B91C1C"/></radialGradient>' +
+    '<filter id="bmSh" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.8" flood-color="#0F172A" flood-opacity=".22"/></filter>' +
+    '<clipPath id="bmClip"><rect x="' + L + '" y="' + T + '" width="' + (R - L) + '" height="' + (B - T) + '" rx="12"/></clipPath></defs>');
+  o.push('<g clip-path="url(#bmClip)"><rect x="' + L + '" y="' + T + '" width="' + (R - L) + '" height="' + (B - T) + '" class="bm-bg"/>' +
+    '<rect x="' + L + '" y="' + T + '" width="' + (R - L) + '" height="' + (zy - T) + '" fill="url(#bmUp)"/>' +
+    '<rect x="' + L + '" y="' + zy + '" width="' + (R - L) + '" height="' + (B - zy) + '" fill="url(#bmDn)"/></g>');
+  if (zy - T > 22) o.push('<text class="bm-zone up" x="' + (R - 10) + '" y="' + (T + 18) + '" text-anchor="end">بالای NAV · گران</text>');
+  if (B - zy > 22) o.push('<text class="bm-zone dn" x="' + (R - 10) + '" y="' + (B - 10) + '" text-anchor="end">زیر NAV · ارزان</text>');
   for (var gx = x0; gx <= x1 + 1e-9; gx += xStep) {
     o.push('<line class="bm-grid" x1="' + X(gx) + '" x2="' + X(gx) + '" y1="' + T + '" y2="' + B + '"/>');
-    o.push('<text class="bm-tick" x="' + X(gx) + '" y="' + (B + 18) + '" text-anchor="middle">' + pc(gx) + '</text>');
+    o.push('<text class="bm-tick" x="' + X(gx) + '" y="' + (B + 20) + '" text-anchor="middle">' + pc(gx) + '</text>');
   }
   for (var gy = y0; gy <= y1 + 1e-9; gy += yStep) {
     var zero = Math.abs(gy) < 1e-9;
@@ -383,13 +396,16 @@ function goldBubbleMix(g, box) {
   }
   /* trend line, clipped to the plot */
   var tx0 = x0, tx1 = x1;
+  var sd = Math.sqrt(pts.reduce(function (m, p) { return m + p.res * p.res; }, 0) / n);
+  o.push('<path class="bm-band" clip-path="url(#bmClip)" d="M' + X(tx0) + ' ' + Y(a + b * tx0 + sd) + ' L' + X(tx1) + ' ' + Y(a + b * tx1 + sd) +
+    ' L' + X(tx1) + ' ' + Y(a + b * tx1 - sd) + ' L' + X(tx0) + ' ' + Y(a + b * tx0 - sd) + ' Z"/>');
   o.push('<line class="bm-trend" x1="' + X(tx0) + '" y1="' + Math.max(T, Math.min(B, Y(a + b * tx0))) + '" x2="' + X(tx1) + '" y2="' + Math.max(T, Math.min(B, Y(a + b * tx1))) + '"/>');
   o.push('<text class="bm-trend-l" x="' + (R - 6) + '" y="' + (Math.max(T + 12, Math.min(B - 6, Y(a + b * tx1) - 8))) + '" text-anchor="end">روند</text>');
 
   /* biggest circles first, so small funds stay clickable on top */
   pts.slice().sort(function (p, q) { return q.cap - p.cap; }).forEach(function (p) {
     var tone = gSign(p.f.nominal_bubble) > 0 ? 'pos' : (gSign(p.f.nominal_bubble) < 0 ? 'neg' : 'zero');
-    o.push('<circle class="bm-pt ' + tone + '" data-isin="' + p.f.isin + '" cx="' + X(p.x).toFixed(1) + '" cy="' + Y(p.y).toFixed(1) + '" r="' + rad(p).toFixed(1) + '"/>');
+    o.push('<circle class="bm-pt ' + tone + '" filter="url(#bmSh)" data-isin="' + p.f.isin + '" cx="' + X(p.x).toFixed(1) + '" cy="' + Y(p.y).toFixed(1) + '" r="' + rad(p).toFixed(1) + '"/>');
   });
   /* label the five largest funds and the two extremes */
   var label = {};
@@ -398,14 +414,14 @@ function goldBubbleMix(g, box) {
   label[lo.f.isin] = lo; label[hi.f.isin] = hi;
   Object.keys(label).forEach(function (k) {
     var p = label[k], r = rad(p), right = X(p.x) + r + 60 < R;
-    o.push('<text class="bm-label" x="' + (X(p.x) + (right ? r + 4 : -r - 4)) + '" y="' + (Y(p.y) + 4) + '" text-anchor="' + (right ? 'start' : 'end') + '">' + p.f.symbol + '</text>');
+    o.push('<text class="bm-label" x="' + (X(p.x) + (right ? r + 5 : -r - 5)) + '" y="' + (Y(p.y) + 4.5) + '" text-anchor="' + (right ? 'start' : 'end') + '">' + p.f.symbol + '</text>');
   });
 
   box.innerHTML =
     '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="حباب هر صندوق در برابر سهم سکه در ترکیب دارایی">' + o.join('') + '</svg>' +
     '<div class="bm-axis-x">سهم گواهی سکه در دارایی صندوق</div>' +
     '<div class="bm-legend"><span><i class="lg-pos"></i>حباب مثبت</span><span><i class="lg-neg"></i>حباب منفی</span>' +
-    '<span><i class="lg-size"></i>اندازه: ارزش بازار</span><span><i class="lg-trend"></i>روند</span></div>' +
+    '<span><i class="lg-size"></i>اندازه: ارزش بازار</span><span><i class="lg-trend"></i>روند و محدوده معمول</span></div>' +
     '<div class="btip bm-tip" hidden></div>';
 
   var svg = box.querySelector('svg'), tip = box.querySelector('.bm-tip');
