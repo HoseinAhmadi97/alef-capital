@@ -44,8 +44,8 @@ GOLD = """
 <div class="subnav">
 <div class="wrap">
   <a class="on" href="#overview">بازار امروز</a>
-  <a href="#funds">صندوق‌های طلا</a>
   <a href="#spot">طلا و سکه</a>
+  <a href="#funds">صندوق‌های طلا</a>
   <a href="#nav">روند NAV</a>
   <a href="#mix">ترکیب دارایی</a>
   <a href="#tools">ابزارها</a>
@@ -128,6 +128,19 @@ GOLD = """
 </div>
 </section>
 
+<!-- SPOT — three compact market cards side by side, above the funds table -->
+<section class="dsec dsec-tight" id="spot">
+<div class="wrap">
+  <div class="sh"><div><h2>طلا و سکه — بازار نقدی</h2><p>مبنای ارزش ذاتی گواهی‌ها و صندوق‌ها · قیمت‌ها به تومان</p></div></div>
+  <div class="spotgrid" id="spotGrid">
+    <div class="spotc" data-grp="gold"><div class="spoth"><b>طلا</b><span>بازار آزاد</span></div><div class="spotb"></div></div>
+    <div class="spotc" data-grp="coin"><div class="spoth"><b>سکه</b><span>بازار آزاد</span></div><div class="spotb"></div></div>
+    <div class="spotc" data-grp="ime"><div class="spoth"><b>گواهی سپرده</b><span>بورس کالا</span></div><div class="spotb"></div></div>
+  </div>
+  <p class="spotnote">حباب ذاتی نسبت به ارزش ذاتی از انس جهانی و دلار · بهار آزادی، نیم و ربع بر پایه سکه امامی · برای دیدن ارزش ذاتی نشانگر را روی حباب ببرید</p>
+</div>
+</section>
+
 <!-- FUNDS TABLE -->
 <section class="dsec" id="funds">
 <div class="wrap">
@@ -151,24 +164,6 @@ GOLD = """
     </table>
   </div></div>
   <p style="font-size:12px;color:var(--slate-400);margin-top:10px"><span class="gcount">—</span> صندوق · برای مرتب‌سازی روی عنوان هر ستون بزنید · همه قیمت‌ها به تومان · حباب ذاتی = حباب اسمی + وزن سکه × حباب گواهی سکه + وزن شمش × حباب گواهی شمش · دلار محاسباتی = دلار × (۱ + حباب ذاتی)</p>
-</div>
-</section>
-
-<!-- SPOT -->
-<section class="dsec" id="spot">
-<div class="wrap">
-  <div class="sh"><div><h2>طلا و سکه — بازار نقدی</h2><p>مبنای محاسبه ارزش ذاتی گواهی‌های سپرده</p></div></div>
-  <div class="dwrap"><div class="tscroll">
-    <table class="dt" id="sTable">
-      <thead><tr><th data-sort="text">عنوان</th>
-        <th data-sort="num">آخرین قیمت<small>تومان</small></th>
-        <th data-sort="num">تغییر<small>درصد</small></th>
-        <th data-sort="num">تغییر<small>تومان</small></th>
-        <th data-sort="num" class="gs">ارزش ذاتی<small>تومان</small></th><th data-sort="num">حباب ذاتی</th><th data-sort="num">دلار محاسباتی<small>تومان</small></th></tr></thead>
-      <tbody id="sBody"></tbody>
-    </table>
-  </div></div>
-  <p style="font-size:12px;color:var(--slate-400);margin-top:10px">ارزش ذاتی از انس جهانی و دلار محاسبه می‌شود · بهار آزادی، نیم و ربع سکه بر پایه سکه امامی</p>
 </div>
 </section>
 
@@ -312,7 +307,6 @@ function bubCell(b){
 /* "۳,۰۲۴ میلیارد" → the number at full weight, the unit small and grey */
 function withUnit(text){return text.replace(/\s(\S+)$/,'<span class="unit">$1</span>')}
 gSortable(document.getElementById('gTable'));
-gSortable(document.getElementById('sTable'));
 
 /* the header's market status is a data-session element (gold-data.js) */
 
@@ -357,32 +351,35 @@ onGold(function(g){
   gResort(document.getElementById('gTable'));
 });
 
-/* spot gold and coins — prices in rial. Intrinsic value, bubble and
-   implied dollar need validated gold-content constants (docs/gold-data-map.md) */
-var SPOT=[['طلا گرم ۱۸ عیار','geram18'],['سکه امامی','sekee'],['سکه بهار آزادی','sekee_bahar'],
- ['نیم سکه','nim'],['ربع سکه','rob'],['مظنه آبشده (مثقال)','mesghal'],
- ['گواهی سکه','govahi_sekke'],['گواهی شمش','govahi_shemsh']];
+/* spot gold and coins — three market cards; intrinsic value, bubble and
+   implied dollar come from Nexus (gold_intrinsic.py) */
+var SPOT={gold:[['طلای ۱۸ عیار','geram18','گرم'],['مظنه آبشده','mesghal','مثقال']],
+  coin:[['سکه امامی','sekee'],['بهار آزادی','sekee_bahar'],['نیم سکه','nim'],['ربع سکه','rob']],
+  ime:[['گواهی سکه','govahi_sekke','یک سکه'],['گواهی شمش','govahi_shemsh','۱۰۰ سوت']]};
 onGold(function(g){
-  var b=document.getElementById('sBody'); if(!b) return;
-  b.innerHTML=SPOT.map(function(s){
-    var r=g.m[s[1]], k=r&&r.unit==='IRR'?0.1:1, px=goldToman(r);   /* toman */
-    /* intrinsic value (row unit) → toman; only the certificates have one (Nexus) */
-    var intr=r&&r.intrinsic!=null?r.intrinsic*k:null;
-    return '<tr>'+gTd(s[0],s[0])+gTd(gNumT(px),px,'k')+
-      chgCells(r?r.change_pct:null,r&&r.change!=null?r.change*k:null)+
-      gTd(gNumT(intr),intr,'s gs')+
-      gTd(r&&r.bubble!=null?bubCell(r.bubble):'—',r?r.bubble:null)+
-      gTd(gNumT(r?r.implied_dollar:null),r?r.implied_dollar:null,'s')+'</tr>'}).join('');
-  gResort(document.getElementById('sTable'));
+  document.querySelectorAll('#spotGrid .spotc').forEach(function(c){
+    c.querySelector('.spotb').innerHTML=SPOT[c.getAttribute('data-grp')].map(function(s){
+      var r=g.m[s[1]], k=r&&r.unit==='IRR'?0.1:1, px=goldToman(r),
+          intr=r&&r.intrinsic!=null?r.intrinsic*k:null, bb=r?r.bubble:null,
+          cp=r?r.change_pct:null;
+      return '<div class="spotr">'+
+        '<div class="sn">'+s[0]+(s[2]?'<small>'+s[2]+'</small>':'')+'</div>'+
+        '<div class="sp"><b class="num">'+gNumT(px)+'</b>'+
+          '<span class="num" style="color:'+gColor(cp)+'">'+(cp==null?'—':gArrow(cp))+'</span></div>'+
+        '<div class="sb" title="'+(intr!=null?'ارزش ذاتی: '+gNumT(intr).replace(/<[^>]*>/g,'')+' تومان':'')+'">'+
+          (bb!=null?bubCell(bb):'—')+
+          '<span class="num">'+(r&&r.implied_dollar!=null?'دلار '+gNumT(r.implied_dollar):'')+'</span></div>'+
+      '</div>'}).join('');
+  });
 });
 
-/* market views: rotate every 9 s until the user picks a tab; pause on hover */
+/* market views: rotate every 5 s until the user picks a tab; pause on hover */
 (function(){
   var box=document.getElementById('ovSlides'); if(!box) return;
   var tabs=[].slice.call(box.querySelectorAll('[data-slide]')),
       slides=[].slice.call(box.querySelectorAll('.ovslide')),
       key=document.getElementById('tmapKey'), prog=box.querySelector('.ovprog i'),
-      MS=9000, cur=0, pinned=false, hover=false, t0=Date.now(), left=MS;
+      MS=5000, cur=0, pinned=false, hover=false, t0=Date.now(), left=MS;
   function go(i){
     cur=i;
     tabs.forEach(function(t,k){t.classList.toggle('on',k===i);t.setAttribute('aria-selected',k===i)});
