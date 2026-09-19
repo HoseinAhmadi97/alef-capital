@@ -1123,3 +1123,30 @@ footer a:hover{color:var(--gold-300)}
 /* spot cards: price centred in its column; the coin card scrollbar sits out at the card edge */
 .spotr .sp{align-items:center;text-align:center}
 .spotc.more .spotb{margin-left:-10px;padding-left:10px}
+
+/* spot: no fade under the coin card, the scrollbar is hint enough */
+.spotc.more::after{display:none}
+/* bubble chart: band funds in gold, zone washes from CSS (themeable) */
+.bm-pt.mid{fill:url(#bmGm)}
+.bm-legend .lg-mid{background:radial-gradient(circle at 35% 30%,#FCD34D,#CA8A04)}
+.bm-s.u0{stop-color:rgba(22,163,74,.13)} .bm-s.u1{stop-color:rgba(22,163,74,.02)}
+.bm-s.d0{stop-color:rgba(220,38,38,.02)} .bm-s.d1{stop-color:rgba(220,38,38,.12)}
+/* market-view tabs use theme tokens */
+.ovtabs{background:var(--surface-3)}
+.ovtabs button:hover{color:var(--ink-800)}
+.ovtabs button.on{background:var(--surface);color:var(--ink-800)}
+/* dark theme: calmer washes, lifted plot panel */
+:root[data-theme="dark"] .ovtabs button.on{background:var(--surface-2);box-shadow:0 0 0 1px var(--border-strong,#334155)}
+:root[data-theme="dark"] .bm-bg{fill:#111A28}
+:root[data-theme="dark"] .bm-grid{stroke:rgba(148,163,184,.12);opacity:1}
+:root[data-theme="dark"] .bm-zero{stroke:rgba(203,213,225,.55)}
+:root[data-theme="dark"] .bm-s.u0{stop-color:rgba(74,222,128,.10)} :root[data-theme="dark"] .bm-s.u1{stop-color:rgba(74,222,128,0)}
+:root[data-theme="dark"] .bm-s.d0{stop-color:rgba(248,113,113,0)} :root[data-theme="dark"] .bm-s.d1{stop-color:rgba(248,113,113,.09)}
+:root[data-theme="dark"] .bm-band.up{fill:rgba(74,222,128,.07)} :root[data-theme="dark"] .bm-band.dn{fill:rgba(248,113,113,.07)}
+:root[data-theme="dark"] .bm-zone.up{fill:rgba(134,239,172,.7)} :root[data-theme="dark"] .bm-zone.dn{fill:rgba(252,165,165,.65)}
+:root[data-theme="dark"] .bm-trend{stroke:#EAB308}
+:root[data-theme="dark"] .bm-trend-l{fill:#FACC15}
+:root[data-theme="dark"] .bm-pt{stroke:#111A28}
+:root[data-theme="dark"] .bm-label{stroke:#111A28}
+:root[data-theme="dark"] .spill.up{background:rgba(74,222,128,.14);color:#86EFAC}
+:root[data-theme="dark"] .spill.dn{background:rgba(248,113,113,.14);color:#FCA5A5}

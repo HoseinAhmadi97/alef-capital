@@ -373,10 +373,11 @@ function goldBubbleMix(g, box) {
   /* zones: premium above NAV (green wash), discount below (red wash) */
   var zy = Math.max(T, Math.min(B, Y(0)));
   o.push('<defs>' +
-    '<linearGradient id="bmUp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(22,163,74,.13)"/><stop offset="1" stop-color="rgba(22,163,74,.02)"/></linearGradient>' +
-    '<linearGradient id="bmDn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(220,38,38,.02)"/><stop offset="1" stop-color="rgba(220,38,38,.12)"/></linearGradient>' +
+    '<linearGradient id="bmUp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="bm-s u0"/><stop offset="1" class="bm-s u1"/></linearGradient>' +
+    '<linearGradient id="bmDn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="bm-s d0"/><stop offset="1" class="bm-s d1"/></linearGradient>' +
     '<radialGradient id="bmGp" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#4ADE80"/><stop offset="1" stop-color="#15803D"/></radialGradient>' +
     '<radialGradient id="bmGn" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#F87171"/><stop offset="1" stop-color="#B91C1C"/></radialGradient>' +
+    '<radialGradient id="bmGm" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#FCD34D"/><stop offset="1" stop-color="#CA8A04"/></radialGradient>' +
     '<filter id="bmSh" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.8" flood-color="#0F172A" flood-opacity=".22"/></filter>' +
     '<clipPath id="bmCu"><rect x="' + L + '" y="' + T + '" width="' + (R - L) + '" height="' + (zy - T) + '"/></clipPath>' +
     '<clipPath id="bmCd"><rect x="' + L + '" y="' + zy + '" width="' + (R - L) + '" height="' + (B - zy) + '"/></clipPath>' +
@@ -408,7 +409,7 @@ function goldBubbleMix(g, box) {
 
   /* biggest circles first, so small funds stay clickable on top */
   pts.slice().sort(function (p, q) { return q.cap - p.cap; }).forEach(function (p) {
-    var tone = gSign(p.f.nominal_bubble) > 0 ? 'pos' : (gSign(p.f.nominal_bubble) < 0 ? 'neg' : 'zero');
+    var tone = Math.abs(p.res) <= sd ? 'mid' : (gSign(p.f.nominal_bubble) > 0 ? 'pos' : (gSign(p.f.nominal_bubble) < 0 ? 'neg' : 'zero'));
     o.push('<circle class="bm-pt ' + tone + '" filter="url(#bmSh)" data-isin="' + p.f.isin + '" cx="' + X(p.x).toFixed(1) + '" cy="' + Y(p.y).toFixed(1) + '" r="' + rad(p).toFixed(1) + '"/>');
   });
   /* label the five largest funds and the two extremes */
@@ -425,7 +426,7 @@ function goldBubbleMix(g, box) {
     '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="حباب هر صندوق در برابر سهم سکه در ترکیب دارایی">' + o.join('') + '</svg>' +
     '<div class="bm-axis-x">سهم گواهی سکه در دارایی صندوق</div>' +
     '<div class="bm-legend"><span><i class="lg-pos"></i>حباب مثبت</span><span><i class="lg-neg"></i>حباب منفی</span>' +
-    '<span><i class="lg-size"></i>اندازه: ارزش بازار</span><span><i class="lg-trend"></i>روند و محدوده معمول</span></div>' +
+    '<span><i class="lg-size"></i>اندازه: ارزش بازار</span><span><i class="lg-mid"></i>هم‌تراز با روند</span><span><i class="lg-trend"></i>روند و محدوده معمول</span></div>' +
     '<div class="btip bm-tip" hidden></div>';
 
   var svg = box.querySelector('svg'), tip = box.querySelector('.bm-tip');

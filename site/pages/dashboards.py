@@ -368,7 +368,7 @@ onGold(function(g){
           '<span class="num" style="color:'+gColor(cp)+'">'+(cp==null?'—':gArrow(cp))+'</span></div>'+
         '<div class="sb" title="'+(intr!=null?'ارزش ذاتی: '+gNumT(intr).replace(/<[^>]*>/g,'')+' تومان':'')+'">'+
           '<em>حباب ذاتی</em>'+
-          (bb==null?'—':PAYWALL?LOCK:'<span class="spill '+gTone(bb,'up','dn')+'">'+(bb<0?'▼ ':bb>0?'▲ ':'')+gPct(bb)+'</span>')+
+          (bb==null?'—':PAYWALL?LOCK:'<span class="spill '+gTone(bb,'up','dn')+'">'+gPct(bb)+'</span>')+
           '<span class="sd">'+(r&&r.implied_dollar!=null?'دلار ذاتی <b class="num">'+gNumT(r.implied_dollar)+'</b>':'')+'</span></div>'+
       '</div>'}).join('');
     var n=SPOT[c.getAttribute('data-grp')].length;
