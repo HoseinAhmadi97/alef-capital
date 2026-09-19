@@ -56,7 +56,7 @@ GOLD = """
 <section class="dsec" id="overview">
 <div class="wrap">
   <div class="sh"><div><h2>بازار امروز</h2></div>
-    <div style="font-size:12px;color:var(--slate-500);display:flex;align-items:center;gap:7px">
+    <div id="tmapKey" style="font-size:12px;color:var(--slate-500);display:flex;align-items:center;gap:7px">
       <span>بازدهی −</span>
       <i style="width:16px;height:12px;background:#B91C1C;border-radius:2px;display:inline-block"></i>
       <i style="width:16px;height:12px;background:#EF4444;border-radius:2px;display:inline-block"></i>
@@ -79,9 +79,50 @@ GOLD = """
       <div class="mtile"><small>پرحباب‌ترین</small><b class="num" id="gMax">—</b><div class="sub" id="gMaxN">—</div></div>
       <div class="mtile"><small>کم‌حباب‌ترین</small><b class="num" id="gMin">—</b><div class="sub" id="gMinN">—</div></div>
     </div>
-    <div class="ovmap">
-      <div class="tmap" id="tmap"></div>
-      <p class="ovcap">اندازه هر بلوک: ارزش معاملات امروز · رنگ: بازدهی روزانه</p>
+    <!-- three views in one spot: they rotate on a timer until a tab is picked -->
+    <div class="ovmap ovslides" id="ovSlides">
+      <div class="ovtabs" role="tablist" aria-label="نمای بازار">
+        <button role="tab" class="on" aria-selected="true" data-slide="0">نقشه بازار</button>
+        <button role="tab" aria-selected="false" data-slide="1">پراکندگی حباب</button>
+        <button role="tab" aria-selected="false" data-slide="2">حباب و وزن سکه</button>
+        <span class="ovprog" aria-hidden="true"><i></i></span>
+      </div>
+      <div class="ovstage">
+        <div class="ovslide on" role="tabpanel">
+          <div class="tmap" id="tmap"></div>
+          <p class="ovcap">اندازه هر بلوک: ارزش معاملات امروز · رنگ: بازدهی روزانه</p>
+        </div>
+        <div class="ovslide" role="tabpanel" aria-hidden="true">
+          <div class="ovspec-h"><b class="num" id="bubAvgD">—</b><span>میانگین حباب <span class="gcount">—</span> صندوق</span></div>
+          <div class="bspec">
+            <svg id="bSpec" viewBox="0 0 300 92" role="img" aria-label="پراکندگی حباب صندوق‌های طلا نسبت به NAV">
+              <defs>
+                <linearGradient id="bTrack" x1="0" x2="1" y1="0" y2="0">
+                  <stop offset="0%" stop-color="rgba(220,38,38,.55)"/>
+                  <stop offset="50%" stop-color="rgba(148,163,184,.35)"/>
+                  <stop offset="100%" stop-color="rgba(22,163,74,.55)"/>
+                </linearGradient>
+              </defs>
+              <rect id="bTrackRect" x="8" y="44" width="284" height="4" rx="2" fill="url(#bTrack)"/>
+              <g id="bZero"></g>
+              <g id="bDots"></g>
+              <g id="bAvgMark"></g>
+              <g id="bAxis" font-size="9" fill="var(--slate-400)"></g>
+            </svg>
+            <div class="btip" id="bTip" hidden></div>
+          </div>
+          <div class="bsplit">
+            <span class="neg"><b id="bBelow">—</b> زیر NAV</span>
+            <div class="bsplit-bar" aria-hidden="true"><i id="bBelowBar"></i><i id="bAboveBar"></i></div>
+            <span class="pos"><b id="bAbove">—</b> بالای NAV</span>
+          </div>
+          <p class="ovcap">هر نقطه یک صندوق · محور: قیمت نسبت به NAV · مثلث طلایی: میانگین</p>
+        </div>
+        <div class="ovslide" role="tabpanel" aria-hidden="true">
+          <div class="bmix" data-bmix></div>
+          <p class="ovcap">هر دایره یک صندوق · اندازه: ارزش بازار · صندوق‌های زیر خط روند نسبت به ترکیب دارایی‌شان ارزنده‌ترند</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -333,6 +374,39 @@ onGold(function(g){
       gTd(r&&r.bubble!=null?bubCell(r.bubble):'—',r?r.bubble:null)+
       gTd(gNumT(r?r.implied_dollar:null),r?r.implied_dollar:null,'s')+'</tr>'}).join('');
   gResort(document.getElementById('sTable'));
+});
+
+/* market views: rotate every 9 s until the user picks a tab; pause on hover */
+(function(){
+  var box=document.getElementById('ovSlides'); if(!box) return;
+  var tabs=[].slice.call(box.querySelectorAll('[data-slide]')),
+      slides=[].slice.call(box.querySelectorAll('.ovslide')),
+      key=document.getElementById('tmapKey'), prog=box.querySelector('.ovprog i'),
+      MS=9000, cur=0, pinned=false, hover=false, t0=Date.now(), left=MS;
+  function go(i){
+    cur=i;
+    tabs.forEach(function(t,k){t.classList.toggle('on',k===i);t.setAttribute('aria-selected',k===i)});
+    slides.forEach(function(s,k){s.classList.toggle('on',k===i);s.setAttribute('aria-hidden',k!==i)});
+    if(key) key.style.visibility=i===0?'':'hidden';
+  }
+  tabs.forEach(function(t,k){t.addEventListener('click',function(){
+    pinned=true; box.classList.add('pinned'); go(k);
+  })});
+  box.addEventListener('mouseenter',function(){hover=true});
+  box.addEventListener('mouseleave',function(){hover=false});
+  (function tick(){
+    var now=Date.now(), dt=now-t0; t0=now;
+    if(!pinned&&!hover&&!document.hidden){
+      left-=dt;
+      if(left<=0){left=MS; go((cur+1)%slides.length)}
+    }
+    if(prog) prog.style.transform='scaleX('+(pinned?0:1-left/MS)+')';
+    if(!pinned) requestAnimationFrame(tick);
+  })();
+})();
+onGold(function(g){
+  var s=g.summary, el=document.getElementById('bubAvgD'); if(!el||!s) return;
+  el.textContent=gPct(s.avg_bubble); el.style.color=gColor(s.avg_bubble);
 });
 
 /* treemap — block size by today's traded value, colour by day change */
