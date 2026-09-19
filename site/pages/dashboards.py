@@ -332,8 +332,7 @@ onGold(function(g){
     var d=pts.map(function(v,i){return (i?'L':'M')+(i/(pts.length-1)*W).toFixed(1)+' '+(H-2-(v-lo)/sp*(H-6)).toFixed(1)}).join(' ');
     var up=pts[pts.length-1]>=pts[0], col=up?'22,163,74':'220,38,38';
     t.insertAdjacentHTML('beforeend','<svg class="tspark" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" aria-hidden="true">'+
-      '<path d="'+d+' L'+W+' '+H+' L0 '+H+' Z" fill="rgba('+col+',.07)"/>'+
-      '<path d="'+d+'" fill="none" stroke="rgba('+col+',.45)" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>');
+      '<path d="'+d+' L'+W+' '+H+' L0 '+H+' Z"/></svg>');
   });
   document.querySelectorAll('#gTiles [data-sym]').forEach(function(t){
     var k=t.getAttribute('data-sym'), v=t.querySelector('b'), sub=t.querySelector('.sub'), f, when;

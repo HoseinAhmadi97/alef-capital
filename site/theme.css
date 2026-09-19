@@ -1201,3 +1201,8 @@ footer a:hover{color:var(--gold-300)}
 /* scenario strip: a light gold wash so it reads as its own tool */
 .scnbar{background:linear-gradient(90deg,rgba(202,138,4,.06),rgba(202,138,4,.02));border-color:rgba(202,138,4,.35)}
 :root[data-theme="dark"] .scnbar{background:linear-gradient(90deg,rgba(250,204,21,.06),rgba(250,204,21,.015))}
+
+/* tile trend: only a faint grey area, spanning most of the tile */
+.tspark{width:100%;height:78%}
+.tspark path{fill:rgba(148,163,184,.13)}
+:root[data-theme="dark"] .tspark path{fill:rgba(148,163,184,.08)}
