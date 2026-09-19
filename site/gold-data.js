@@ -360,7 +360,7 @@ function goldBubbleMix(g, box) {
   function X(v) { return L + (v - x0) / (x1 - x0) * (R - L); }
   function Y(v) { return T + (y1 - v) / (y1 - y0) * (B - T); }
   var maxCap = Math.max.apply(null, pts.map(function (p) { return p.cap; })) || 1;
-  function rad(p) { return 5.5 + 14 * Math.sqrt(p.cap / maxCap); }
+  function rad(p) { return 4 + 9.5 * Math.sqrt(p.cap / maxCap); }
 
   /* least-squares trend */
   var n = pts.length, sx = 0, sy = 0, sxx = 0, sxy = 0;
@@ -378,12 +378,14 @@ function goldBubbleMix(g, box) {
     '<radialGradient id="bmGp" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#4ADE80"/><stop offset="1" stop-color="#15803D"/></radialGradient>' +
     '<radialGradient id="bmGn" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#F87171"/><stop offset="1" stop-color="#B91C1C"/></radialGradient>' +
     '<filter id="bmSh" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.8" flood-color="#0F172A" flood-opacity=".22"/></filter>' +
+    '<clipPath id="bmCu"><rect x="' + L + '" y="' + T + '" width="' + (R - L) + '" height="' + (zy - T) + '"/></clipPath>' +
+    '<clipPath id="bmCd"><rect x="' + L + '" y="' + zy + '" width="' + (R - L) + '" height="' + (B - zy) + '"/></clipPath>' +
     '<clipPath id="bmClip"><rect x="' + L + '" y="' + T + '" width="' + (R - L) + '" height="' + (B - T) + '" rx="12"/></clipPath></defs>');
   o.push('<g clip-path="url(#bmClip)"><rect x="' + L + '" y="' + T + '" width="' + (R - L) + '" height="' + (B - T) + '" class="bm-bg"/>' +
     '<rect x="' + L + '" y="' + T + '" width="' + (R - L) + '" height="' + (zy - T) + '" fill="url(#bmUp)"/>' +
     '<rect x="' + L + '" y="' + zy + '" width="' + (R - L) + '" height="' + (B - zy) + '" fill="url(#bmDn)"/></g>');
-  if (zy - T > 22) o.push('<text class="bm-zone up" x="' + (R - 10) + '" y="' + (T + 18) + '" text-anchor="end">بالای NAV · گران</text>');
-  if (B - zy > 22) o.push('<text class="bm-zone dn" x="' + (R - 10) + '" y="' + (B - 10) + '" text-anchor="end">زیر NAV · ارزان</text>');
+  if (zy - T > 22) o.push('<text class="bm-zone up" direction="rtl" unicode-bidi="embed" x="' + (R - 10) + '" y="' + (T + 18) + '" text-anchor="start">بالای NAV · گران</text>');
+  if (B - zy > 22) o.push('<text class="bm-zone dn" direction="rtl" unicode-bidi="embed" x="' + (R - 10) + '" y="' + (B - 10) + '" text-anchor="start">زیر NAV · ارزان</text>');
   for (var gx = x0; gx <= x1 + 1e-9; gx += xStep) {
     o.push('<line class="bm-grid" x1="' + X(gx) + '" x2="' + X(gx) + '" y1="' + T + '" y2="' + B + '"/>');
     o.push('<text class="bm-tick" x="' + X(gx) + '" y="' + (B + 20) + '" text-anchor="middle">' + pc(gx) + '</text>');
@@ -397,8 +399,10 @@ function goldBubbleMix(g, box) {
   /* trend line, clipped to the plot */
   var tx0 = x0, tx1 = x1;
   var sd = Math.sqrt(pts.reduce(function (m, p) { return m + p.res * p.res; }, 0) / n);
-  o.push('<path class="bm-band" clip-path="url(#bmClip)" d="M' + X(tx0) + ' ' + Y(a + b * tx0 + sd) + ' L' + X(tx1) + ' ' + Y(a + b * tx1 + sd) +
-    ' L' + X(tx1) + ' ' + Y(a + b * tx1 - sd) + ' L' + X(tx0) + ' ' + Y(a + b * tx0 - sd) + ' Z"/>');
+  var bandD = 'M' + X(tx0) + ' ' + Y(a + b * tx0 + sd) + ' L' + X(tx1) + ' ' + Y(a + b * tx1 + sd) +
+    ' L' + X(tx1) + ' ' + Y(a + b * tx1 - sd) + ' L' + X(tx0) + ' ' + Y(a + b * tx0 - sd) + ' Z';
+  o.push('<path class="bm-band up" clip-path="url(#bmCu)" d="' + bandD + '"/>');
+  o.push('<path class="bm-band dn" clip-path="url(#bmCd)" d="' + bandD + '"/>');
   o.push('<line class="bm-trend" x1="' + X(tx0) + '" y1="' + Math.max(T, Math.min(B, Y(a + b * tx0))) + '" x2="' + X(tx1) + '" y2="' + Math.max(T, Math.min(B, Y(a + b * tx1))) + '"/>');
   o.push('<text class="bm-trend-l" x="' + (R - 6) + '" y="' + (Math.max(T + 12, Math.min(B - 6, Y(a + b * tx1) - 8))) + '" text-anchor="end">روند</text>');
 
