@@ -367,10 +367,18 @@ onGold(function(g){
         '<div class="sp"><b class="num">'+gNumT(px)+'</b>'+
           '<span class="num" style="color:'+gColor(cp)+'">'+(cp==null?'—':gArrow(cp))+'</span></div>'+
         '<div class="sb" title="'+(intr!=null?'ارزش ذاتی: '+gNumT(intr).replace(/<[^>]*>/g,'')+' تومان':'')+'">'+
-          (bb!=null?bubCell(bb):'—')+
-          '<span class="num">'+(r&&r.implied_dollar!=null?'دلار '+gNumT(r.implied_dollar):'')+'</span></div>'+
+          '<em>حباب ذاتی</em>'+
+          (bb==null?'—':PAYWALL?LOCK:'<span class="spill '+gTone(bb,'up','dn')+'">'+(bb<0?'▼ ':bb>0?'▲ ':'')+gPct(bb)+'</span>')+
+          '<span class="sd">'+(r&&r.implied_dollar!=null?'دلار ذاتی <b class="num">'+gNumT(r.implied_dollar)+'</b>':'')+'</span></div>'+
       '</div>'}).join('');
+    var n=SPOT[c.getAttribute('data-grp')].length;
+    c.classList.toggle('more',n>2);
   });
+});
+/* the coin card scrolls inside itself; drop the hint once scrolled to the end */
+document.querySelectorAll('#spotGrid .spotb').forEach(function(b){
+  b.addEventListener('scroll',function(){
+    b.parentNode.classList.toggle('end',b.scrollTop+b.clientHeight>=b.scrollHeight-2)});
 });
 
 /* market views: rotate every 5 s until the user picks a tab; pause on hover */

@@ -1100,3 +1100,19 @@ footer a:hover{color:var(--gold-300)}
 .spotr .sb{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:74px;cursor:help}
 .spotr .sb>.num{font-size:10px;color:var(--slate-400);white-space:nowrap}
 .spotnote{font-size:11px;color:var(--slate-400);margin:10px 0 0}
+
+/* spot cards: two rows visible, the rest scroll inside the card */
+.spotc{position:relative}
+.spotr{height:66px;box-sizing:border-box;padding:6px 0}
+.spotb{max-height:132px;overflow-y:auto;scrollbar-width:thin;scroll-snap-type:y mandatory}
+.spotb .spotr{scroll-snap-align:start}
+.spotc.more::after{content:"اسکرول برای نیم و ربع ↓";position:absolute;inset:auto 1px 1px 1px;height:30px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;font-size:10px;font-weight:600;color:var(--slate-400);background:linear-gradient(transparent,var(--surface) 70%);border-radius:0 0 14px 14px;pointer-events:none;transition:opacity .2s}
+.spotc.more.end::after{opacity:0}
+.spotr .sb em{font-style:normal;font-size:9.5px;color:var(--slate-400);line-height:1}
+.spill{display:inline-block;font-size:12px;font-weight:800;padding:2px 8px;border-radius:99px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.spill.up{background:rgba(22,163,74,.12);color:var(--up-text,#15803D)}
+.spill.dn{background:rgba(220,38,38,.11);color:var(--down,#DC2626)}
+.spotr .sd{font-size:9.5px;color:var(--slate-400);white-space:nowrap}
+.spotr .sd b{font-size:11px;font-weight:700;color:var(--slate-600,#475569)}
+.spotb{overflow-x:hidden;max-height:133px}
+.spotc:not(.more) .spotb{overflow:visible;max-height:none}
