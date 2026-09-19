@@ -1166,3 +1166,5 @@ footer a:hover{color:var(--gold-300)}
 .bm-band.mid{fill:rgba(202,138,4,.10)}
 :root[data-theme="dark"] .bm-band.base{fill:#111A28}
 :root[data-theme="dark"] .bm-band.mid{fill:rgba(250,204,21,.07)}
+
+.ovslide-t{font-size:15px;font-weight:800;margin:0 0 8px}

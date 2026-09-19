@@ -84,7 +84,7 @@ GOLD = """
       <div class="ovtabs" role="tablist" aria-label="نمای بازار">
         <button role="tab" class="on" aria-selected="true" data-slide="0">نقشه بازار</button>
         <button role="tab" aria-selected="false" data-slide="1">پراکندگی حباب</button>
-        <button role="tab" aria-selected="false" data-slide="2">حباب و وزن سکه</button>
+        <button role="tab" aria-selected="false" data-slide="2">حباب و وزن گواهی سکه</button>
         <span class="ovprog" aria-hidden="true"><i></i></span>
       </div>
       <div class="ovstage">
@@ -119,6 +119,7 @@ GOLD = """
           <p class="ovcap">هر نقطه یک صندوق · محور: قیمت نسبت به NAV · مثلث طلایی: میانگین</p>
         </div>
         <div class="ovslide" role="tabpanel" aria-hidden="true">
+          <h3 class="ovslide-t">حباب و وزن گواهی سکه</h3>
           <div class="bmix" data-bmix></div>
           <p class="ovcap">هر دایره یک صندوق · اندازه: ارزش بازار · صندوق‌های زیر خط روند نسبت به ترکیب دارایی‌شان ارزنده‌ترند</p>
         </div>

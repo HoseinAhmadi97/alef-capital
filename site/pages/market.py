@@ -81,7 +81,7 @@ HTML = """
 <section class="sec">
 <div class="wrap split" style="align-items:start">
   <div class="card">
-    <h3 style="font-size:16px;margin-bottom:4px">حباب اسمی در برابر وزن سکه در صندوق</h3>
+    <h3 style="font-size:16px;margin-bottom:4px">حباب و وزن گواهی سکه</h3>
     <p style="font-size:12.5px;color:var(--slate-500);margin:0 0 12px">هر دایره یک صندوق. صندوق‌های زیر خط روند، نسبت به ترکیب دارایی‌شان ارزنده‌ترند.</p>
     <div class="bmix" data-bmix></div>
   </div>
