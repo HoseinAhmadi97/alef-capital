@@ -387,13 +387,16 @@ document.querySelectorAll('#spotGrid .spotb').forEach(function(b){
   var tabs=[].slice.call(box.querySelectorAll('[data-slide]')),
       slides=[].slice.call(box.querySelectorAll('.ovslide')),
       key=document.getElementById('tmapKey'), prog=box.querySelector('.ovprog i'),
-      MS=5000, cur=0, pinned=false, hover=false, t0=Date.now(), left=MS;
+      MS=5000, cur=0,
+      /* phones: slides differ in height, so no auto-rotate (content below would jump) */
+      pinned=window.matchMedia("(max-width:980px)").matches, hover=false, t0=Date.now(), left=MS;
   function go(i){
     cur=i;
     tabs.forEach(function(t,k){t.classList.toggle('on',k===i);t.setAttribute('aria-selected',k===i)});
     slides.forEach(function(s,k){s.classList.toggle('on',k===i);s.setAttribute('aria-hidden',k!==i)});
     if(key) key.style.visibility=i===0?'':'hidden';
   }
+  if(pinned) box.classList.add("pinned");
   tabs.forEach(function(t,k){t.addEventListener('click',function(){
     pinned=true; box.classList.add('pinned'); go(k);
   })});
