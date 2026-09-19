@@ -1193,3 +1193,11 @@ footer a:hover{color:var(--gold-300)}
 
 .scnr{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;background:rgba(202,138,4,.1)}
 .scnr:hover{background:rgba(202,138,4,.18)}
+
+/* tile sparklines sit behind the numbers, along the bottom-left of the tile */
+.mtile{position:relative;overflow:hidden}
+.mtile>:not(.tspark){position:relative;z-index:1}
+.tspark{position:absolute;left:0;bottom:0;width:58%;height:48%;pointer-events:none}
+/* scenario strip: a light gold wash so it reads as its own tool */
+.scnbar{background:linear-gradient(90deg,rgba(202,138,4,.06),rgba(202,138,4,.02));border-color:rgba(202,138,4,.35)}
+:root[data-theme="dark"] .scnbar{background:linear-gradient(90deg,rgba(250,204,21,.06),rgba(250,204,21,.015))}
