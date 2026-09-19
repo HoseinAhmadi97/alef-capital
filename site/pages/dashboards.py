@@ -138,6 +138,18 @@ GOLD = """
 </div>
 </section>
 
+<!-- SCENARIO — the user's own dollar and ounce; intrinsic numbers above and below follow -->
+<section class="dsec dsec-tight" id="scn">
+<div class="wrap">
+  <div class="scnbar" id="scnBar">
+    <div class="scnt"><b>سناریوی شما</b><span>با دلار و انس دلخواه، حباب ذاتی و دلار ذاتی بازار نقدی و صندوق‌ها دوباره حساب می‌شود</span></div>
+    <label class="scnf">دلار<input id="scnD" inputmode="numeric" autocomplete="off" aria-label="قیمت دلار به تومان"><small>تومان</small></label>
+    <label class="scnf">انس<input id="scnO" inputmode="decimal" autocomplete="off" aria-label="قیمت انس جهانی به دلار"><small>دلار</small></label>
+    <button type="button" class="scnr" id="scnReset" hidden>قیمت روز ↺</button>
+  </div>
+</div>
+</section>
+
 <!-- FUNDS TABLE -->
 <section class="dsec" id="funds">
 <div class="wrap">
@@ -337,6 +349,7 @@ onGold(function(g){
   var rows=g.funds.slice().sort(function(x,y){return (y.value||0)-(x.value||0)});
   /* intrinsic bubble and implied dollar are computed in Nexus (gold_intrinsic.py) */
   b.innerHTML=rows.map(function(f){
+    f=scnFund(g,f);
     return '<tr>'+gTd(f.symbol,f.symbol)+
       gTd(gNumT(gToman(f.last_trade)),f.last_trade,'k')+chgCells(f.change_pct,gToman(f.change))+
       gTd(cell(gNumT(gToman(f.nav))),f.nav,'s gs')+
@@ -348,6 +361,50 @@ onGold(function(g){
   gResort(document.getElementById('gTable'));
 });
 
+/* scenario: intrinsic value is proportional to ounce x dollar (gold_intrinsic.py),
+   so a user's own ounce/dollar rescales it by k = live(o*d) / scenario(o*d):
+   bubble' = (1+bubble)*k - 1. Funds: nominal + coin weight x coin-cert bubble'
+   + bar weight x bar-cert bubble'. Implied dollar = scenario dollar x (1+bubble'). */
+var SCN=null;
+function scnK(g){var o=g.m.ons,d=g.m.dollar;return SCN&&o&&d?(o.price*d.price)/(SCN.ons*SCN.dollar):1}
+function scnRow(g,r){
+  if(!SCN||!r||r.bubble==null) return r;
+  var k=scnK(g), b=(1+r.bubble)*k-1;
+  return Object.assign({},r,{bubble:b,intrinsic:r.intrinsic/k,implied_dollar:SCN.dollar*(1+b)});
+}
+function scnFund(g,f){
+  if(!SCN||f.intrinsic_bubble==null||!f.weights||f.nominal_bubble==null) return f;
+  var cs=scnRow(g,g.m.govahi_sekke), cb=scnRow(g,g.m.govahi_shemsh), w=f.weights;
+  var b=f.nominal_bubble+(w.sekke_weight||0)*(cs&&cs.bubble||0)+(w.shemsh_weight||0)*(cb&&cb.bubble||0);
+  return Object.assign({},f,{intrinsic_bubble:b,implied_dollar:SCN.dollar*(1+b)});
+}
+(function(){
+  var D=document.getElementById('scnD'), O=document.getElementById('scnO'),
+      R=document.getElementById('scnReset'), bar=document.getElementById('scnBar'), live=null;
+  if(!D) return;
+  function num(v){ /* Persian/Arabic digits, any thousands separator */
+    v=String(v).replace(/[۰-۹]/g,function(c){return c.charCodeAt(0)-1776}).replace(/[٠-٩]/g,function(c){return c.charCodeAt(0)-1632});
+    v=v.replace(/[٬,\s]/g,'').replace('٫','.'); var n=parseFloat(v); return n>0?n:null}
+  function fmt(n,dp){return fa(n.toLocaleString('en-US',{maximumFractionDigits:dp})).replace(/,/g,'٬').replace('.','٫')}
+  function apply(){
+    var d=num(D.value), o=num(O.value);
+    var on=live&&d&&o&&(Math.abs(d-live.d)>0.5||Math.abs(o-live.o)>0.005);
+    SCN=on?{dollar:d,ons:o}:null;
+    bar.classList.toggle('on',!!on); R.hidden=!on;
+    GOLD_SUBS.forEach(goldRun);
+  }
+  var t; function soon(){clearTimeout(t); t=setTimeout(apply,180)}
+  D.addEventListener('input',soon); O.addEventListener('input',soon);
+  [D,O].forEach(function(el,i){el.addEventListener('blur',function(){var n=num(el.value); if(n) el.value=fmt(n,i?1:0)})});
+  R.addEventListener('click',function(){D.value=fmt(live.d,0); O.value=fmt(live.o,1); apply()});
+  onGold(function(g){
+    if(!g.m.dollar||!g.m.ons) return;
+    live={d:g.m.dollar.price,o:g.m.ons.price};
+    /* keep live prices in the boxes until the user types their own */
+    if(!SCN&&document.activeElement!==D&&document.activeElement!==O){D.value=fmt(live.d,0); O.value=fmt(live.o,1)}
+  });
+})();
+
 /* spot gold and coins — three market cards; intrinsic value, bubble and
    implied dollar come from Nexus (gold_intrinsic.py) */
 var SPOT={gold:[['طلای ۱۸ عیار','geram18','گرم'],['مظنه آبشده','mesghal','مثقال']],
@@ -356,7 +413,7 @@ var SPOT={gold:[['طلای ۱۸ عیار','geram18','گرم'],['مظنه آبش�
 onGold(function(g){
   document.querySelectorAll('#spotGrid .spotc').forEach(function(c){
     c.querySelector('.spotb').innerHTML=SPOT[c.getAttribute('data-grp')].map(function(s){
-      var r=g.m[s[1]], k=r&&r.unit==='IRR'?0.1:1, px=goldToman(r),
+      var r=scnRow(g,g.m[s[1]]), k=r&&r.unit==='IRR'?0.1:1, px=goldToman(r),
           intr=r&&r.intrinsic!=null?r.intrinsic*k:null, bb=r?r.bubble:null,
           cp=r?r.change_pct:null;
       return '<div class="spotr">'+

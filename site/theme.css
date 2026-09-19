@@ -1177,3 +1177,16 @@ footer a:hover{color:var(--gold-300)}
 .ovstat .live,.ovstat .live.is-soon,.ovstat .live.is-closed{background:none;padding:0;font-size:13px;font-weight:800;gap:6px}
 .ovstat .live:not(.is-closed):not(.is-soon){color:var(--up-text)}
 .ovstat em{font-style:normal;font-size:11px;color:var(--slate-400);white-space:nowrap;padding-inline-start:10px;border-inline-start:1px solid var(--border)}
+
+/* scenario strip: one quiet line between the spot cards and the funds table */
+.scnbar{display:flex;align-items:center;flex-wrap:wrap;gap:10px 14px;padding:10px 14px;border:1px dashed var(--border-strong,#CBD5E1);border-radius:14px;transition:background .2s,border-color .2s}
+.scnbar.on{background:rgba(202,138,4,.07);border-color:var(--gold-500,#D4A017);border-style:solid}
+.scnt{flex:1;min-width:220px;display:flex;flex-direction:column;line-height:1.6}
+.scnt b{font-size:13.5px;font-weight:800}
+.scnt span{font-size:11px;color:var(--slate-400)}
+.scnf{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--slate-500)}
+.scnf input{width:112px;padding:7px 10px;border:1px solid var(--border);border-radius:9px;background:var(--surface);color:var(--ink-800);font:inherit;font-size:14px;font-weight:800;text-align:center;font-variant-numeric:tabular-nums;direction:ltr}
+.scnf input:focus{outline:none;border-color:var(--gold-500,#D4A017);box-shadow:0 0 0 3px rgba(202,138,4,.15)}
+.scnf small{font-size:10.5px;font-weight:500;color:var(--slate-400)}
+.scnr{border:0;background:none;font:inherit;font-size:12px;font-weight:700;color:var(--gold-700,#A16207);cursor:pointer;padding:6px 4px}
+@media(max-width:600px){.scnf{flex:1}.scnf input{width:100%}}
