@@ -633,6 +633,12 @@ onGold(function(g){
     var isin=b.getAttribute('data-isin');
     pick=pick===isin?null:isin;
     render();
+    /* phones: the donut sits below the list — bring it into view under the sticky bars */
+    if(pick&&window.matchMedia("(max-width:820px)").matches){
+      var sum=document.querySelector(".mixsum"), nav=document.querySelector(".subnav"),
+          off=nav?nav.getBoundingClientRect().bottom:0;
+      window.scrollTo({top:window.scrollY+sum.getBoundingClientRect().top-Math.max(off,0)-12,behavior:"smooth"});
+    }
   });
   document.getElementById('mixReset').addEventListener('click',function(){pick=null; render()});
 
