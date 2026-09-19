@@ -1160,3 +1160,9 @@ footer a:hover{color:var(--gold-300)}
   .ovslide .bspec{margin:18px 0 10px}
 }
 @media(max-width:820px){.mixgrid .mixsum{order:2}}  /* phones: the fund list first, the donut after it */
+
+/* bubble chart: the trend band is neutral, between the green and red zones */
+.bm-band.base{fill:var(--surface-2);opacity:.92}
+.bm-band.mid{fill:rgba(202,138,4,.10)}
+:root[data-theme="dark"] .bm-band.base{fill:#111A28}
+:root[data-theme="dark"] .bm-band.mid{fill:rgba(250,204,21,.07)}

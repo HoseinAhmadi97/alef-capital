@@ -402,8 +402,9 @@ function goldBubbleMix(g, box) {
   var sd = Math.sqrt(pts.reduce(function (m, p) { return m + p.res * p.res; }, 0) / n);
   var bandD = 'M' + X(tx0) + ' ' + Y(a + b * tx0 + sd) + ' L' + X(tx1) + ' ' + Y(a + b * tx1 + sd) +
     ' L' + X(tx1) + ' ' + Y(a + b * tx1 - sd) + ' L' + X(tx0) + ' ' + Y(a + b * tx0 - sd) + ' Z';
-  o.push('<path class="bm-band up" clip-path="url(#bmCu)" d="' + bandD + '"/>');
-  o.push('<path class="bm-band dn" clip-path="url(#bmCd)" d="' + bandD + '"/>');
+  /* neutral band: masks the red/green washes, then a light gold tint */
+  o.push('<path class="bm-band base" clip-path="url(#bmClip)" d="' + bandD + '"/>');
+  o.push('<path class="bm-band mid" clip-path="url(#bmClip)" d="' + bandD + '"/>');
   o.push('<line class="bm-trend" x1="' + X(tx0) + '" y1="' + Math.max(T, Math.min(B, Y(a + b * tx0))) + '" x2="' + X(tx1) + '" y2="' + Math.max(T, Math.min(B, Y(a + b * tx1))) + '"/>');
   o.push('<text class="bm-trend-l" x="' + (R - 6) + '" y="' + (Math.max(T + 12, Math.min(B - 6, Y(a + b * tx1) - 8))) + '" text-anchor="end">روند</text>');
 
@@ -426,7 +427,7 @@ function goldBubbleMix(g, box) {
     '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="حباب هر صندوق در برابر سهم سکه در ترکیب دارایی">' + o.join('') + '</svg>' +
     '<div class="bm-axis-x">سهم گواهی سکه در دارایی صندوق</div>' +
     '<div class="bm-legend"><span><i class="lg-pos"></i>حباب مثبت</span><span><i class="lg-neg"></i>حباب منفی</span>' +
-    '<span><i class="lg-size"></i>اندازه: ارزش بازار</span><span><i class="lg-mid"></i>هم‌تراز با روند</span><span><i class="lg-trend"></i>روند و محدوده معمول</span></div>' +
+    '<span><i class="lg-mid"></i>هم‌تراز با روند</span><span><i class="lg-trend"></i>روند و محدوده معمول</span></div>' +
     '<div class="btip bm-tip" hidden></div>';
 
   var svg = box.querySelector('svg'), tip = box.querySelector('.bm-tip');
