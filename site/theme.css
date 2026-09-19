@@ -1159,3 +1159,4 @@ footer a:hover{color:var(--gold-300)}
   .ovslide.on{position:relative}
   .ovslide .bspec{margin:18px 0 10px}
 }
+@media(max-width:820px){.mixgrid .mixsum{order:2}}  /* phones: the fund list first, the donut after it */
